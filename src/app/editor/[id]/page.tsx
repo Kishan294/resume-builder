@@ -6,9 +6,12 @@ import { useSession } from "@/lib/auth-client";
 import { ResumeEditor } from "@/components/editor/resume-editor";
 import { ResumePreview } from "@/components/editor/resume-preview";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, Download, Share2 } from "lucide-react";
+import { toast } from "sonner";
+import { ArrowLeft, Save, Download, Share2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Resume } from "@/types/resume";
+import { generatePDF } from "@/utils/pdf-generator";
+import { shareResume, copyToClipboard } from "@/utils/share-utils";
 
 export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { data: session, isPending } = useSession();
@@ -16,6 +19,8 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
   const [resume, setResume] = useState<Resume | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
 
   useEffect(() => {
@@ -71,11 +76,49 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
       if (response.ok) {
         const updatedResume = await response.json();
         setResume(updatedResume);
+        toast.success("Resume saved successfully!");
+      } else {
+        toast.error("Failed to save resume");
       }
     } catch (error) {
       console.error("Failed to save resume:", error);
+      toast.error("Failed to save resume");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const downloadPDF = async () => {
+    if (!resume) return;
+
+    setIsDownloading(true);
+    try {
+      await generatePDF('resume-preview', `${resume.title || 'resume'}.pdf`);
+      toast.success("PDF downloaded successfully!");
+    } catch (error) {
+      console.error("Failed to download PDF:", error);
+      toast.error("Failed to download PDF");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!resume || !resolvedParams) return;
+
+    setIsSharing(true);
+    try {
+      const success = await shareResume(resolvedParams.id, resume.title);
+      if (success) {
+        toast.success("Resume link copied to clipboard!");
+      } else {
+        toast.error("Failed to share resume");
+      }
+    } catch (error) {
+      console.error("Failed to share resume:", error);
+      toast.error("Failed to share resume");
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -115,15 +158,37 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
               onClick={saveResume}
               disabled={isSaving}
             >
-              <Save className="h-4 w-4 mr-2" />
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
               {isSaving ? "Saving..." : "Save"}
             </Button>
-            <Button variant="outline" size="sm">
-              <Share2 className="h-4 w-4 mr-2" />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleShare}
+              disabled={isSharing}
+            >
+              {isSharing ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Share2 className="h-4 w-4 mr-2" />
+              )}
               Share
             </Button>
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={downloadPDF}
+              disabled={isDownloading}
+            >
+              {isDownloading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4 mr-2" />
+              )}
               Download PDF
             </Button>
           </div>

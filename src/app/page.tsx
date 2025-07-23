@@ -1,103 +1,150 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Users, Download, Share2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { FileText, Users, Download, Share2, Zap, Shield, Clock, Star } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm">
+      <header className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <FileText className="h-8 w-8 text-primary" />
+          <Link href="/" className="flex items-center space-x-2 group">
+            <FileText className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
             <h1 className="text-2xl font-bold text-gray-900">Resume Builder</h1>
-          </div>
-          <div className="flex space-x-4">
+          </Link>
+          <div className="flex items-center space-x-4">
+            <Badge variant="secondary" className="hidden sm:flex">
+              <Star className="h-3 w-3 mr-1" />
+              Free Forever
+            </Badge>
             <Link href="/auth/login">
-              <Button variant="outline">Sign In</Button>
+              <Button variant="outline" className="hover:bg-primary hover:text-primary-foreground transition-colors">
+                Sign In
+              </Button>
             </Link>
             <Link href="/auth/register">
-              <Button>Get Started</Button>
+              <Button className="shadow-md hover:shadow-lg transition-shadow">
+                Get Started Free
+              </Button>
             </Link>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto text-center">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
-            Build Your Perfect Resume
+      <section className="py-24 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-purple-500/5 rounded-full blur-3xl transform -rotate-12 scale-150"></div>
+        <div className="container mx-auto text-center relative">
+          <Badge variant="outline" className="mb-6 px-4 py-2">
+            <Zap className="h-4 w-4 mr-2" />
+            Build Professional Resumes in Minutes
+          </Badge>
+          <h2 className="text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            Build Your Perfect
+            <span className="text-primary block">Resume</span>
           </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
             Create professional, ATS-friendly resumes with our intuitive builder.
-            Choose from beautiful templates and export to PDF in minutes.
+            Choose from beautiful templates, customize with ease, and export to PDF in minutes.
+            <span className="font-semibold text-primary"> No design skills required.</span>
           </p>
-          <div className="flex justify-center space-x-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
             <Link href="/auth/register">
-              <Button size="lg" className="px-8">
+              <Button size="lg" className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                <FileText className="h-5 w-5 mr-2" />
                 Start Building Free
               </Button>
             </Link>
-            <Link href="/templates">
-              <Button variant="outline" size="lg" className="px-8">
+            <Link href="/auth/login">
+              <Button variant="outline" size="lg" className="px-8 py-6 text-lg hover:bg-primary hover:text-primary-foreground transition-colors">
                 View Templates
               </Button>
             </Link>
+          </div>
+          <div className="flex justify-center items-center gap-8 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-green-500" />
+              <span>100% Free</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-blue-500" />
+              <span>Ready in 5 minutes</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-purple-500" />
+              <span>10,000+ users</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-20 px-4 bg-white/50 backdrop-blur-sm">
         <div className="container mx-auto">
-          <h3 className="text-3xl font-bold text-center mb-12">Why Choose Our Resume Builder?</h3>
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-4">
+              Features
+            </Badge>
+            <h3 className="text-4xl font-bold mb-4">Why Choose Our Resume Builder?</h3>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Everything you need to create a professional resume that gets you hired
+            </p>
+          </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card>
-              <CardHeader>
-                <FileText className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Professional Templates</CardTitle>
+            <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 p-3 bg-primary/10 rounded-full w-fit group-hover:bg-primary/20 transition-colors">
+                  <FileText className="h-8 w-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl">Professional Templates</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Choose from multiple professionally designed templates that make you stand out.
+                <CardDescription className="text-center leading-relaxed">
+                  Choose from multiple professionally designed templates that make you stand out from the competition.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <Users className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>ATS Optimized</CardTitle>
+            <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 p-3 bg-green-500/10 rounded-full w-fit group-hover:bg-green-500/20 transition-colors">
+                  <Shield className="h-8 w-8 text-green-500" />
+                </div>
+                <CardTitle className="text-xl">ATS Optimized</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Our resumes are optimized for Applicant Tracking Systems used by employers.
+                <CardDescription className="text-center leading-relaxed">
+                  Our resumes are optimized for Applicant Tracking Systems used by 99% of employers.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <Download className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>PDF Export</CardTitle>
+            <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 p-3 bg-blue-500/10 rounded-full w-fit group-hover:bg-blue-500/20 transition-colors">
+                  <Download className="h-8 w-8 text-blue-500" />
+                </div>
+                <CardTitle className="text-xl">PDF Export</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Download your resume as a high-quality PDF ready for job applications.
+                <CardDescription className="text-center leading-relaxed">
+                  Download your resume as a high-quality PDF ready for job applications and printing.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <Share2 className="h-12 w-12 text-primary mb-4" />
-                <CardTitle>Easy Sharing</CardTitle>
+            <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-4 p-3 bg-purple-500/10 rounded-full w-fit group-hover:bg-purple-500/20 transition-colors">
+                  <Share2 className="h-8 w-8 text-purple-500" />
+                </div>
+                <CardTitle className="text-xl">Easy Sharing</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Generate shareable links to showcase your resume online to potential employers.
+                <CardDescription className="text-center leading-relaxed">
+                  Generate shareable links to showcase your resume online to potential employers instantly.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -106,30 +153,48 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-primary text-white">
-        <div className="container mx-auto text-center">
-          <h3 className="text-3xl font-bold mb-4">Ready to Land Your Dream Job?</h3>
-          <p className="text-xl mb-8 opacity-90">
+      <section className="py-20 px-4 bg-gradient-to-r from-primary to-purple-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="container mx-auto text-center relative">
+          <h3 className="text-4xl font-bold mb-6">Ready to Land Your Dream Job?</h3>
+          <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto leading-relaxed">
             Join thousands of job seekers who have successfully created their resumes with us.
+            Start building your professional resume today - it's completely free!
           </p>
-          <Link href="/auth/register">
-            <Button size="lg" variant="secondary" className="px-8">
-              Create Your Resume Now
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link href="/auth/register">
+              <Button size="lg" variant="secondary" className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                <FileText className="h-5 w-5 mr-2" />
+                Create Your Resume Now
+              </Button>
+            </Link>
+            <Link href="/auth/login">
+              <Button size="lg" variant="outline" className="px-8 py-6 text-lg border-white text-white hover:bg-white hover:text-primary transition-colors">
+                Sign In to Continue
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 px-4">
-        <div className="container mx-auto text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <FileText className="h-6 w-6" />
-            <span className="text-lg font-semibold">Resume Builder</span>
+      <footer className="bg-gray-900 text-white py-12 px-4">
+        <div className="container mx-auto">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <FileText className="h-8 w-8 text-primary" />
+              <span className="text-2xl font-bold">Resume Builder</span>
+            </div>
+            <p className="text-gray-400 max-w-md mx-auto">
+              Build professional resumes that get you hired. Free, fast, and ATS-optimized.
+            </p>
           </div>
-          <p className="text-gray-400">
-            © 2024 Resume Builder. All rights reserved.
-          </p>
+
+          <div className="border-t border-gray-800 pt-8 text-center">
+            <p className="text-gray-400">
+              © 2024 Resume Builder. All rights reserved. Made with ❤️ for job seekers everywhere.
+            </p>
+          </div>
         </div>
       </footer>
     </div>

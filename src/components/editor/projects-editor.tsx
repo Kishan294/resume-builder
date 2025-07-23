@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, Trash2, X, FolderOpen, Calendar, ExternalLink, Github } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import { Project } from "@/types/resume";
@@ -75,24 +76,37 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
     }
   };
 
+  const formatDateRange = (startDate: string, endDate?: string, current?: boolean) => {
+    if (!startDate) return "";
+    const start = new Date(startDate + "-01").toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    if (current) return `${start} - Present`;
+    if (!endDate) return start;
+    const end = new Date(endDate + "-01").toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    return `${start} - ${end}`;
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h3 className="text-lg font-semibold">Projects</h3>
-          <p className="text-sm text-gray-600">Showcase your personal and professional projects</p>
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <FolderOpen className="h-5 w-5" />
+            Projects
+          </h3>
+          <p className="text-sm text-muted-foreground">Showcase your personal and professional projects</p>
         </div>
-        <Button onClick={addProject} className="flex items-center space-x-2">
-          <Plus className="h-4 w-4" />
-          <span>Add Project</span>
+        <Button onClick={addProject}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Project
         </Button>
       </div>
 
       {data.length === 0 ? (
         <Card>
           <CardContent className="pt-6">
-            <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No projects added yet</p>
+            <div className="text-center py-12">
+              <FolderOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground mb-4">No projects added yet</p>
               <Button onClick={addProject} variant="outline">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Your First Project
@@ -102,15 +116,59 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
         </Card>
       ) : (
         data.map((project, index) => (
-          <Card key={project.id}>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-base">Project {index + 1}</CardTitle>
+          <Card key={project.id} className="transition-all duration-200 hover:shadow-md">
+            <CardHeader className="pb-3">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    Project {index + 1}
+                    {project.current && (
+                      <Badge variant="secondary" className="text-xs">
+                        Ongoing
+                      </Badge>
+                    )}
+                  </CardTitle>
+                  {project.name && (
+                    <p className="text-sm text-muted-foreground mt-1 font-medium">
+                      {project.name}
+                    </p>
+                  )}
+                  {project.startDate && (
+                    <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
+                      {formatDateRange(project.startDate, project.endDate, project.current)}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 mt-2">
+                    {project.url && (
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline flex items-center gap-1"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        Live Demo
+                      </a>
+                    )}
+                    {project.github && (
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-primary hover:underline flex items-center gap-1"
+                      >
+                        <Github className="h-3 w-3" />
+                        Source Code
+                      </a>
+                    )}
+                  </div>
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => removeProject(project.id)}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-destructive hover:text-destructive/80"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -123,6 +181,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                   value={project.name}
                   onChange={(e) => updateProject(project.id, "name", e.target.value)}
                   placeholder="My Awesome Project"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
@@ -131,43 +190,79 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                 <Textarea
                   value={project.description}
                   onChange={(e) => updateProject(project.id, "description", e.target.value)}
-                  placeholder="Describe what this project does and your role in it..."
+                  placeholder="• Describe what this project does and your role in it...&#10;• Highlight key features and technologies used&#10;• Mention any challenges overcome or results achieved"
                   rows={3}
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 resize-none"
                 />
+                <p className="text-xs text-muted-foreground">
+                  {project.description?.length || 0}/500 characters
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Project URL</Label>
+                  <Label className="flex items-center gap-2">
+                    <ExternalLink className="h-4 w-4" />
+                    Project URL
+                  </Label>
                   <Input
                     value={project.url || ""}
                     onChange={(e) => updateProject(project.id, "url", e.target.value)}
                     placeholder="https://myproject.com"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>GitHub Repository</Label>
+                  <Label className="flex items-center gap-2">
+                    <Github className="h-4 w-4" />
+                    GitHub Repository
+                  </Label>
                   <Input
                     value={project.github || ""}
                     onChange={(e) => updateProject(project.id, "github", e.target.value)}
                     placeholder="https://github.com/username/project"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Start Date</Label>
+                  <Label className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Start Date
+                  </Label>
                   <Input
                     type="month"
                     value={project.startDate || ""}
                     onChange={(e) => updateProject(project.id, "startDate", e.target.value)}
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>End Date</Label>
+                  <Label className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    End Date
+                  </Label>
                   <Input
                     type="month"
                     value={project.endDate || ""}
                     onChange={(e) => updateProject(project.id, "endDate", e.target.value)}
+                    disabled={project.current}
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`current-${project.id}`}
+                      checked={project.current}
+                      onCheckedChange={(checked) => {
+                        updateProject(project.id, "current", checked as boolean);
+                        if (checked) {
+                          updateProject(project.id, "endDate", "");
+                        }
+                      }}
+                    />
+                    <Label htmlFor={`current-${project.id}`} className="text-sm">
+                      Ongoing project
+                    </Label>
+                  </div>
                 </div>
               </div>
 
@@ -179,11 +274,13 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                     onChange={(e) => handleTechInputChange(project.id, e.target.value)}
                     onKeyPress={(e) => handleTechInputKeyPress(project.id, e)}
                     placeholder="Add a technology and press Enter"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                   <Button
                     type="button"
                     onClick={() => addTechnology(project.id)}
                     size="sm"
+                    disabled={!newTechInputs[project.id]?.trim()}
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
@@ -195,12 +292,12 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                       <Badge
                         key={techIndex}
                         variant="secondary"
-                        className="flex items-center space-x-1"
+                        className="flex items-center space-x-1 transition-all duration-200 hover:bg-secondary/80"
                       >
                         <span>{tech}</span>
                         <button
                           onClick={() => removeTechnology(project.id, techIndex)}
-                          className="ml-1 hover:text-red-600"
+                          className="ml-1 hover:text-destructive transition-colors"
                         >
                           <X className="h-3 w-3" />
                         </button>

@@ -24,7 +24,7 @@ export function ResumePreview({ resume }: ResumePreviewProps) {
 
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-      <div className="aspect-[8.5/11] w-full">
+      <div id="resume-preview" className="aspect-[8.5/11] w-full">
         {renderTemplate()}
       </div>
     </div>

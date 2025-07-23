@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Trash2, GraduationCap, Calendar, Award } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { Education } from "@/types/resume";
 
@@ -38,24 +40,37 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
     onUpdate(data.filter((edu) => edu.id !== id));
   };
 
+  const formatDateRange = (startDate: string, endDate?: string, current?: boolean) => {
+    if (!startDate) return "";
+    const start = new Date(startDate + "-01").toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    if (current) return `${start} - Present`;
+    if (!endDate) return start;
+    const end = new Date(endDate + "-01").toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    return `${start} - ${end}`;
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h3 className="text-lg font-semibold">Education</h3>
-          <p className="text-sm text-gray-600">Add your educational background</p>
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <GraduationCap className="h-5 w-5" />
+            Education
+          </h3>
+          <p className="text-sm text-muted-foreground">Add your educational background</p>
         </div>
-        <Button onClick={addEducation} className="flex items-center space-x-2">
-          <Plus className="h-4 w-4" />
-          <span>Add Education</span>
+        <Button onClick={addEducation}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Education
         </Button>
       </div>
 
       {data.length === 0 ? (
         <Card>
           <CardContent className="pt-6">
-            <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No education added yet</p>
+            <div className="text-center py-12">
+              <GraduationCap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground mb-4">No education added yet</p>
               <Button onClick={addEducation} variant="outline">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Your Education
@@ -65,15 +80,40 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
         </Card>
       ) : (
         data.map((education, index) => (
-          <Card key={education.id}>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-base">Education {index + 1}</CardTitle>
+          <Card key={education.id} className="transition-all duration-200 hover:shadow-md">
+            <CardHeader className="pb-3">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    Education {index + 1}
+                    {education.current && (
+                      <Badge variant="secondary" className="text-xs">
+                        Current
+                      </Badge>
+                    )}
+                  </CardTitle>
+                  {education.degree && education.field && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {education.degree} in {education.field}
+                    </p>
+                  )}
+                  {education.institution && (
+                    <p className="text-sm text-muted-foreground">
+                      {education.institution}
+                    </p>
+                  )}
+                  {education.startDate && (
+                    <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
+                      {formatDateRange(education.startDate, education.endDate, education.current)}
+                    </div>
+                  )}
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => removeEducation(education.id)}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-destructive hover:text-destructive/80"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -87,6 +127,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     value={education.institution}
                     onChange={(e) => updateEducation(education.id, "institution", e.target.value)}
                     placeholder="University Name"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -95,6 +136,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     value={education.degree}
                     onChange={(e) => updateEducation(education.id, "degree", e.target.value)}
                     placeholder="Bachelor's, Master's, etc."
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -103,40 +145,52 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     value={education.field}
                     onChange={(e) => updateEducation(education.id, "field", e.target.value)}
                     placeholder="Computer Science, Business, etc."
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>GPA</Label>
+                  <Label className="flex items-center gap-2">
+                    <Award className="h-4 w-4" />
+                    GPA
+                  </Label>
                   <Input
                     value={education.gpa || ""}
                     onChange={(e) => updateEducation(education.id, "gpa", e.target.value)}
                     placeholder="3.8/4.0"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Start Date *</Label>
+                  <Label className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Start Date *
+                  </Label>
                   <Input
                     type="month"
                     value={education.startDate}
                     onChange={(e) => updateEducation(education.id, "startDate", e.target.value)}
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>End Date</Label>
+                  <Label className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    End Date
+                  </Label>
                   <Input
                     type="month"
                     value={education.endDate || ""}
                     onChange={(e) => updateEducation(education.id, "endDate", e.target.value)}
                     disabled={education.current}
+                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
                   <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       id={`current-${education.id}`}
                       checked={education.current}
-                      onChange={(e) => {
-                        updateEducation(education.id, "current", e.target.checked);
-                        if (e.target.checked) {
+                      onCheckedChange={(checked) => {
+                        updateEducation(education.id, "current", checked as boolean);
+                        if (checked) {
                           updateEducation(education.id, "endDate", "");
                         }
                       }}
@@ -152,9 +206,13 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                 <Textarea
                   value={education.description || ""}
                   onChange={(e) => updateEducation(education.id, "description", e.target.value)}
-                  placeholder="Relevant coursework, achievements, activities..."
+                  placeholder="• Relevant coursework, achievements, activities...&#10;• Academic honors or awards&#10;• Thesis or capstone project details"
                   rows={3}
+                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 resize-none"
                 />
+                <p className="text-xs text-muted-foreground">
+                  {education.description?.length || 0}/500 characters
+                </p>
               </div>
             </CardContent>
           </Card>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Phone, MapPin, Globe, Linkedin, Github } from "lucide-react";
+import { Mail, Phone, MapPin, Globe, ExternalLink } from "lucide-react";
 
 interface ResumeData {
   personalInfo: {
@@ -102,13 +102,13 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
           )}
           {personalInfo?.linkedin && (
             <div className="flex items-center gap-1">
-              <Linkedin className="h-4 w-4" />
+              <ExternalLink className="h-4 w-4" />
               <span>LinkedIn</span>
             </div>
           )}
           {personalInfo?.github && (
             <div className="flex items-center gap-1">
-              <Github className="h-4 w-4" />
+              <ExternalLink className="h-4 w-4" />
               <span>GitHub</span>
             </div>
           )}
