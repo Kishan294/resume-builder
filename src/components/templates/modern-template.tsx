@@ -68,10 +68,10 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
   };
 
   return (
-    <div className="w-full h-full p-8 text-sm bg-white">
+    <div className="w-full h-full p-8 text-sm bg-white print:p-4 print:text-xs print:h-auto print:max-h-none print:overflow-visible">
       {/* Header */}
-      <div className="border-b-2 border-primary pb-6 mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+      <div className="border-b-2 border-primary pb-6 mb-6 print:pb-3 print:mb-3">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 print:text-2xl print:mb-1">
           {personalInfo?.fullName || "Your Name"}
         </h1>
 

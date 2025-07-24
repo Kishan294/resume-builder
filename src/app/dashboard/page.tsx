@@ -95,22 +95,12 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDownloadPDF = async (resumeId: string, title: string) => {
+  const handleDownloadPDF = async (resumeId: string) => {
     setLoadingStates(prev => ({ ...prev, [resumeId]: { ...prev[resumeId], downloading: true } }));
     try {
-      // Open the resume in a new window for PDF generation
-      const printWindow = window.open(`/editor/${resumeId}?print=true`, '_blank');
-      if (printWindow) {
-        printWindow.onload = () => {
-          setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-          }, 1000);
-        };
-        toast.success("Opening resume for download...");
-      } else {
-        toast.error("Please allow popups to download PDF");
-      }
+      // Redirect to editor with a download flag
+      router.push(`/editor/${resumeId}?download=true`);
+      toast.success("Redirecting to editor for PDF download...");
     } catch (error) {
       console.error("Failed to download PDF:", error);
       toast.error("Failed to download PDF");
@@ -226,7 +216,7 @@ export default function DashboardPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDownloadPDF(resume.id, resume.title)}
+                      onClick={() => handleDownloadPDF(resume.id)}
                       disabled={loadingStates[resume.id]?.downloading}
                       className="flex items-center space-x-1"
                     >

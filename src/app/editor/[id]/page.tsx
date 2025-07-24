@@ -7,11 +7,15 @@ import { ResumeEditor } from "@/components/editor/resume-editor";
 import { ResumePreview } from "@/components/editor/resume-preview";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Download, Share2, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Download, Share2, Loader2, Printer } from "lucide-react";
 import Link from "next/link";
 import { Resume } from "@/types/resume";
-import { generatePDF } from "@/utils/pdf-generator";
-import { shareResume, copyToClipboard } from "@/utils/share-utils";
+import { generatePDF, generatePDFViaPrint, triggerBrowserPrint, openCleanPrintWindow, generateSimplePDF } from "@/utils/pdf-generator";
+import { shareResume } from "@/utils/share-utils";
+import { PDFDebug } from "@/components/debug/pdf-debug";
+import { PrintInstructions } from "@/components/editor/print-instructions";
+import { PrintPreview } from "@/components/editor/print-preview";
+import { PrintReminder } from "@/components/editor/print-reminder";
 
 export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { data: session, isPending } = useSession();
@@ -60,6 +64,31 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     }
   }, [session, isPending, router, resolvedParams, fetchResume]);
 
+  // Handle auto-download if coming from dashboard
+  useEffect(() => {
+    if (resume && typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('download') === 'true') {
+        // Remove the parameter from URL
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+
+        // Trigger download after a short delay to ensure everything is loaded
+        setTimeout(() => {
+          // First check if element exists
+          const element = document.getElementById('resume-preview');
+          if (element) {
+            console.log('Resume preview element found, triggering download');
+            downloadPDF();
+          } else {
+            console.error('Resume preview element not found');
+            toast.error('Resume preview not ready. Please try the download button manually.');
+          }
+        }, 1500);
+      }
+    }
+  }, [resume]);
+
   const saveResume = async () => {
     if (!resume || !resolvedParams) return;
 
@@ -93,11 +122,40 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
 
     setIsDownloading(true);
     try {
-      await generatePDF('resume-preview', `${resume.title || 'resume'}.pdf`);
-      toast.success("PDF downloaded successfully!");
+      // Start with the most reliable method - simple CSS-only PDF
+      generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`);
+      toast.success("Print window opened! This is the most reliable method for PDF generation.");
     } catch (error) {
-      console.error("Failed to download PDF:", error);
-      toast.error("Failed to download PDF");
+      console.error("Simple PDF generation failed, trying canvas method:", error);
+      try {
+        // Try canvas-based approach as fallback
+        await generatePDF('resume-preview', `${resume.title || 'resume'}.pdf`);
+        toast.success("PDF downloaded successfully!");
+      } catch (canvasError) {
+        console.error("Canvas PDF generation failed, trying print window method:", canvasError);
+        try {
+          // Fallback to print window approach
+          generatePDFViaPrint('resume-preview', `${resume.title || 'resume'}.pdf`);
+          toast.success("PDF download initiated! Please save the file when prompted.");
+        } catch (printError) {
+          console.error("Print window method also failed, trying clean print window:", printError);
+          try {
+            // Try clean print window
+            openCleanPrintWindow('resume-preview', `${resume.title || 'resume'}.pdf`);
+            toast.success("Clean print window opened! Follow the instructions to save as PDF.");
+          } catch (cleanPrintError) {
+            console.error("Clean print window failed, trying browser print:", cleanPrintError);
+            try {
+              // Final fallback to browser print
+              triggerBrowserPrint();
+              toast.success("Print dialog opened! Choose 'Save as PDF' to download.");
+            } catch (browserPrintError) {
+              console.error("All PDF generation methods failed:", browserPrintError);
+              toast.error("Failed to download PDF. Please try using Ctrl+P (Cmd+P on Mac) and select 'Save as PDF'.");
+            }
+          }
+        }
+      }
     } finally {
       setIsDownloading(false);
     }
@@ -191,6 +249,19 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
               )}
               Download PDF
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
+              title="Open simple print window (most reliable)"
+            >
+              <Printer className="h-4 w-4 mr-2" />
+              Print
+            </Button>
+            <PrintInstructions
+              onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
+              onDownload={downloadPDF}
+            />
           </div>
         </div>
       </header>
@@ -208,11 +279,19 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
 
         {/* Preview Panel */}
         <div className="w-1/2 overflow-y-auto bg-gray-100 p-8">
-          <div className="max-w-[8.5in] mx-auto">
-            <ResumePreview resume={resume} />
+          <div className="max-w-[8.5in] mx-auto space-y-4">
+            <PrintPreview resume={resume} />
+
+            {/* Debug component - remove in production */}
+            {process.env.NODE_ENV === 'development' && (
+              <PDFDebug elementId="resume-preview" filename={`${resume.title || 'resume'}.pdf`} />
+            )}
           </div>
         </div>
       </div>
+
+      {/* Print Reminder - shows when user tries to print */}
+      <PrintReminder />
     </div>
   );
 }

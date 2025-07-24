@@ -66,10 +66,10 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
   };
 
   return (
-    <div className="w-full h-full p-8 text-sm bg-white font-serif">
+    <div className="w-full h-full p-8 text-sm bg-white font-serif print:p-4 print:text-xs print:h-auto print:max-h-none print:overflow-visible">
       {/* Header */}
-      <div className="text-center border-b-2 border-black pb-4 mb-6">
-        <h1 className="text-2xl font-bold text-black mb-2 uppercase tracking-wide">
+      <div className="text-center border-b-2 border-black pb-4 mb-6 print:pb-2 print:mb-3">
+        <h1 className="text-2xl font-bold text-black mb-2 uppercase tracking-wide print:text-xl print:mb-1">
           {personalInfo?.fullName || "Your Name"}
         </h1>
 
