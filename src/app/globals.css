@@ -389,3 +389,87 @@
     break-inside: avoid;
   }
 }
+/* Print styles for consistent export appearance */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      sans-serif !important;
+  }
+
+  #resume-preview {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    aspect-ratio: unset !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+}
+
+/* Export mode styles - apply print styles in screen mode */
+.export-mode .print\:p-6 {
+  padding: 1.5rem !important;
+}
+.export-mode .print\:text-sm {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+.export-mode .print\:text-2xl {
+  font-size: 1.5rem !important;
+  line-height: 2rem !important;
+}
+.export-mode .print\:pb-4 {
+  padding-bottom: 1rem !important;
+}
+.export-mode .print\:mb-4 {
+  margin-bottom: 1rem !important;
+}
+.export-mode .print\:mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+.export-mode .print\:p-4 {
+  padding: 1rem !important;
+}
+.export-mode .print\:-mx-6 {
+  margin-left: -1.5rem !important;
+  margin-right: -1.5rem !important;
+}
+.export-mode .print\:text-xs {
+  font-size: 0.75rem !important;
+  line-height: 1rem !important;
+}
+.export-mode .print\:text-xl {
+  font-size: 1.25rem !important;
+  line-height: 1.75rem !important;
+}
+.export-mode .print\:mb-1 {
+  margin-bottom: 0.25rem !important;
+}
+.export-mode .print\:p-0 {
+  padding: 0 !important;
+}
+.export-mode .print\:h-auto {
+  height: auto !important;
+}
+.export-mode .print\:max-h-none {
+  max-height: none !important;
+}
+.export-mode .print\:overflow-visible {
+  overflow: visible !important;
+}
+.export-mode .print\:mb-6 {
+  margin-bottom: 1.5rem !important;
+}
+.export-mode .print\:pb-3 {
+  padding-bottom: 0.75rem !important;
+}
+.export-mode .print\:mb-3 {
+  margin-bottom: 0.75rem !important;
+}

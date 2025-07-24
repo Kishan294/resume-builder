@@ -10,6 +10,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus, Check } from "lucide-react";
+import { TemplatePreview } from "./template-preview";
+
 
 interface TemplateSelectorProps {
   onCreateResume: (template: string) => void;
@@ -73,28 +75,36 @@ export function TemplateSelector({ onCreateResume, children }: TemplateSelectorP
           <DialogTitle className="text-xl">Choose a Template</DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 py-6">
           {templates.map((template) => (
             <div
               key={template.id}
-              className={`relative p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${selectedTemplate === template.id
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-gray-200 hover:border-gray-300"
+              className={`relative group cursor-pointer transition-all hover:shadow-lg ${selectedTemplate === template.id ? "ring-2 ring-blue-500" : ""
                 }`}
               onClick={() => setSelectedTemplate(template.id)}
             >
               {selectedTemplate === template.id && (
-                <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1">
+                <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1.5 z-10 shadow-lg">
                   <Check className="h-3 w-3" />
                 </div>
               )}
 
-              <div className="h-24 bg-gray-100 rounded mb-3 flex items-center justify-center">
-                <span className="text-gray-500 text-sm">{template.name}</span>
+              {/* Template Preview */}
+              <div className="mb-3 rounded-lg overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
+                <TemplatePreview
+                  templateId={template.id}
+                  isSelected={selectedTemplate === template.id}
+                />
               </div>
 
-              <h3 className="font-medium text-sm">{template.name}</h3>
-              <p className="text-xs text-gray-600 mt-1">{template.description}</p>
+              {/* Template Info */}
+              <div className="px-1">
+                <h3 className="font-semibold text-sm text-gray-900">{template.name}</h3>
+                <p className="text-xs text-gray-600 mt-1 leading-relaxed">{template.description}</p>
+              </div>
+
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg pointer-events-none" />
             </div>
           ))}
         </div>

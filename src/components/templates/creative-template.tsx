@@ -66,10 +66,10 @@ export function CreativeTemplate({ resume }: CreativeTemplateProps) {
   };
 
   return (
-    <div className="w-full h-full bg-white print:p-4 print:text-xs print:h-auto print:max-h-none print:overflow-visible">
+    <div className="w-full h-full bg-white print:p-0 print:text-sm print:h-auto print:max-h-none print:overflow-visible">
       <div className="flex">
         {/* Left Sidebar */}
-        <div className="w-1/3 bg-gradient-to-b from-purple-600 to-blue-600 text-white p-6 print:p-3">
+        <div className="w-1/3 bg-gradient-to-b from-purple-600 to-blue-600 text-white p-6 print:p-4">
           {/* Profile Section */}
           <div className="mb-6 print:mb-3">
             <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mb-4 print:w-16 print:h-16 print:mb-2">

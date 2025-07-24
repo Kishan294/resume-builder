@@ -66,10 +66,10 @@ export function CompactTemplate({ resume }: CompactTemplateProps) {
   };
 
   return (
-    <div className="w-full h-full p-6 text-xs bg-white print:p-3 print:text-xs print:h-auto print:max-h-none print:overflow-visible leading-tight">
+    <div className="w-full h-full p-6 text-xs bg-white print:p-6 print:text-xs print:h-auto print:max-h-none print:overflow-visible leading-tight">
       {/* Header - Compact */}
-      <div className="mb-4 print:mb-2">
-        <h1 className="text-xl font-bold text-gray-900 mb-1 print:text-lg">
+      <div className="mb-4 print:mb-4">
+        <h1 className="text-xl font-bold text-gray-900 mb-1 print:text-xl print:mb-1">
           {personalInfo?.fullName || "Your Name"}
         </h1>
 

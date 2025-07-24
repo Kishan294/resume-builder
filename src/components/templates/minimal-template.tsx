@@ -66,10 +66,10 @@ export function MinimalTemplate({ resume }: MinimalTemplateProps) {
   };
 
   return (
-    <div className="w-full h-full p-8 text-sm bg-white print:p-4 print:text-xs print:h-auto print:max-h-none print:overflow-visible">
+    <div className="w-full h-full p-6 text-sm bg-white print:p-6 print:text-sm print:h-auto print:max-h-none print:overflow-visible">
       {/* Header - Minimal centered design */}
-      <div className="text-center mb-8 print:mb-4">
-        <h1 className="text-2xl font-light text-gray-900 mb-2 print:text-xl print:mb-1 tracking-wide">
+      <div className="text-center mb-6 print:mb-6">
+        <h1 className="text-2xl font-light text-gray-900 mb-2 print:text-2xl print:mb-2 tracking-wide">
           {personalInfo?.fullName || "Your Name"}
         </h1>
 

@@ -68,10 +68,10 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
   };
 
   return (
-    <div className="w-full h-full p-8 text-sm bg-white print:p-4 print:text-xs print:h-auto print:max-h-none print:overflow-visible">
+    <div className="w-full h-full p-6 text-sm bg-white print:p-6 print:text-sm print:h-auto print:max-h-none print:overflow-visible">
       {/* Header */}
-      <div className="border-b-2 border-primary pb-6 mb-6 print:pb-3 print:mb-3">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2 print:text-2xl print:mb-1">
+      <div className="border-b-2 border-blue-500 pb-4 mb-4 print:pb-4 print:mb-4">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2 print:text-2xl print:mb-2">
           {personalInfo?.fullName || "Your Name"}
         </h1>
 
@@ -118,7 +118,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
       {/* Professional Summary */}
       {personalInfo?.summary && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-primary mb-3 border-b border-gray-200 pb-1">
+          <h2 className="text-lg font-semibold text-blue-600 mb-3 border-b border-gray-200 pb-1">
             Professional Summary
           </h2>
           <p className="text-gray-700 leading-relaxed">{personalInfo.summary}</p>
@@ -128,7 +128,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
       {/* Work Experience */}
       {workExperience.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-primary mb-3 border-b border-gray-200 pb-1">
+          <h2 className="text-lg font-semibold text-blue-600 mb-3 border-b border-gray-200 pb-1">
             Work Experience
           </h2>
           <div className="space-y-4">
@@ -137,7 +137,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
                 <div className="flex justify-between items-start mb-1">
                   <div>
                     <h3 className="font-semibold text-gray-900">{exp.position}</h3>
-                    <p className="text-primary font-medium">{exp.company}</p>
+                    <p className="text-blue-600 font-medium">{exp.company}</p>
                   </div>
                   <div className="text-right text-gray-600">
                     <p>{formatDateRange(exp.startDate, exp.endDate, exp.current)}</p>
@@ -154,7 +154,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
       {/* Education */}
       {education.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-primary mb-3 border-b border-gray-200 pb-1">
+          <h2 className="text-lg font-semibold text-blue-600 mb-3 border-b border-gray-200 pb-1">
             Education
           </h2>
           <div className="space-y-3">
@@ -165,7 +165,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
                     <h3 className="font-semibold text-gray-900">
                       {edu.degree} in {edu.field}
                     </h3>
-                    <p className="text-primary font-medium">{edu.institution}</p>
+                    <p className="text-blue-600 font-medium">{edu.institution}</p>
                     {edu.gpa && <p className="text-sm text-gray-600">GPA: {edu.gpa}</p>}
                   </div>
                   <p className="text-gray-600">
@@ -184,7 +184,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
       {/* Skills */}
       {skills.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-primary mb-3 border-b border-gray-200 pb-1">
+          <h2 className="text-lg font-semibold text-blue-600 mb-3 border-b border-gray-200 pb-1">
             Skills
           </h2>
           <div className="space-y-2">
@@ -201,7 +201,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
       {/* Projects */}
       {projects.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-primary mb-3 border-b border-gray-200 pb-1">
+          <h2 className="text-lg font-semibold text-blue-600 mb-3 border-b border-gray-200 pb-1">
             Projects
           </h2>
           <div className="space-y-4">
@@ -211,7 +211,7 @@ export function ModernTemplate({ resume }: ModernTemplateProps) {
                   <div>
                     <h3 className="font-semibold text-gray-900">{project.name}</h3>
                     {project.technologies.length > 0 && (
-                      <p className="text-sm text-primary">
+                      <p className="text-sm text-blue-600">
                         {project.technologies.join(", ")}
                       </p>
                     )}

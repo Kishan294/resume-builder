@@ -47,14 +47,14 @@ export function PrintPreview({ resume }: PrintPreviewProps) {
 
       <div
         className={`transition-all duration-300 ${isPrintPreview
-            ? 'bg-gray-100 p-4 rounded-lg'
-            : ''
+          ? 'bg-gray-100 p-4 rounded-lg'
+          : ''
           }`}
       >
         <div
           className={`${isPrintPreview
-              ? 'transform scale-75 origin-top shadow-2xl'
-              : ''
+            ? 'transform scale-75 origin-top shadow-2xl'
+            : ''
             }`}
           style={isPrintPreview ? {
             width: '210mm',
@@ -66,7 +66,7 @@ export function PrintPreview({ resume }: PrintPreviewProps) {
             boxSizing: 'border-box'
           } : {}}
         >
-          <ResumePreview resume={resume} />
+          <ResumePreview resume={resume} exportMode={isPrintPreview} />
         </div>
       </div>
 
@@ -77,8 +77,8 @@ export function PrintPreview({ resume }: PrintPreviewProps) {
           </CardHeader>
           <CardContent>
             <p className="text-xs text-muted-foreground">
-              This shows how your resume will look when printed on A4 paper with 0.5" margins.
-              If content appears cut off, consider reducing font sizes or content length.
+              This shows exactly how your resume will look when exported to PDF or printed.
+              The layout, spacing, and font sizes match the exported version.
             </p>
           </CardContent>
         </Card>

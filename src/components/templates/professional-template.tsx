@@ -66,11 +66,11 @@ export function ProfessionalTemplate({ resume }: ProfessionalTemplateProps) {
   };
 
   return (
-    <div className="w-full h-full p-8 text-sm bg-white print:p-4 print:text-xs print:h-auto print:max-h-none print:overflow-visible">
+    <div className="w-full h-full p-6 text-sm bg-white print:p-6 print:text-sm print:h-auto print:max-h-none print:overflow-visible">
       {/* Header */}
-      <div className="bg-gray-900 text-white p-6 print:p-3 -mx-8 print:-mx-4 mb-6 print:mb-3">
+      <div className="bg-gray-900 text-white p-4 print:p-4 -mx-6 print:-mx-6 mb-4 print:mb-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-2 print:text-2xl print:mb-1">
+          <h1 className="text-2xl font-bold mb-2 print:text-2xl print:mb-2">
             {personalInfo?.fullName || "Your Name"}
           </h1>
 

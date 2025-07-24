@@ -4,11 +4,9 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { ResumeEditor } from "@/components/editor/resume-editor";
-import { ResumePreview } from "@/components/editor/resume-preview";
-import { Button } from "@/components/ui/button";
+import { ResumeHeader } from "@/components/editor/resume-header";
+
 import { toast } from "sonner";
-import { ArrowLeft, Save, Download, Share2, Loader2, Printer } from "lucide-react";
-import Link from "next/link";
 import { Resume } from "@/types/resume";
 import { generatePDF, generatePDFViaPrint, triggerBrowserPrint, openCleanPrintWindow, generateSimplePDF } from "@/utils/pdf-generator";
 import { shareResume } from "@/utils/share-utils";
@@ -180,6 +178,12 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     }
   };
 
+  const handleTitleUpdate = (newTitle: string) => {
+    if (resume) {
+      setResume({ ...resume, title: newTitle });
+    }
+  };
+
   if (isPending || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -197,74 +201,24 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
-            <h1 className="text-xl font-semibold">{resume.title}</h1>
-          </div>
+      <ResumeHeader
+        resume={resume}
+        onTitleUpdate={handleTitleUpdate}
+        onSave={saveResume}
+        onDownload={downloadPDF}
+        onShare={handleShare}
+        onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
+        isSaving={isSaving}
+        isDownloading={isDownloading}
+        isSharing={isSharing}
+      />
 
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={saveResume}
-              disabled={isSaving}
-            >
-              {isSaving ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Save className="h-4 w-4 mr-2" />
-              )}
-              {isSaving ? "Saving..." : "Save"}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              disabled={isSharing}
-            >
-              {isSharing ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Share2 className="h-4 w-4 mr-2" />
-              )}
-              Share
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={downloadPDF}
-              disabled={isDownloading}
-            >
-              {isDownloading ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4 mr-2" />
-              )}
-              Download PDF
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
-              title="Open simple print window (most reliable)"
-            >
-              <Printer className="h-4 w-4 mr-2" />
-              Print
-            </Button>
-            <PrintInstructions
-              onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
-              onDownload={downloadPDF}
-            />
-          </div>
-        </div>
-      </header>
+      <div className="px-4 py-2 bg-white border-b">
+        <PrintInstructions
+          onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
+          onDownload={downloadPDF}
+        />
+      </div>
 
       {/* Editor Layout */}
       <div className="flex h-[calc(100vh-73px)]">

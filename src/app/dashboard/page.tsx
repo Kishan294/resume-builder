@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { FileText, Plus, Edit, Share2, Download, Loader2, Calendar, Eye } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { TemplateSelector } from "@/components/dashboard/template-selector";
+import { ResumeCard } from "@/components/dashboard/resume-card";
 import { shareResume } from "@/utils/share-utils";
 
 interface Resume {
@@ -109,6 +109,16 @@ export default function DashboardPage() {
     }
   };
 
+  const handleResumeUpdate = (updatedResume: Resume) => {
+    setResumes(prev => prev.map(resume =>
+      resume.id === updatedResume.id ? updatedResume : resume
+    ));
+  };
+
+  const handleResumeDelete = (resumeId: string) => {
+    setResumes(prev => prev.filter(resume => resume.id !== resumeId));
+  };
+
   if (isPending || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -163,73 +173,15 @@ export default function DashboardPage() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {resumes.map((resume) => (
-              <Card key={resume.id} className="hover:shadow-lg transition-all duration-200 group">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg group-hover:text-primary transition-colors">
-                        {resume.title}
-                      </CardTitle>
-                      <CardDescription className="flex items-center gap-2 mt-1">
-                        <Badge variant="outline" className="text-xs">
-                          {resume.template}
-                        </Badge>
-                        <span className="flex items-center gap-1 text-xs">
-                          <Calendar className="h-3 w-3" />
-                          {new Date(resume.updatedAt).toLocaleDateString()}
-                        </span>
-                      </CardDescription>
-                    </div>
-                    {resume.isPublic && (
-                      <Badge variant="secondary" className="flex items-center gap-1">
-                        <Eye className="h-3 w-3" />
-                        Public
-                      </Badge>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => router.push(`/editor/${resume.id}`)}
-                      className="flex items-center space-x-1 hover:bg-primary hover:text-primary-foreground transition-colors"
-                    >
-                      <Edit className="h-3 w-3" />
-                      <span>Edit</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleShare(resume.id, resume.title)}
-                      disabled={loadingStates[resume.id]?.sharing}
-                      className="flex items-center space-x-1"
-                    >
-                      {loadingStates[resume.id]?.sharing ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <Share2 className="h-3 w-3" />
-                      )}
-                      <span>Share</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDownloadPDF(resume.id)}
-                      disabled={loadingStates[resume.id]?.downloading}
-                      className="flex items-center space-x-1"
-                    >
-                      {loadingStates[resume.id]?.downloading ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <Download className="h-3 w-3" />
-                      )}
-                      <span>PDF</span>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <ResumeCard
+                key={resume.id}
+                resume={resume}
+                onShare={handleShare}
+                onDownload={handleDownloadPDF}
+                onUpdate={handleResumeUpdate}
+                onDelete={handleResumeDelete}
+                loadingStates={loadingStates[resume.id] || {}}
+              />
             ))}
           </div>
         )}

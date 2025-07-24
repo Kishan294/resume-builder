@@ -230,6 +230,26 @@ export const generatePDF = async (
     element.style.height = "auto";
     element.style.aspectRatio = "unset";
 
+    // Add print media query to ensure print styles are applied
+    const printStyleSheet = document.createElement("style");
+    printStyleSheet.textContent = `
+      @media screen {
+        .print\\:p-6 { padding: 1.5rem !important; }
+        .print\\:text-sm { font-size: 0.875rem !important; line-height: 1.25rem !important; }
+        .print\\:text-2xl { font-size: 1.5rem !important; line-height: 2rem !important; }
+        .print\\:pb-4 { padding-bottom: 1rem !important; }
+        .print\\:mb-4 { margin-bottom: 1rem !important; }
+        .print\\:mb-2 { margin-bottom: 0.5rem !important; }
+        .print\\:p-4 { padding: 1rem !important; }
+        .print\\:-mx-6 { margin-left: -1.5rem !important; margin-right: -1.5rem !important; }
+        .print\\:text-xs { font-size: 0.75rem !important; line-height: 1rem !important; }
+        .print\\:text-xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+        .print\\:mb-1 { margin-bottom: 0.25rem !important; }
+        .print\\:p-0 { padding: 0 !important; }
+      }
+    `;
+    document.head.appendChild(printStyleSheet);
+
     // Create canvas from the element with better options
     const canvas = await html2canvas(element, {
       scale: 1.5, // Reduced scale to avoid memory issues
@@ -266,6 +286,11 @@ export const generatePDF = async (
 
     // Restore original styles
     element.style.cssText = originalStyle;
+
+    // Remove the temporary print stylesheet
+    if (printStyleSheet && printStyleSheet.parentNode) {
+      printStyleSheet.parentNode.removeChild(printStyleSheet);
+    }
 
     const imgData = canvas.toDataURL("image/png", 1.0);
 
