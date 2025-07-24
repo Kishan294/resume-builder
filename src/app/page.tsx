@@ -170,11 +170,11 @@ export default function Home() {
                     Create Your Resume Now
                   </Button>
                 </Link>
-                <Link href="/login">
-                  <Button size="lg" variant="outline" className="px-8 py-6 text-lg border-white text-white hover:bg-white hover:text-primary transition-colors">
+                <Button asChild size="lg" variant="outline" className="px-8 py-6 text-lg  text-white  hover:text-primary transition-colors">
+                  <Link href="/login">
                     Sign In to Continue
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </>
             )}
           </div>

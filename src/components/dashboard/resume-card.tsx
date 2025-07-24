@@ -34,6 +34,7 @@ import {
   Trash2
 } from "lucide-react";
 import type { Resume } from "@/db/schema";
+import { api } from "@/lib/trpc/client";
 
 interface ResumeCardProps {
   resume: Resume;
@@ -58,39 +59,31 @@ export function ResumeCard({
   const isDeleting = loadingStates.deleting || false;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleRename = async () => {
+  const updateResumeMutation = api.resume.update.useMutation({
+    onSuccess: (updatedResume) => {
+      onUpdate(updatedResume);
+      toast.success("Resume title updated successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to update resume title");
+      setNewTitle(resume.title);
+    },
+    onSettled: () => {
+      setIsRenaming(false);
+    },
+  });
+
+  const handleRename = () => {
     if (!newTitle.trim() || newTitle === resume.title) {
       setIsRenaming(false);
       setNewTitle(resume.title);
       return;
     }
 
-    try {
-      const response = await fetch(`/api/resumes/${resume.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: newTitle.trim(),
-        }),
-      });
-
-      if (response.ok) {
-        const updatedResume = await response.json();
-        onUpdate(updatedResume);
-        toast.success("Resume title updated successfully!");
-      } else {
-        toast.error("Failed to update resume title");
-        setNewTitle(resume.title);
-      }
-    } catch (error) {
-      console.error("Failed to update resume title:", error);
-      toast.error("Failed to update resume title");
-      setNewTitle(resume.title);
-    } finally {
-      setIsRenaming(false);
-    }
+    updateResumeMutation.mutate({
+      id: resume.id,
+      data: { title: newTitle.trim() },
+    });
   };
 
   const handleDelete = () => {

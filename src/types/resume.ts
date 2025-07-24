@@ -32,13 +32,6 @@ export interface Education {
   description?: string;
 }
 
-export interface Skill {
-  id: string;
-  name: string;
-  level: "Beginner" | "Intermediate" | "Advanced" | "Expert";
-  category?: string;
-}
-
 export interface Project {
   id: string;
   name: string;
