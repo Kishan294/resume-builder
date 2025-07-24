@@ -2,6 +2,10 @@
 
 import { ModernTemplate } from "@/components/templates/modern-template";
 import { ClassicTemplate } from "@/components/templates/classic-template";
+import { MinimalTemplate } from "@/components/templates/minimal-template";
+import { CreativeTemplate } from "@/components/templates/creative-template";
+import { ProfessionalTemplate } from "@/components/templates/professional-template";
+import { CompactTemplate } from "@/components/templates/compact-template";
 import { Resume } from "@/types/resume";
 import { transformResumeForTemplate } from "@/utils/resume-transform";
 
@@ -16,6 +20,14 @@ export function ResumePreview({ resume }: ResumePreviewProps) {
     switch (resume.template) {
       case "classic":
         return <ClassicTemplate resume={transformedResume} />;
+      case "minimal":
+        return <MinimalTemplate resume={transformedResume} />;
+      case "creative":
+        return <CreativeTemplate resume={transformedResume} />;
+      case "professional":
+        return <ProfessionalTemplate resume={transformedResume} />;
+      case "compact":
+        return <CompactTemplate resume={transformedResume} />;
       case "modern":
       default:
         return <ModernTemplate resume={transformedResume} />;
