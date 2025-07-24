@@ -6,12 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Download, Eye, Bug } from "lucide-react";
 
-interface PDFDebugProps {
-  elementId: string;
-  filename?: string;
-}
-
-export function PDFDebug({ elementId, filename = "debug.pdf" }: PDFDebugProps) {
+export function PDFDebug({ elementId }: { elementId: string }) {
   const [isDebugging, setIsDebugging] = useState(false);
 
   const debugElement = () => {
@@ -77,7 +72,7 @@ export function PDFDebug({ elementId, filename = "debug.pdf" }: PDFDebugProps) {
       toast.success("Canvas generated and downloaded as PNG");
     } catch (error) {
       console.error("Canvas generation error:", error);
-      toast.error(`Canvas generation failed: ${error.message}`);
+      toast.error(`Canvas generation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsDebugging(false);
     }

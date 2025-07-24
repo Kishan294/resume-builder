@@ -1,30 +1,29 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
-import { AuthGuard } from "@/components/auth/auth-guard";
 import { ResumeEditor } from "@/components/editor/resume-editor";
 import { ResumeHeader } from "@/components/editor/resume-header";
-
 import { toast } from "sonner";
-import { Resume } from "@/types/resume";
+import { api } from "@/lib/trpc/client";
+import { useResumeStore } from "@/lib/stores/resume-store";
 import { generatePDF, generatePDFViaPrint, triggerBrowserPrint, openCleanPrintWindow, generateSimplePDF } from "@/utils/pdf-generator";
-import { shareResume } from "@/utils/share-utils";
 import { PDFDebug } from "@/components/debug/pdf-debug";
 import { PrintInstructions } from "@/components/editor/print-instructions";
 import { PrintPreview } from "@/components/editor/print-preview";
 import { PrintReminder } from "@/components/editor/print-reminder";
 
 export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
-  const { data: session, isPending } = useSession();
-  const router = useRouter();
-  const [resume, setResume] = useState<Resume | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
-  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
+
+  const {
+    currentResume,
+    setCurrentResume,
+    updateResume,
+    setHasUnsavedChanges,
+    resetState
+  } = useResumeStore();
 
   useEffect(() => {
     const resolveParams = async () => {
@@ -34,38 +33,102 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     resolveParams();
   }, [params]);
 
-  const fetchResume = useCallback(async () => {
-    if (!resolvedParams) return;
+  const { data: resume, isLoading, error } = api.resume.getById.useQuery(
+    { id: resolvedParams?.id ?? "" },
+    { enabled: !!resolvedParams?.id }
+  );
 
-    try {
-      const response = await fetch(`/api/resumes/${resolvedParams.id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setResume(data);
-      } else if (response.status === 404) {
-        router.push("/dashboard");
-      }
-    } catch (error) {
-      console.error("Failed to fetch resume:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [resolvedParams, router]);
-
+  // Set current resume when data is loaded
   useEffect(() => {
-    if (!isPending && !session) {
-      router.push("/auth/login");
-      return;
+    if (resume) {
+      setCurrentResume(resume);
     }
+  }, [resume, setCurrentResume]);
 
-    if (session && resolvedParams) {
-      fetchResume();
+  const updateResumeMutation = api.resume.update.useMutation({
+    onSuccess: () => {
+      setHasUnsavedChanges(false);
+      toast.success("Resume saved successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to save resume");
+    },
+  });
+
+  const togglePublicMutation = api.resume.togglePublic.useMutation({
+    onSuccess: (updatedResume) => {
+      if (updatedResume.isPublic && updatedResume.publicSlug) {
+        const shareUrl = `${window.location.origin}/resume/${updatedResume.publicSlug}`;
+        navigator.clipboard.writeText(shareUrl);
+        toast.success("Resume link copied to clipboard!");
+      } else {
+        toast.success("Resume is now private");
+      }
+    },
+    onError: () => {
+      toast.error("Failed to share resume");
+    },
+  });
+
+  const saveResume = async () => {
+    if (!currentResume || !resolvedParams) return;
+
+    updateResumeMutation.mutate({
+      id: resolvedParams.id,
+      data: {
+        title: currentResume.title,
+        template: currentResume.template,
+        personalInfo: currentResume.personalInfo || undefined,
+        workExperience: currentResume.workExperience || [],
+        education: currentResume.education || [],
+        skills: currentResume.skills || [],
+        projects: currentResume.projects || [],
+      },
+    });
+  };
+
+  const downloadPDF = useCallback(async () => {
+    if (!currentResume) return;
+
+    setIsDownloading(true);
+    try {
+      generateSimplePDF('resume-preview');
+      toast.success("Print window opened! This is the most reliable method for PDF generation.");
+    } catch (error) {
+      console.error("Simple PDF generation failed, trying canvas method:", error);
+      try {
+        await generatePDF('resume-preview', `${currentResume.title || 'resume'}.pdf`);
+        toast.success("PDF downloaded successfully!");
+      } catch (canvasError) {
+        console.error("Canvas PDF generation failed, trying print window method:", canvasError);
+        try {
+          generatePDFViaPrint('resume-preview', `${currentResume.title || 'resume'}.pdf`);
+          toast.success("PDF download initiated! Please save the file when prompted.");
+        } catch (printError) {
+          console.error("Print window method also failed, trying clean print window:", printError);
+          try {
+            openCleanPrintWindow('resume-preview');
+            toast.success("Clean print window opened! Follow the instructions to save as PDF.");
+          } catch (cleanPrintError) {
+            console.error("Clean print window failed, trying browser print:", cleanPrintError);
+            try {
+              triggerBrowserPrint();
+              toast.success("Print dialog opened! Choose &apos;Save as PDF&apos; to download.");
+            } catch (browserPrintError) {
+              console.error("All PDF generation methods failed:", browserPrintError);
+              toast.error("Failed to download PDF. Please try using Ctrl+P (Cmd+P on Mac) and select &apos;Save as PDF&apos;.");
+            }
+          }
+        }
+      }
+    } finally {
+      setIsDownloading(false);
     }
-  }, [session, isPending, router, resolvedParams, fetchResume]);
+  }, [currentResume]);
 
   // Handle auto-download if coming from dashboard
   useEffect(() => {
-    if (resume && typeof window !== 'undefined') {
+    if (currentResume && typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('download') === 'true') {
         // Remove the parameter from URL
@@ -74,118 +137,42 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
 
         // Trigger download after a short delay to ensure everything is loaded
         setTimeout(() => {
-          // First check if element exists
           const element = document.getElementById('resume-preview');
           if (element) {
-            console.log('Resume preview element found, triggering download');
             downloadPDF();
           } else {
-            console.error('Resume preview element not found');
             toast.error('Resume preview not ready. Please try the download button manually.');
           }
         }, 1500);
       }
     }
-  }, [resume]);
+  }, [currentResume, downloadPDF]);
 
-  const saveResume = async () => {
-    if (!resume || !resolvedParams) return;
-
-    setIsSaving(true);
-    try {
-      const response = await fetch(`/api/resumes/${resolvedParams.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(resume),
-      });
-
-      if (response.ok) {
-        const updatedResume = await response.json();
-        setResume(updatedResume);
-        toast.success("Resume saved successfully!");
-      } else {
-        toast.error("Failed to save resume");
-      }
-    } catch (error) {
-      console.error("Failed to save resume:", error);
-      toast.error("Failed to save resume");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const downloadPDF = async () => {
-    if (!resume) return;
-
-    setIsDownloading(true);
-    try {
-      // Start with the most reliable method - simple CSS-only PDF
-      generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`);
-      toast.success("Print window opened! This is the most reliable method for PDF generation.");
-    } catch (error) {
-      console.error("Simple PDF generation failed, trying canvas method:", error);
-      try {
-        // Try canvas-based approach as fallback
-        await generatePDF('resume-preview', `${resume.title || 'resume'}.pdf`);
-        toast.success("PDF downloaded successfully!");
-      } catch (canvasError) {
-        console.error("Canvas PDF generation failed, trying print window method:", canvasError);
-        try {
-          // Fallback to print window approach
-          generatePDFViaPrint('resume-preview', `${resume.title || 'resume'}.pdf`);
-          toast.success("PDF download initiated! Please save the file when prompted.");
-        } catch (printError) {
-          console.error("Print window method also failed, trying clean print window:", printError);
-          try {
-            // Try clean print window
-            openCleanPrintWindow('resume-preview', `${resume.title || 'resume'}.pdf`);
-            toast.success("Clean print window opened! Follow the instructions to save as PDF.");
-          } catch (cleanPrintError) {
-            console.error("Clean print window failed, trying browser print:", cleanPrintError);
-            try {
-              // Final fallback to browser print
-              triggerBrowserPrint();
-              toast.success("Print dialog opened! Choose 'Save as PDF' to download.");
-            } catch (browserPrintError) {
-              console.error("All PDF generation methods failed:", browserPrintError);
-              toast.error("Failed to download PDF. Please try using Ctrl+P (Cmd+P on Mac) and select 'Save as PDF'.");
-            }
-          }
-        }
-      }
-    } finally {
-      setIsDownloading(false);
-    }
-  };
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      resetState();
+    };
+  }, [resetState]);
 
   const handleShare = async () => {
-    if (!resume || !resolvedParams) return;
+    if (!currentResume || !resolvedParams) return;
 
     setIsSharing(true);
     try {
-      const success = await shareResume(resolvedParams.id, resume.title);
-      if (success) {
-        toast.success("Resume link copied to clipboard!");
-      } else {
-        toast.error("Failed to share resume");
-      }
-    } catch (error) {
-      console.error("Failed to share resume:", error);
-      toast.error("Failed to share resume");
+      await togglePublicMutation.mutateAsync({ id: resolvedParams.id });
     } finally {
       setIsSharing(false);
     }
   };
 
   const handleTitleUpdate = (newTitle: string) => {
-    if (resume) {
-      setResume({ ...resume, title: newTitle });
+    if (currentResume) {
+      updateResume({ title: newTitle });
     }
   };
 
-  if (isPending || isLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -195,60 +182,68 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     );
   }
 
-  if (!session || !resume) {
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p>Resume not found</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentResume) {
     return null;
   }
 
   return (
-    <AuthGuard requireAuth={true}>
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <ResumeHeader
-          resume={resume}
-          onTitleUpdate={handleTitleUpdate}
-          onSave={saveResume}
-          onDownload={downloadPDF}
-          onShare={handleShare}
-          onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
-          isSaving={isSaving}
-          isDownloading={isDownloading}
-          isSharing={isSharing}
-        />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <ResumeHeader
+        resume={currentResume}
+        onTitleUpdate={handleTitleUpdate}
+        onSave={saveResume}
+        onDownload={downloadPDF}
+        onShare={handleShare}
+        onPrint={() => generateSimplePDF('resume-preview')}
+        isSaving={updateResumeMutation.isPending}
+        isDownloading={isDownloading}
+        isSharing={isSharing}
+      />
 
-        <div className="px-4 py-2 bg-white border-b">
-          <PrintInstructions
-            onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
-            onDownload={downloadPDF}
+      <div className="px-4 py-2 bg-white border-b">
+        <PrintInstructions
+          onPrint={() => generateSimplePDF('resume-preview')}
+          onDownload={downloadPDF}
+        />
+      </div>
+
+      {/* Editor Layout */}
+      <div className="flex h-[calc(100vh-73px)]">
+        {/* Editor Panel */}
+        <div className="w-1/2 overflow-y-auto border-r bg-white">
+          <ResumeEditor
+            resume={currentResume}
+            onUpdate={updateResume}
+            onSave={saveResume}
           />
         </div>
 
-        {/* Editor Layout */}
-        <div className="flex h-[calc(100vh-73px)]">
-          {/* Editor Panel */}
-          <div className="w-1/2 overflow-y-auto border-r bg-white">
-            <ResumeEditor
-              resume={resume}
-              onUpdate={setResume}
-              onSave={saveResume}
-            />
-          </div>
+        {/* Preview Panel */}
+        <div className="w-1/2 overflow-y-auto bg-gray-100 p-8">
+          <div className="max-w-[8.5in] mx-auto space-y-4">
+            <PrintPreview resume={currentResume} />
 
-          {/* Preview Panel */}
-          <div className="w-1/2 overflow-y-auto bg-gray-100 p-8">
-            <div className="max-w-[8.5in] mx-auto space-y-4">
-              <PrintPreview resume={resume} />
-
-              {/* Debug component - remove in production */}
-              {process.env.NODE_ENV === 'development' && (
-                <PDFDebug elementId="resume-preview" filename={`${resume.title || 'resume'}.pdf`} />
-              )}
-            </div>
+            {/* Debug component - remove in production */}
+            {process.env.NODE_ENV === 'development' && (
+              <PDFDebug elementId="resume-preview" />
+            )}
           </div>
         </div>
-
-        {/* Print Reminder - shows when user tries to print */}
-        <PrintReminder />
       </div>
-    </AuthGuard>
+
+      {/* Print Reminder - shows when user tries to print */}
+      <PrintReminder />
+    </div>
   );
 }

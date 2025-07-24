@@ -33,14 +33,7 @@ import {
   Edit2,
   Trash2
 } from "lucide-react";
-
-interface Resume {
-  id: string;
-  title: string;
-  template: string;
-  isPublic: boolean;
-  updatedAt: string;
-}
+import type { Resume } from "@/db/schema";
 
 interface ResumeCardProps {
   resume: Resume;
@@ -48,7 +41,7 @@ interface ResumeCardProps {
   onDownload: (resumeId: string) => void;
   onUpdate: (updatedResume: Resume) => void;
   onDelete: (resumeId: string) => void;
-  loadingStates: { sharing?: boolean; downloading?: boolean };
+  loadingStates: { sharing?: boolean; downloading?: boolean; deleting?: boolean };
 }
 
 export function ResumeCard({
@@ -62,7 +55,7 @@ export function ResumeCard({
   const router = useRouter();
   const [isRenaming, setIsRenaming] = useState(false);
   const [newTitle, setNewTitle] = useState(resume.title);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const isDeleting = loadingStates.deleting || false;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleRename = async () => {
@@ -100,26 +93,9 @@ export function ResumeCard({
     }
   };
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      const response = await fetch(`/api/resumes/${resume.id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        onDelete(resume.id);
-        toast.success("Resume deleted successfully!");
-      } else {
-        toast.error("Failed to delete resume");
-      }
-    } catch (error) {
-      console.error("Failed to delete resume:", error);
-      toast.error("Failed to delete resume");
-    } finally {
-      setIsDeleting(false);
-      setShowDeleteDialog(false);
-    }
+  const handleDelete = () => {
+    onDelete(resume.id);
+    setShowDeleteDialog(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -157,7 +133,7 @@ export function ResumeCard({
                 </Badge>
                 <span className="flex items-center gap-1 text-xs">
                   <Calendar className="h-3 w-3" />
-                  {new Date(resume.updatedAt).toLocaleDateString()}
+                  {resume.updatedAt ? new Date(resume.updatedAt).toLocaleDateString() : "Unknown"}
                 </span>
               </CardDescription>
             </div>

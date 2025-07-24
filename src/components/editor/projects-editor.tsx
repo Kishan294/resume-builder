@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import { Plus, Trash2, X, FolderOpen, Calendar, ExternalLink, Github } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
@@ -27,7 +27,6 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
       description: "",
       technologies: [],
       startDate: "",
-      current: false,
     };
     onUpdate([...data, newProject]);
   };
@@ -76,10 +75,9 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
     }
   };
 
-  const formatDateRange = (startDate: string, endDate?: string, current?: boolean) => {
+  const formatDateRange = (startDate: string, endDate?: string) => {
     if (!startDate) return "";
     const start = new Date(startDate + "-01").toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    if (current) return `${start} - Present`;
     if (!endDate) return start;
     const end = new Date(endDate + "-01").toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     return `${start} - ${end}`;
@@ -122,11 +120,6 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                 <div className="flex-1">
                   <CardTitle className="text-base flex items-center gap-2">
                     Project {index + 1}
-                    {project.current && (
-                      <Badge variant="secondary" className="text-xs">
-                        Ongoing
-                      </Badge>
-                    )}
                   </CardTitle>
                   {project.name && (
                     <p className="text-sm text-muted-foreground mt-1 font-medium">
@@ -136,7 +129,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                   {project.startDate && (
                     <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                       <Calendar className="h-3 w-3" />
-                      {formatDateRange(project.startDate, project.endDate, project.current)}
+                      {formatDateRange(project.startDate, project.endDate)}
                     </div>
                   )}
                   <div className="flex items-center gap-2 mt-2">
@@ -245,24 +238,8 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                     type="month"
                     value={project.endDate || ""}
                     onChange={(e) => updateProject(project.id, "endDate", e.target.value)}
-                    disabled={project.current}
                     className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                   />
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`current-${project.id}`}
-                      checked={project.current}
-                      onCheckedChange={(checked) => {
-                        updateProject(project.id, "current", checked as boolean);
-                        if (checked) {
-                          updateProject(project.id, "endDate", "");
-                        }
-                      }}
-                    />
-                    <Label htmlFor={`current-${project.id}`} className="text-sm">
-                      Ongoing project
-                    </Label>
-                  </div>
                 </div>
               </div>
 

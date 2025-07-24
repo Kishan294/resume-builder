@@ -1,0 +1,75 @@
+import { initTRPC, TRPCError } from "@trpc/server";
+import superjson from "superjson";
+import { ZodError } from "zod";
+import { auth } from "@/lib/auth";
+import { db } from "@/db";
+
+interface CreateContextOptions {
+  req: { headers: Headers };
+  res: Response;
+}
+
+export const createTRPCContext = async (opts: CreateContextOptions) => {
+  const { req } = opts;
+
+  // Get session from request headers
+  const session = await auth.api.getSession({
+    headers: req.headers,
+  });
+
+  return {
+    db,
+    session,
+  };
+};
+
+const t = initTRPC.context<typeof createTRPCContext>().create({
+  transformer: superjson,
+  errorFormatter({ shape, error }) {
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError:
+          error.cause instanceof ZodError ? error.cause.flatten() : null,
+      },
+    };
+  },
+});
+
+export const createCallerFactory = t.createCallerFactory;
+export const createTRPCRouter = t.router;
+
+const timingMiddleware = t.middleware(async ({ next, path }) => {
+  const start = Date.now();
+
+  if (t._config.isDev) {
+    const waitMs = Math.floor(Math.random() * 400) + 100;
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+  }
+
+  const result = await next();
+
+  if (t._config.isDev) {
+    const end = Date.now();
+    console.log(`[TRPC] ${path} took ${end - start}ms`);
+  }
+
+  return result;
+});
+
+export const publicProcedure = t.procedure.use(timingMiddleware);
+
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session?.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+      ctx: {
+        ...ctx,
+        session: { ...ctx.session, user: ctx.session.user },
+      },
+    });
+  });

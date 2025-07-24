@@ -13,7 +13,7 @@ interface AuthGuardProps {
 export function AuthGuard({
   children,
   requireAuth = false,
-  redirectTo = '/auth/login'
+  redirectTo = '/login'
 }: AuthGuardProps) {
   const { data: session, isPending } = useSession();
   const router = useRouter();

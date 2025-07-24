@@ -1,183 +1,177 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Code, Star } from "lucide-react";
-import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
-import { Skill } from "@/types/resume";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Code, Plus, X, Trash2 } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
+
+interface SkillCategory {
+  id: string;
+  category: string;
+  items: string[];
+}
 
 interface SkillsEditorProps {
-  data: Skill[];
-  onUpdate: (data: Skill[]) => void;
+  data: SkillCategory[];
+  onUpdate: (data: SkillCategory[]) => void;
 }
 
 export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
-  const [newSkillName, setNewSkillName] = useState("");
+  const [newSkillInputs, setNewSkillInputs] = useState<{ [categoryId: string]: string }>({});
 
-  const addSkill = () => {
-    if (!newSkillName.trim()) return;
-
-    const newSkill: Skill = {
+  const addCategory = () => {
+    const newCategory: SkillCategory = {
       id: uuidv4(),
-      name: newSkillName.trim(),
-      level: "Intermediate",
+      category: "New Category",
+      items: [],
     };
-    onUpdate([...data, newSkill]);
-    setNewSkillName("");
+    onUpdate([...data, newCategory]);
   };
 
-  const updateSkill = (id: string, field: keyof Skill, value: string) => {
-    const updated = data.map((skill) =>
-      skill.id === id ? { ...skill, [field]: value } : skill
+  const updateCategory = (categoryId: string, newCategoryName: string) => {
+    const updatedData = data.map(category =>
+      category.id === categoryId
+        ? { ...category, category: newCategoryName }
+        : category
     );
-    onUpdate(updated);
+    onUpdate(updatedData);
   };
 
-  const removeSkill = (id: string) => {
-    onUpdate(data.filter((skill) => skill.id !== id));
+  const deleteCategory = (categoryId: string) => {
+    const updatedData = data.filter(category => category.id !== categoryId);
+    onUpdate(updatedData);
   };
 
-  const handleSkillInputKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+  const addSkill = (categoryId: string) => {
+    const skillName = newSkillInputs[categoryId]?.trim();
+    if (!skillName) return;
+
+    const updatedData = data.map(category =>
+      category.id === categoryId
+        ? { ...category, items: [...category.items, skillName] }
+        : category
+    );
+    onUpdate(updatedData);
+
+    // Clear the input
+    setNewSkillInputs(prev => ({ ...prev, [categoryId]: "" }));
+  };
+
+  const removeSkill = (categoryId: string, skillIndex: number) => {
+    const updatedData = data.map(category =>
+      category.id === categoryId
+        ? { ...category, items: category.items.filter((_, index) => index !== skillIndex) }
+        : category
+    );
+    onUpdate(updatedData);
+  };
+
+  const handleSkillInputChange = (categoryId: string, value: string) => {
+    setNewSkillInputs(prev => ({ ...prev, [categoryId]: value }));
+  };
+
+  const handleSkillInputKeyPress = (categoryId: string, e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      addSkill();
+      addSkill(categoryId);
     }
-  };
-
-  const skillLevels = [
-    { value: "Beginner", label: "Beginner", stars: 1 },
-    { value: "Intermediate", label: "Intermediate", stars: 2 },
-    { value: "Advanced", label: "Advanced", stars: 3 },
-    { value: "Expert", label: "Expert", stars: 4 },
-  ];
-
-  const renderStars = (level: string) => {
-    const levelData = skillLevels.find(l => l.value === level);
-    const stars = levelData?.stars || 1;
-    return (
-      <div className="flex items-center gap-1">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Star
-            key={i}
-            className={`h-3 w-3 ${i < stars ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-          />
-        ))}
-      </div>
-    );
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+      <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Code className="h-5 w-5" />
-            Skills
-          </h3>
-          <p className="text-sm text-muted-foreground">Add your technical and professional skills</p>
+          <h2 className="text-2xl font-bold text-gray-900">Skills</h2>
+          <p className="text-muted-foreground">
+            Organize your skills by category to showcase your expertise
+          </p>
         </div>
-        <div className="flex space-x-2">
-          <Input
-            value={newSkillName}
-            onChange={(e) => setNewSkillName(e.target.value)}
-            onKeyPress={handleSkillInputKeyPress}
-            placeholder="Add a skill"
-            className="w-48"
-          />
-          <Button onClick={addSkill} disabled={!newSkillName.trim()}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add
-          </Button>
-        </div>
+        <Button onClick={addCategory} className="flex items-center space-x-2">
+          <Plus className="h-4 w-4" />
+          <span>Add Category</span>
+        </Button>
       </div>
 
       {data.length === 0 ? (
-        <Card>
+        <Card className="border-dashed border-2 border-gray-300">
           <CardContent className="pt-6">
-            <div className="text-center py-12">
+            <div className="text-center py-8">
               <Code className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground mb-4">No skills added yet</p>
-              <Button onClick={addSkill} variant="outline" disabled={!newSkillName.trim()}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Your First Skill
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No skills added yet</h3>
+              <p className="text-muted-foreground mb-4">
+                Start by adding a skill category like &quot;Programming Languages&quot; or &quot;Design Tools&quot;
+              </p>
+              <Button onClick={addCategory} className="flex items-center space-x-2">
+                <Plus className="h-4 w-4" />
+                <span>Add Your First Category</span>
               </Button>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4">
-          {data.map((skill) => (
-            <Card key={skill.id} className="transition-all duration-200 hover:shadow-md">
-              <CardHeader className="pb-3">
+        <div className="space-y-4">
+          {data.map((category) => (
+            <Card key={category.id} className="shadow-sm">
+              <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
-                      {skill.category || "General"}
-                    </Badge>
-                  </CardTitle>
+                  <div className="flex-1">
+                    <Input
+                      value={category.category}
+                      onChange={(e) => updateCategory(category.id, e.target.value)}
+                      className="text-lg font-semibold border-none p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
+                      placeholder="Category name"
+                    />
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => removeSkill(skill.id)}
-                    className="text-destructive hover:text-destructive/80"
+                    onClick={() => deleteCategory(category.id)}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label>Skill Name *</Label>
-                    <Input
-                      value={skill.name}
-                      onChange={(e) => updateSkill(skill.id, "name", e.target.value)}
-                      placeholder="e.g., JavaScript, React, etc."
-                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Proficiency Level</Label>
-                    <Select
-                      value={skill.level}
-                      onValueChange={(value) => updateSkill(skill.id, "level", value as Skill['level'])}
+                {/* Skills List */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {category.items.map((skill, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="flex items-center space-x-1 px-3 py-1"
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {skillLevels.map((level) => (
-                          <SelectItem key={level.value} value={level.value}>
-                            <div className="flex items-center gap-2">
-                              <span>{level.label}</span>
-                              {renderStars(level.value)}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Category</Label>
+                      <span>{skill}</span>
+                      <button
+                        onClick={() => removeSkill(category.id, index)}
+                        className="ml-1 hover:text-red-500 transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+
+                {/* Add New Skill */}
+                <div className="flex items-center space-x-2">
+                  <div className="flex-1">
                     <Input
-                      value={skill.category || ""}
-                      onChange={(e) => updateSkill(skill.id, "category", e.target.value)}
-                      placeholder="e.g., Programming, Design, etc."
-                      className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                      placeholder="Add a skill..."
+                      value={newSkillInputs[category.id] || ""}
+                      onChange={(e) => handleSkillInputChange(category.id, e.target.value)}
+                      onKeyPress={(e) => handleSkillInputKeyPress(category.id, e)}
                     />
                   </div>
-                </div>
-                <div className="mt-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">Level:</span>
-                    {renderStars(skill.level)}
-                    <span className="text-sm font-medium">{skill.level}</span>
-                  </div>
+                  <Button
+                    onClick={() => addSkill(category.id)}
+                    disabled={!newSkillInputs[category.id]?.trim()}
+                    size="sm"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>

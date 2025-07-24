@@ -77,9 +77,9 @@ export function PrintInstructions({ onPrint, onDownload }: PrintInstructionsProp
                 <div className="flex items-start gap-3">
                   <Badge variant="outline" className="mt-0.5">2</Badge>
                   <div>
-                    <p className="font-medium">Choose "Save as PDF"</p>
+                    <p className="font-medium">Choose &quot;Save as PDF&quot;</p>
                     <p className="text-sm text-muted-foreground">
-                      Select "Save as PDF" or "Microsoft Print to PDF" as destination
+                      Select &quot;Save as PDF&quot; or &quot;Microsoft Print to PDF&quot; as destination
                     </p>
                   </div>
                 </div>
@@ -89,7 +89,7 @@ export function PrintInstructions({ onPrint, onDownload }: PrintInstructionsProp
                   <div>
                     <p className="font-medium">Set Paper Size</p>
                     <p className="text-sm text-muted-foreground">
-                      Choose "A4" or "Letter" size
+                      Choose &quot;A4&quot; or &quot;Letter&quot; size
                     </p>
                   </div>
                 </div>
@@ -99,7 +99,7 @@ export function PrintInstructions({ onPrint, onDownload }: PrintInstructionsProp
                   <div>
                     <p className="font-medium text-red-600">⚠️ IMPORTANT: Remove Headers & Footers</p>
                     <p className="text-sm text-muted-foreground">
-                      In "More settings", <strong>uncheck "Headers and footers"</strong> to remove date, time, and filename
+                      In &quot;More settings&quot;, <strong>uncheck &quot;Headers and footers&quot;</strong> to remove date, time, and filename
                     </p>
                   </div>
                 </div>
@@ -109,7 +109,7 @@ export function PrintInstructions({ onPrint, onDownload }: PrintInstructionsProp
                   <div>
                     <p className="font-medium">Set Margins</p>
                     <p className="text-sm text-muted-foreground">
-                      Choose "Minimum" or "Custom" margins (0.5 inch recommended)
+                      Choose &quot;Minimum&quot; or &quot;Custom&quot; margins (0.5 inch recommended)
                     </p>
                   </div>
                 </div>
@@ -127,7 +127,7 @@ export function PrintInstructions({ onPrint, onDownload }: PrintInstructionsProp
                 The browser automatically adds headers and footers with date, time, and filename.
               </p>
               <p className="text-sm text-red-600">
-                <strong>You MUST uncheck "Headers and footers" in print settings</strong> to get a clean resume without this information.
+                <strong>You MUST uncheck &quot;Headers and footers&quot; in print settings</strong> to get a clean resume without this information.
               </p>
             </CardContent>
           </Card>
@@ -140,10 +140,10 @@ export function PrintInstructions({ onPrint, onDownload }: PrintInstructionsProp
             <CardContent>
               <ul className="space-y-2 text-sm">
                 <li>• The resume is designed to fit on a single A4/Letter page</li>
-                <li>• Make sure "Background graphics" is enabled for colors</li>
+                <li>• Make sure &quot;Background graphics&quot; is enabled for colors</li>
                 <li>• If content is cut off, try reducing margins or font size</li>
                 <li>• For best results, use Chrome or Edge browser</li>
-                <li>• <strong>Always check "More settings" to disable headers/footers</strong></li>
+                <li>• <strong>Always check &quot;More settings&quot; to disable headers/footers</strong></li>
               </ul>
             </CardContent>
           </Card>

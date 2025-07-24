@@ -50,7 +50,7 @@ interface ProfessionalTemplateProps {
 }
 
 export function ProfessionalTemplate({ resume }: ProfessionalTemplateProps) {
-  const { personalInfo, workExperience, education, skills, projects } = resume;
+  const { personalInfo, workExperience = [], education = [], skills = [], projects = [] } = resume;
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "";

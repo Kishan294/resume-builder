@@ -66,8 +66,8 @@ export const resumes = pgTable("resumes", {
     .references(() => user.id, { onDelete: "cascade" })
     .notNull(),
   title: text("title").notNull(),
-  template: text("template").default("modern"),
-  isPublic: boolean("isPublic").default(false),
+  template: text("template").notNull().default("modern"),
+  isPublic: boolean("isPublic").notNull().default(false),
   publicSlug: text("publicSlug").unique(),
   personalInfo: jsonb("personal_info").$type<{
     fullName: string;

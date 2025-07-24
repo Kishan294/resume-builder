@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Resume } from "@/types/resume";
+import { api } from "@/lib/trpc/client";
 
 interface ResumeHeaderProps {
   resume: Resume;
@@ -62,6 +63,20 @@ export function ResumeHeader({
   const [newTitle, setNewTitle] = useState(resume.title);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const deleteResumeMutation = api.resume.delete.useMutation({
+    onSuccess: () => {
+      toast.success("Resume deleted successfully!");
+      router.push("/dashboard");
+    },
+    onError: () => {
+      toast.error("Failed to delete resume");
+    },
+    onSettled: () => {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    },
+  });
 
   const handleRename = async () => {
     if (!newTitle.trim() || newTitle === resume.title) {
@@ -98,26 +113,9 @@ export function ResumeHeader({
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     setIsDeleting(true);
-    try {
-      const response = await fetch(`/api/resumes/${resume.id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        toast.success("Resume deleted successfully!");
-        router.push("/dashboard");
-      } else {
-        toast.error("Failed to delete resume");
-      }
-    } catch (error) {
-      console.error("Failed to delete resume:", error);
-      toast.error("Failed to delete resume");
-    } finally {
-      setIsDeleting(false);
-      setShowDeleteDialog(false);
-    }
+    deleteResumeMutation.mutate({ id: resume.id });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

@@ -44,23 +44,27 @@ export interface Project {
   name: string;
   description: string;
   technologies: string[];
-  startDate: string;
-  endDate?: string;
-  current: boolean;
   url?: string;
   github?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
-export interface Resume {
+export interface ResumeData {
   id: string;
   title: string;
   template: string;
-  personalInfo: PersonalInfo;
-  workExperience: WorkExperience[];
-  education: Education[];
-  skills: Skill[];
-  projects: Project[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  personalInfo: PersonalInfo | null;
+  workExperience: WorkExperience[] | null;
+  education: Education[] | null;
+  skills: { id: string; category: string; items: string[] }[] | null;
+  projects: Project[] | null;
+  createdAt?: Date | null;
+  updatedAt?: Date | null;
   userId?: string;
+  isPublic?: boolean;
+  publicSlug?: string | null;
 }
+
+// For backward compatibility
+export type Resume = ResumeData;

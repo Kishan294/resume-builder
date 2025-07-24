@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Eye, EyeOff } from "lucide-react";
-import { Resume } from "@/types/resume";
+import type { Resume } from "@/db/schema";
 import { ResumePreview } from "./resume-preview";
 
 interface PrintPreviewProps {

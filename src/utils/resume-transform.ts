@@ -1,5 +1,6 @@
-import { Resume, Skill } from "@/types/resume";
+import { Skill } from "@/types/resume";
 import { v4 as uuidv4 } from "uuid";
+import type { Resume } from "@/db/schema";
 
 // Transform skills from new format to database format
 export function transformSkillsForDatabase(
@@ -71,6 +72,15 @@ export function transformSkillsForTemplate(
 export function transformResumeForTemplate(resume: Resume) {
   return {
     ...resume,
-    skills: transformSkillsForTemplate(resume.skills),
+    personalInfo: resume.personalInfo || {
+      fullName: "",
+      email: "",
+      phone: "",
+      location: "",
+    },
+    workExperience: resume.workExperience || [],
+    education: resume.education || [],
+    skills: resume.skills || [],
+    projects: resume.projects || [],
   };
 }

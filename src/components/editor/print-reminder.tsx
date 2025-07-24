@@ -54,9 +54,9 @@ export function PrintReminder() {
                 To remove date, time, and filename from your PDF:
               </p>
               <ol className="text-xs text-orange-600 space-y-1 mb-3">
-                <li>1. Click "More settings" in print dialog</li>
-                <li>2. Uncheck "Headers and footers"</li>
-                <li>3. Set margins to "Minimum"</li>
+                <li>1. Click &quot;More settings&quot; in print dialog</li>
+                <li>2. Uncheck &quot;Headers and footers&quot;</li>
+                <li>3. Set margins to &quot;Minimum&quot;</li>
               </ol>
             </div>
             <Button

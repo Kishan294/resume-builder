@@ -50,7 +50,7 @@ interface CreativeTemplateProps {
 }
 
 export function CreativeTemplate({ resume }: CreativeTemplateProps) {
-  const { personalInfo, workExperience, education, skills, projects } = resume;
+  const { personalInfo, workExperience = [], education = [], skills = [], projects = [] } = resume;
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "";

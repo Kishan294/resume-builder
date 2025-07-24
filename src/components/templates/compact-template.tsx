@@ -50,7 +50,7 @@ interface CompactTemplateProps {
 }
 
 export function CompactTemplate({ resume }: CompactTemplateProps) {
-  const { personalInfo, workExperience, education, skills, projects } = resume;
+  const { personalInfo, workExperience = [], education = [], skills = [], projects = [] } = resume;
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "";

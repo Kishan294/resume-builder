@@ -55,7 +55,12 @@ export function ResumeEditor({ resume, onUpdate }: ResumeEditorProps) {
 
         <TabsContent value="personal" className="mt-6">
           <PersonalInfoEditor
-            data={resume.personalInfo || {}}
+            data={resume.personalInfo || {
+              fullName: "",
+              email: "",
+              phone: "",
+              location: "",
+            }}
             onUpdate={(data) => updateSection("personalInfo", data)}
           />
         </TabsContent>

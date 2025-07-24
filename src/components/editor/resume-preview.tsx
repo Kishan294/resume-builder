@@ -6,7 +6,7 @@ import { MinimalTemplate } from "@/components/templates/minimal-template";
 import { CreativeTemplate } from "@/components/templates/creative-template";
 import { ProfessionalTemplate } from "@/components/templates/professional-template";
 import { CompactTemplate } from "@/components/templates/compact-template";
-import { Resume } from "@/types/resume";
+import type { Resume } from "@/db/schema";
 import { transformResumeForTemplate } from "@/utils/resume-transform";
 
 interface ResumePreviewProps {

@@ -325,21 +325,31 @@ export const generatePDF = async (
     // Save the PDF
     pdf.save(filename);
     return true;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error generating PDF:", error);
 
     // Provide more specific error messages
-    if (error.message && error.message.includes("color function")) {
+    if (
+      error instanceof Error &&
+      error.message &&
+      error.message.includes("color function")
+    ) {
       throw new Error(
         "PDF generation failed due to unsupported CSS colors. Please try the print method instead."
       );
-    } else if (error.message && error.message.includes("canvas")) {
+    } else if (
+      error instanceof Error &&
+      error.message &&
+      error.message.includes("canvas")
+    ) {
       throw new Error(
         "PDF generation failed during canvas creation. Please try the print method instead."
       );
     } else {
       throw new Error(
-        `Failed to generate PDF: ${error.message || "Unknown error"}`
+        `Failed to generate PDF: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
       );
     }
   }
@@ -392,21 +402,31 @@ export const generatePDFBlob = async (elementId: string): Promise<Blob> => {
     pdf.addImage(imgData, "PNG", xOffset, yOffset, imgWidth, imgHeight);
 
     return pdf.output("blob");
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error generating PDF blob:", error);
 
     // Provide more specific error messages
-    if (error.message && error.message.includes("color function")) {
+    if (
+      error instanceof Error &&
+      error.message &&
+      error.message.includes("color function")
+    ) {
       throw new Error(
         "PDF generation failed due to unsupported CSS colors. Please try the print method instead."
       );
-    } else if (error.message && error.message.includes("canvas")) {
+    } else if (
+      error instanceof Error &&
+      error.message &&
+      error.message.includes("canvas")
+    ) {
       throw new Error(
         "PDF generation failed during canvas creation. Please try the print method instead."
       );
     } else {
       throw new Error(
-        `Failed to generate PDF blob: ${error.message || "Unknown error"}`
+        `Failed to generate PDF blob: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
       );
     }
   }
@@ -436,7 +456,7 @@ export const generatePDFViaPrint = (
           return Array.from(sheet.cssRules)
             .map((rule) => rule.cssText)
             .join("\n");
-        } catch (e) {
+        } catch {
           // Handle cross-origin stylesheets
           return "";
         }
@@ -641,10 +661,7 @@ export const triggerBrowserPrint = () => {
 
 // Create a clean print window with no headers/footers
 // Simple CSS-only PDF generation (most reliable)
-export const generateSimplePDF = (
-  elementId: string,
-  filename: string = "resume.pdf"
-) => {
+export const generateSimplePDF = (elementId: string) => {
   try {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -761,10 +778,7 @@ export const generateSimplePDF = (
   }
 };
 
-export const openCleanPrintWindow = (
-  elementId: string,
-  filename: string = "resume.pdf"
-) => {
+export const openCleanPrintWindow = (elementId: string) => {
   try {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -781,8 +795,8 @@ export const openCleanPrintWindow = (
       throw new Error("Failed to open print window. Please allow popups.");
     }
 
-    // Get computed styles for the element
-    const computedStyle = window.getComputedStyle(element);
+    // Get computed styles for the element (not used but kept for future enhancement)
+    // const computedStyle = window.getComputedStyle(element);
 
     // Create a minimal HTML document
     printWindow.document.write(`
