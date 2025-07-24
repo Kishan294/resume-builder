@@ -1,34 +1,106 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Users, Download, Share2, Zap, Shield, Clock, Star } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { FileText, Users, Download, Share2, Zap, Shield, Clock, Star, User, Settings, LogOut } from "lucide-react";
+import { useSession, signOut } from "@/lib/auth-client";
 
 export default function Home() {
+  const { data: session, isPending } = useSession();
+
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.href = "/";
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
       <header className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="flex items-center space-x-2 group">
+          <Link href={session ? "/dashboard" : "/"} className="flex items-center space-x-2 group">
             <FileText className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
             <h1 className="text-2xl font-bold text-gray-900">Resume Builder</h1>
           </Link>
           <div className="flex items-center space-x-4">
-            <Badge variant="secondary" className="hidden sm:flex">
-              <Star className="h-3 w-3 mr-1" />
-              Free Forever
-            </Badge>
-            <Link href="/auth/login">
-              <Button variant="outline" className="hover:bg-primary hover:text-primary-foreground transition-colors">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/auth/register">
-              <Button className="shadow-md hover:shadow-lg transition-shadow">
-                Get Started Free
-              </Button>
-            </Link>
+            {isPending ? (
+              // Loading state
+              <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+            ) : session ? (
+              // Authenticated user menu
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={session.user.image || undefined} alt={session.user.name} />
+                      <AvatarFallback>
+                        {session.user.name?.charAt(0) || session.user.email?.charAt(0) || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      {session.user.name && <p className="font-medium">{session.user.name}</p>}
+                      {session.user.email && (
+                        <p className="w-[200px] truncate text-sm text-muted-foreground">
+                          {session.user.email}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="cursor-pointer">
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              // Unauthenticated user buttons
+              <>
+                <Badge variant="secondary" className="hidden sm:flex">
+                  <Star className="h-3 w-3 mr-1" />
+                  Free Forever
+                </Badge>
+                <Link href="/auth/login">
+                  <Button variant="outline" className="hover:bg-primary hover:text-primary-foreground transition-colors">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button className="shadow-md hover:shadow-lg transition-shadow">
+                    Get Started Free
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -51,17 +123,28 @@ export default function Home() {
             <span className="font-semibold text-primary"> No design skills required.</span>
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-            <Link href="/auth/register">
-              <Button size="lg" className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                <FileText className="h-5 w-5 mr-2" />
-                Start Building Free
-              </Button>
-            </Link>
-            <Link href="/auth/login">
-              <Button variant="outline" size="lg" className="px-8 py-6 text-lg hover:bg-primary hover:text-primary-foreground transition-colors">
-                View Templates
-              </Button>
-            </Link>
+            {session ? (
+              <Link href="/dashboard">
+                <Button size="lg" className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Go to Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/auth/register">
+                  <Button size="lg" className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                    <FileText className="h-5 w-5 mr-2" />
+                    Start Building Free
+                  </Button>
+                </Link>
+                <Link href="/auth/login">
+                  <Button variant="outline" size="lg" className="px-8 py-6 text-lg hover:bg-primary hover:text-primary-foreground transition-colors">
+                    View Templates
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
           <div className="flex justify-center items-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
@@ -162,17 +245,28 @@ export default function Home() {
             Start building your professional resume today - it's completely free!
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/auth/register">
-              <Button size="lg" variant="secondary" className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                <FileText className="h-5 w-5 mr-2" />
-                Create Your Resume Now
-              </Button>
-            </Link>
-            <Link href="/auth/login">
-              <Button size="lg" variant="outline" className="px-8 py-6 text-lg border-white text-white hover:bg-white hover:text-primary transition-colors">
-                Sign In to Continue
-              </Button>
-            </Link>
+            {session ? (
+              <Link href="/dashboard">
+                <Button size="lg" variant="secondary" className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Go to Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/auth/register">
+                  <Button size="lg" variant="secondary" className="px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                    <FileText className="h-5 w-5 mr-2" />
+                    Create Your Resume Now
+                  </Button>
+                </Link>
+                <Link href="/auth/login">
+                  <Button size="lg" variant="outline" className="px-8 py-6 text-lg border-white text-white hover:bg-white hover:text-primary transition-colors">
+                    Sign In to Continue
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>

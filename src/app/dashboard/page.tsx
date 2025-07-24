@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { FileText, Plus } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
+import { AuthGuard } from "@/components/auth/auth-guard";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { TemplateSelector } from "@/components/dashboard/template-selector";
 import { ResumeCard } from "@/components/dashboard/resume-card";
@@ -135,57 +136,59 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <DashboardHeader user={session.user} />
+    <AuthGuard requireAuth={true}>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <DashboardHeader user={session.user} />
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Resumes</h1>
-            <p className="text-muted-foreground mt-2">Create and manage your professional resumes</p>
+        <main className="container mx-auto px-4 py-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">My Resumes</h1>
+              <p className="text-muted-foreground mt-2">Create and manage your professional resumes</p>
+            </div>
+            <TemplateSelector onCreateResume={createNewResume}>
+              <Button className="flex items-center space-x-2 shadow-md hover:shadow-lg transition-shadow">
+                <Plus className="h-4 w-4" />
+                <span>New Resume</span>
+              </Button>
+            </TemplateSelector>
           </div>
-          <TemplateSelector onCreateResume={createNewResume}>
-            <Button className="flex items-center space-x-2 shadow-md hover:shadow-lg transition-shadow">
-              <Plus className="h-4 w-4" />
-              <span>New Resume</span>
-            </Button>
-          </TemplateSelector>
-        </div>
 
-        {resumes.length === 0 ? (
-          <Card className="border-dashed border-2 border-gray-300">
-            <CardContent className="pt-6">
-              <div className="text-center py-16">
-                <FileText className="h-24 w-24 text-muted-foreground mx-auto mb-6" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">No resumes yet</h3>
-                <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                  Create your first professional resume with our easy-to-use builder. Choose from modern templates and get started in minutes.
-                </p>
-                <TemplateSelector onCreateResume={createNewResume}>
-                  <Button size="lg" className="flex items-center space-x-2 shadow-md">
-                    <Plus className="h-5 w-5" />
-                    <span>Create Your First Resume</span>
-                  </Button>
-                </TemplateSelector>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {resumes.map((resume) => (
-              <ResumeCard
-                key={resume.id}
-                resume={resume}
-                onShare={handleShare}
-                onDownload={handleDownloadPDF}
-                onUpdate={handleResumeUpdate}
-                onDelete={handleResumeDelete}
-                loadingStates={loadingStates[resume.id] || {}}
-              />
-            ))}
-          </div>
-        )}
-      </main>
-    </div>
+          {resumes.length === 0 ? (
+            <Card className="border-dashed border-2 border-gray-300">
+              <CardContent className="pt-6">
+                <div className="text-center py-16">
+                  <FileText className="h-24 w-24 text-muted-foreground mx-auto mb-6" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No resumes yet</h3>
+                  <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                    Create your first professional resume with our easy-to-use builder. Choose from modern templates and get started in minutes.
+                  </p>
+                  <TemplateSelector onCreateResume={createNewResume}>
+                    <Button size="lg" className="flex items-center space-x-2 shadow-md">
+                      <Plus className="h-5 w-5" />
+                      <span>Create Your First Resume</span>
+                    </Button>
+                  </TemplateSelector>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {resumes.map((resume) => (
+                <ResumeCard
+                  key={resume.id}
+                  resume={resume}
+                  onShare={handleShare}
+                  onDownload={handleDownloadPDF}
+                  onUpdate={handleResumeUpdate}
+                  onDelete={handleResumeDelete}
+                  loadingStates={loadingStates[resume.id] || {}}
+                />
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
+    </AuthGuard>
   );
 }

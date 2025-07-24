@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
+import { AuthGuard } from "@/components/auth/auth-guard";
 import { ResumeEditor } from "@/components/editor/resume-editor";
 import { ResumeHeader } from "@/components/editor/resume-header";
 
@@ -199,53 +200,55 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <ResumeHeader
-        resume={resume}
-        onTitleUpdate={handleTitleUpdate}
-        onSave={saveResume}
-        onDownload={downloadPDF}
-        onShare={handleShare}
-        onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
-        isSaving={isSaving}
-        isDownloading={isDownloading}
-        isSharing={isSharing}
-      />
-
-      <div className="px-4 py-2 bg-white border-b">
-        <PrintInstructions
-          onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
+    <AuthGuard requireAuth={true}>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <ResumeHeader
+          resume={resume}
+          onTitleUpdate={handleTitleUpdate}
+          onSave={saveResume}
           onDownload={downloadPDF}
+          onShare={handleShare}
+          onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
+          isSaving={isSaving}
+          isDownloading={isDownloading}
+          isSharing={isSharing}
         />
-      </div>
 
-      {/* Editor Layout */}
-      <div className="flex h-[calc(100vh-73px)]">
-        {/* Editor Panel */}
-        <div className="w-1/2 overflow-y-auto border-r bg-white">
-          <ResumeEditor
-            resume={resume}
-            onUpdate={setResume}
-            onSave={saveResume}
+        <div className="px-4 py-2 bg-white border-b">
+          <PrintInstructions
+            onPrint={() => generateSimplePDF('resume-preview', `${resume.title || 'resume'}.pdf`)}
+            onDownload={downloadPDF}
           />
         </div>
 
-        {/* Preview Panel */}
-        <div className="w-1/2 overflow-y-auto bg-gray-100 p-8">
-          <div className="max-w-[8.5in] mx-auto space-y-4">
-            <PrintPreview resume={resume} />
+        {/* Editor Layout */}
+        <div className="flex h-[calc(100vh-73px)]">
+          {/* Editor Panel */}
+          <div className="w-1/2 overflow-y-auto border-r bg-white">
+            <ResumeEditor
+              resume={resume}
+              onUpdate={setResume}
+              onSave={saveResume}
+            />
+          </div>
 
-            {/* Debug component - remove in production */}
-            {process.env.NODE_ENV === 'development' && (
-              <PDFDebug elementId="resume-preview" filename={`${resume.title || 'resume'}.pdf`} />
-            )}
+          {/* Preview Panel */}
+          <div className="w-1/2 overflow-y-auto bg-gray-100 p-8">
+            <div className="max-w-[8.5in] mx-auto space-y-4">
+              <PrintPreview resume={resume} />
+
+              {/* Debug component - remove in production */}
+              {process.env.NODE_ENV === 'development' && (
+                <PDFDebug elementId="resume-preview" filename={`${resume.title || 'resume'}.pdf`} />
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Print Reminder - shows when user tries to print */}
-      <PrintReminder />
-    </div>
+        {/* Print Reminder - shows when user tries to print */}
+        <PrintReminder />
+      </div>
+    </AuthGuard>
   );
 }
