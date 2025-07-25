@@ -11,10 +11,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { MonthYearPicker } from "@/components/ui/date-picker";
-import { Plus, Trash2, GraduationCap, Calendar, Award } from "lucide-react";
+import { Plus, Trash2, GraduationCap, Calendar, Award, AlertCircle } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { Education } from "@/types/resume";
 import { educationFormSchema, type EducationFormData } from "@/lib/validations";
+import { toast } from "sonner";
 
 interface EducationEditorProps {
   data: Education[];

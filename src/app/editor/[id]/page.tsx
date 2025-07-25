@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { ResumeEditor } from "@/components/editor/resume-editor";
 import { ResumeHeader } from "@/components/editor/resume-header";
 import { toast } from "sonner";
@@ -70,8 +70,25 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     },
   });
 
+  const validateResumeRef = useRef<(() => boolean) | null>(null);
+
   const saveResume = async () => {
     if (!currentResume || !resolvedParams) return;
+
+    // Validate resume before saving
+    if (validateResumeRef.current && !validateResumeRef.current()) {
+      toast.error("Cannot save resume - validation errors found", {
+        description: "Please check the highlighted sections and fix all required fields before saving.",
+        duration: 8000,
+        action: {
+          label: "Review Errors",
+          onClick: () => {
+            // The validation function already switches to the first invalid tab
+          }
+        }
+      });
+      return;
+    }
 
     updateResumeMutation.mutate({
       id: resolvedParams.id,
@@ -226,6 +243,9 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
             resume={currentResume}
             onUpdate={updateResume}
             onSave={saveResume}
+            onValidate={(validateFn) => {
+              validateResumeRef.current = validateFn;
+            }}
           />
         </div>
 
