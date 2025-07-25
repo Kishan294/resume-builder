@@ -170,8 +170,8 @@ function formatSectionName(section: string): string {
 }
 
 export function validateResumeSection(
-  data: any,
-  schema: any,
+  data: unknown,
+  schema: { parse: (data: unknown) => unknown },
   sectionName: string,
   setFieldError?: (fieldPath: string) => void
 ): boolean {
@@ -197,8 +197,8 @@ export function validateResumeSection(
 }
 
 export function validateResumeSectionSilent(
-  data: any,
-  schema: any,
+  data: unknown,
+  schema: { parse: (data: unknown) => unknown },
   sectionName: string
 ): ValidationError[] {
   try {

@@ -167,7 +167,7 @@ function ResumeEditorContent({ resume, onUpdate, onValidate }: ResumeEditorProps
     }
 
     return isValid;
-  }, [resume]);
+  }, [resume, clearAllErrors, setFieldError]);
 
   // Expose validation function to parent using ref to avoid setState during render
   const validateResumeRef = React.useRef(validateResume);
