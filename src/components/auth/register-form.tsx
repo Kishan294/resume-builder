@@ -2,66 +2,145 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { Loader2, User, Mail, Lock, Eye, EyeOff, Chrome } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth-client";
 
+const registerSchema = z.object({
+  name: z.string()
+    .min(1, "Full name is required")
+    .min(2, "Name must be at least 2 characters")
+    .max(50, "Name must be less than 50 characters"),
+  email: z.string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address")
+    .max(100, "Email must be less than 100 characters"),
+  password: z.string()
+    .min(6, "Password must be at least 6 characters")
+    .max(100, "Password must be less than 100 characters"),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
 export function RegisterForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords don't match");
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
-
-    setIsLoading(true);
-
+  const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     try {
-      await signUp.email({
-        email,
-        password,
-        name,
+      const result = await signUp.email({
+        email: values.email,
+        password: values.password,
+        name: values.name,
       });
+
+      if (result.error) {
+        // Handle specific Better Auth errors
+        const errorMessage = result.error.message || "Registration failed";
+        toast.error(errorMessage);
+        return;
+      }
+
       toast.success("Account created successfully!");
       router.push("/dashboard");
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Registration failed:", error);
-      toast.error("Failed to create account. Please try again.");
-    } finally {
-      setIsLoading(false);
+
+      // Handle different types of errors
+      let errorMessage = "Failed to create account. Please try again.";
+
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorMsg = (error as { message: string }).message;
+        if (errorMsg.includes("Password is too short")) {
+          errorMessage = "Password must be at least 6 characters long";
+          // Set form error for password field
+          form.setError("password", {
+            type: "manual",
+            message: "Password must be at least 6 characters long"
+          });
+        } else if (errorMsg.includes("User already exists") || errorMsg.includes("Email already")) {
+          errorMessage = "An account with this email already exists";
+          // Set form error for email field
+          form.setError("email", {
+            type: "manual",
+            message: "An account with this email already exists"
+          });
+        } else if (errorMsg.includes("Invalid email")) {
+          errorMessage = "Please enter a valid email address";
+          form.setError("email", {
+            type: "manual",
+            message: "Please enter a valid email address"
+          });
+        } else if (errorMsg.includes("Name is required")) {
+          errorMessage = "Full name is required";
+          form.setError("name", {
+            type: "manual",
+            message: "Full name is required"
+          });
+        } else if (errorMsg.includes("Too many requests")) {
+          errorMessage = "Too many registration attempts. Please try again later.";
+        } else if (errorMsg.includes("Network")) {
+          errorMessage = "Network error. Please check your connection.";
+        } else {
+          errorMessage = errorMsg;
+        }
+      }
+
+      toast.error(errorMessage);
     }
   };
 
   const handleGoogleSignUp = async () => {
     setIsGoogleLoading(true);
     try {
-      await signIn.social({
+      const result = await signIn.social({
         provider: "google",
       });
+
+      if (result.error) {
+        toast.error(result.error.message || "Failed to sign up with Google");
+        return;
+      }
+
       toast.success("Welcome!");
-    } catch (error) {
+      router.push("/dashboard");
+    } catch (error: unknown) {
       console.error("Google sign up failed:", error);
-      toast.error("Failed to sign up with Google");
+
+      let errorMessage = "Failed to sign up with Google";
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errorMsg = (error as { message: string }).message;
+        if (errorMsg.includes("popup_closed")) {
+          errorMessage = "Sign-up was cancelled";
+        } else if (errorMsg.includes("access_denied")) {
+          errorMessage = "Access denied. Please try again.";
+        } else {
+          errorMessage = errorMsg;
+        }
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsGoogleLoading(false);
     }
@@ -81,102 +160,125 @@ export function RegisterForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 px-6 pb-8">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="flex items-center gap-2 text-gray-700 font-medium">
-              <User className="h-4 w-4" />
-              Full Name
-            </Label>
-            <Input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your full name"
-              className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-12 border-gray-200 focus:border-orange-500"
-              required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2 text-gray-700 font-medium">
+                    <User className="h-4 w-4" />
+                    Full Name
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your full name"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-12 border-gray-200 focus:border-orange-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email" className="flex items-center gap-2 text-gray-700 font-medium">
-              <Mail className="h-4 w-4" />
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-12 border-gray-200 focus:border-orange-500"
-              required
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2 text-gray-700 font-medium">
+                    <Mail className="h-4 w-4" />
+                    Email
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-12 border-gray-200 focus:border-orange-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password" className="flex items-center gap-2 text-gray-700 font-medium">
-              <Lock className="h-4 w-4" />
-              Password
-            </Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Create a password"
-                className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 pr-10 h-12 border-gray-200 focus:border-orange-500"
-                required
-                minLength={6}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="flex items-center gap-2 text-gray-700 font-medium">
-              <Lock className="h-4 w-4" />
-              Confirm Password
-            </Label>
-            <div className="relative">
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your password"
-                className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 pr-10 h-12 border-gray-200 focus:border-orange-500"
-                required
-                minLength={6}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-          </div>
-          <Button
-            type="submit"
-            className="w-full h-12 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-300 text-white font-semibold"
-            disabled={isLoading || isGoogleLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Creating account...
-              </>
-            ) : (
-              "Create Account"
-            )}
-          </Button>
-        </form>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2 text-gray-700 font-medium">
+                    <Lock className="h-4 w-4" />
+                    Password
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Create a password"
+                        className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 pr-10 h-12 border-gray-200 focus:border-orange-500"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2 text-gray-700 font-medium">
+                    <Lock className="h-4 w-4" />
+                    Confirm Password
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm your password"
+                        className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 pr-10 h-12 border-gray-200 focus:border-orange-500"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              className="w-full h-12 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-300 text-white font-semibold"
+              disabled={form.formState.isSubmitting || isGoogleLoading}
+            >
+              {form.formState.isSubmitting ? (
+                <>
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                "Create Account"
+              )}
+            </Button>
+          </form>
+        </Form>
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
@@ -193,7 +295,7 @@ export function RegisterForm() {
           variant="outline"
           className="w-full h-12 border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm hover:shadow-md transition-all duration-300 font-medium"
           onClick={handleGoogleSignUp}
-          disabled={isLoading || isGoogleLoading}
+          disabled={form.formState.isSubmitting || isGoogleLoading}
         >
           {isGoogleLoading ? (
             <>

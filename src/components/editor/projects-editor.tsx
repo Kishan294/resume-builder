@@ -1,16 +1,58 @@
 "use client";
 
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Plus, Trash2, X, FolderOpen, Calendar, ExternalLink, Github } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
-import { useState } from "react";
 import { Project } from "@/types/resume";
+import { toast } from "sonner";
+
+const projectSchema = z.object({
+  id: z.string(),
+  name: z.string()
+    .min(1, "Project name is required")
+    .min(2, "Project name must be at least 2 characters")
+    .max(100, "Project name must be less than 100 characters"),
+  description: z.string()
+    .min(1, "Description is required")
+    .min(10, "Description must be at least 10 characters")
+    .max(500, "Description must be 500 characters or less"),
+  technologies: z.array(z.string())
+    .min(1, "Please add at least one technology"),
+  url: z.string()
+    .optional()
+    .refine((val) => !val || val === "" || z.string().url().safeParse(val).success, "Please enter a valid URL"),
+  github: z.string()
+    .optional()
+    .refine((val) => !val || val === "" || z.string().url().safeParse(val).success, "Please enter a valid GitHub URL")
+    .refine((val) => !val || val === "" || val.includes("github.com"), "Please enter a valid GitHub URL"),
+  startDate: z.string()
+    .optional()
+    .refine((val) => !val || /^\d{4}-\d{2}$/.test(val), "Please select a valid start date"),
+  endDate: z.string()
+    .optional()
+    .refine((val) => !val || /^\d{4}-\d{2}$/.test(val), "Please select a valid end date"),
+}).refine((data) => {
+  if (data.startDate && data.endDate && data.startDate > data.endDate) {
+    return false;
+  }
+  return true;
+}, {
+  message: "End date must be after start date",
+  path: ["endDate"],
+});
+
+const projectsFormSchema = z.object({
+  projects: z.array(projectSchema),
+});
 
 interface ProjectsEditorProps {
   data: Project[];
@@ -20,6 +62,35 @@ interface ProjectsEditorProps {
 export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
   const [newTechInputs, setNewTechInputs] = useState<{ [key: string]: string }>({});
 
+  const form = useForm<z.infer<typeof projectsFormSchema>>({
+    resolver: zodResolver(projectsFormSchema),
+    defaultValues: {
+      projects: data.length > 0 ? data : [],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "projects",
+  });
+
+  // Update form when data changes
+  useEffect(() => {
+    form.reset({
+      projects: data.length > 0 ? data : [],
+    });
+  }, [data, form]);
+
+  // Watch form changes and update parent
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      if (values.projects) {
+        onUpdate(values.projects as Project[]);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onUpdate]);
+
   const addProject = () => {
     const newProject: Project = {
       id: uuidv4(),
@@ -28,50 +99,39 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
       technologies: [],
       startDate: "",
     };
-    onUpdate([...data, newProject]);
+    append(newProject);
   };
 
-  const updateProject = (id: string, field: keyof Project, value: string | string[] | boolean) => {
-    const updated = data.map((proj) =>
-      proj.id === id ? { ...proj, [field]: value } : proj
-    );
-    onUpdate(updated);
-  };
-
-  const removeProject = (id: string) => {
-    onUpdate(data.filter((proj) => proj.id !== id));
-  };
-
-  const addTechnology = (projectId: string) => {
-    const techText = newTechInputs[projectId]?.trim();
+  const addTechnology = (projectIndex: number) => {
+    const techText = newTechInputs[`project-${projectIndex}`]?.trim();
     if (!techText) return;
 
-    const updated = data.map((proj) =>
-      proj.id === projectId
-        ? { ...proj, technologies: [...proj.technologies, techText] }
-        : proj
-    );
-    onUpdate(updated);
-    setNewTechInputs({ ...newTechInputs, [projectId]: "" });
+    const currentTechnologies = form.getValues(`projects.${projectIndex}.technologies`) || [];
+
+    // Check for duplicates
+    if (currentTechnologies.includes(techText)) {
+      toast.error("This technology is already added to this project");
+      return;
+    }
+
+    form.setValue(`projects.${projectIndex}.technologies`, [...currentTechnologies, techText]);
+    setNewTechInputs({ ...newTechInputs, [`project-${projectIndex}`]: "" });
   };
 
-  const removeTechnology = (projectId: string, techIndex: number) => {
-    const updated = data.map((proj) =>
-      proj.id === projectId
-        ? { ...proj, technologies: proj.technologies.filter((_, index) => index !== techIndex) }
-        : proj
-    );
-    onUpdate(updated);
+  const removeTechnology = (projectIndex: number, techIndex: number) => {
+    const currentTechnologies = form.getValues(`projects.${projectIndex}.technologies`) || [];
+    const updatedTechnologies = currentTechnologies.filter((_, index) => index !== techIndex);
+    form.setValue(`projects.${projectIndex}.technologies`, updatedTechnologies);
   };
 
-  const handleTechInputChange = (projectId: string, value: string) => {
-    setNewTechInputs({ ...newTechInputs, [projectId]: value });
+  const handleTechInputChange = (projectIndex: number, value: string) => {
+    setNewTechInputs({ ...newTechInputs, [`project-${projectIndex}`]: value });
   };
 
-  const handleTechInputKeyPress = (projectId: string, e: React.KeyboardEvent) => {
+  const handleTechInputKeyPress = (projectIndex: number, e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      addTechnology(projectId);
+      addTechnology(projectIndex);
     }
   };
 
@@ -113,179 +173,232 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
           </CardContent>
         </Card>
       ) : (
-        data.map((project, index) => (
-          <Card key={project.id} className="transition-all duration-200 hover:shadow-md">
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    Project {index + 1}
-                  </CardTitle>
-                  {project.name && (
-                    <p className="text-sm text-muted-foreground mt-1 font-medium">
-                      {project.name}
-                    </p>
-                  )}
-                  {project.startDate && (
-                    <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3" />
-                      {formatDateRange(project.startDate, project.endDate)}
+        <Form {...form}>
+          {fields.map((field, index) => (
+            <Card key={field.id} className="transition-all duration-200 hover:shadow-md">
+              <CardHeader className="pb-3">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      Project {index + 1}
+                    </CardTitle>
+                    {form.watch(`projects.${index}.name`) && (
+                      <p className="text-sm text-muted-foreground mt-1 font-medium">
+                        {form.watch(`projects.${index}.name`)}
+                      </p>
+                    )}
+                    {form.watch(`projects.${index}.startDate`) && (
+                      <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                        <Calendar className="h-3 w-3" />
+                        {formatDateRange(
+                          form.watch(`projects.${index}.startDate`) || "",
+                          form.watch(`projects.${index}.endDate`) || ""
+                        )}
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2 mt-2">
+                      {form.watch(`projects.${index}.url`) && (
+                        <a
+                          href={form.watch(`projects.${index}.url`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-orange-500 hover:underline flex items-center gap-1"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          Live Demo
+                        </a>
+                      )}
+                      {form.watch(`projects.${index}.github`) && (
+                        <a
+                          href={form.watch(`projects.${index}.github`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-orange-500 hover:underline flex items-center gap-1"
+                        >
+                          <Github className="h-3 w-3" />
+                          Source Code
+                        </a>
+                      )}
                     </div>
-                  )}
-                  <div className="flex items-center gap-2 mt-2">
-                    {project.url && (
-                      <a
-                        href={project.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-orange-500 hover:underline flex items-center gap-1"
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                        Live Demo
-                      </a>
-                    )}
-                    {project.github && (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-orange-500 hover:underline flex items-center gap-1"
-                      >
-                        <Github className="h-3 w-3" />
-                        Source Code
-                      </a>
-                    )}
                   </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeProject(project.id)}
-                  className="text-destructive hover:text-destructive/80"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Project Name *</Label>
-                <Input
-                  value={project.name}
-                  onChange={(e) => updateProject(project.id, "name", e.target.value)}
-                  placeholder="My Awesome Project"
-                  className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Description *</Label>
-                <Textarea
-                  value={project.description}
-                  onChange={(e) => updateProject(project.id, "description", e.target.value)}
-                  placeholder="• Describe what this project does and your role in it...&#10;• Highlight key features and technologies used&#10;• Mention any challenges overcome or results achieved"
-                  rows={3}
-                  className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
-                />
-                <p className="text-xs text-muted-foreground">
-                  {project.description?.length || 0}/500 characters
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <ExternalLink className="h-4 w-4" />
-                    Project URL
-                  </Label>
-                  <Input
-                    value={project.url || ""}
-                    onChange={(e) => updateProject(project.id, "url", e.target.value)}
-                    placeholder="https://myproject.com"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Github className="h-4 w-4" />
-                    GitHub Repository
-                  </Label>
-                  <Input
-                    value={project.github || ""}
-                    onChange={(e) => updateProject(project.id, "github", e.target.value)}
-                    placeholder="https://github.com/username/project"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Start Date
-                  </Label>
-                  <Input
-                    type="month"
-                    value={project.startDate || ""}
-                    onChange={(e) => updateProject(project.id, "startDate", e.target.value)}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    End Date
-                  </Label>
-                  <Input
-                    type="month"
-                    value={project.endDate || ""}
-                    onChange={(e) => updateProject(project.id, "endDate", e.target.value)}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Technologies Used</Label>
-                <div className="flex space-x-2">
-                  <Input
-                    value={newTechInputs[project.id] || ""}
-                    onChange={(e) => handleTechInputChange(project.id, e.target.value)}
-                    onKeyPress={(e) => handleTechInputKeyPress(project.id, e)}
-                    placeholder="Add a technology and press Enter"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                  />
                   <Button
-                    type="button"
-                    onClick={() => addTechnology(project.id)}
+                    variant="ghost"
                     size="sm"
-                    disabled={!newTechInputs[project.id]?.trim()}
+                    onClick={() => remove(index)}
+                    className="text-destructive hover:text-destructive/80"
                   >
-                    <Plus className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name={`projects.${index}.name`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Project Name *</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="My Awesome Project"
+                          className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                {project.technologies.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {project.technologies.map((tech, techIndex) => (
-                      <Badge
-                        key={techIndex}
-                        variant="secondary"
-                        className="flex items-center space-x-1 transition-all duration-200 hover:bg-secondary/80"
-                      >
-                        <span>{tech}</span>
-                        <button
-                          onClick={() => removeTechnology(project.id, techIndex)}
-                          className="ml-1 hover:text-destructive transition-colors"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </Badge>
-                    ))}
+                <FormField
+                  control={form.control}
+                  name={`projects.${index}.description`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description *</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="• Describe what this project does and your role in it...&#10;• Highlight key features and technologies used&#10;• Mention any challenges overcome or results achieved"
+                          rows={3}
+                          className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="text-xs text-muted-foreground">
+                        {field.value?.length || 0}/500 characters
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name={`projects.${index}.url`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <ExternalLink className="h-4 w-4" />
+                          Project URL
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="https://myproject.com"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`projects.${index}.github`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Github className="h-4 w-4" />
+                          GitHub Repository
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="https://github.com/username/project"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`projects.${index}.startDate`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          Start Date
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="month"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`projects.${index}.endDate`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          End Date
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="month"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <FormLabel>Technologies Used</FormLabel>
+                  <div className="flex space-x-2">
+                    <Input
+                      value={newTechInputs[`project-${index}`] || ""}
+                      onChange={(e) => handleTechInputChange(index, e.target.value)}
+                      onKeyPress={(e) => handleTechInputKeyPress(index, e)}
+                      placeholder="Add a technology and press Enter"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => addTechnology(index)}
+                      size="sm"
+                      disabled={!newTechInputs[`project-${index}`]?.trim()}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))
+
+                  {form.watch(`projects.${index}.technologies`)?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {form.watch(`projects.${index}.technologies`).map((tech: string, techIndex: number) => (
+                        <Badge
+                          key={techIndex}
+                          variant="secondary"
+                          className="flex items-center space-x-1 transition-all duration-200 hover:bg-secondary/80"
+                        >
+                          <span>{tech}</span>
+                          <button
+                            onClick={() => removeTechnology(index, techIndex)}
+                            className="ml-1 hover:text-destructive transition-colors"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </Form>
       )}
     </div>
   );

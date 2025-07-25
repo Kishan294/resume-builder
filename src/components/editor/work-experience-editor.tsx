@@ -1,15 +1,63 @@
 "use client";
 
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Plus, Trash2, Briefcase, Calendar, MapPin } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { WorkExperience } from "@/types/resume";
+
+const workExperienceSchema = z.object({
+  id: z.string(),
+  company: z.string()
+    .min(1, "Company name is required")
+    .min(2, "Company name must be at least 2 characters")
+    .max(100, "Company name must be less than 100 characters"),
+  position: z.string()
+    .min(1, "Position is required")
+    .min(2, "Position must be at least 2 characters")
+    .max(100, "Position must be less than 100 characters"),
+  startDate: z.string()
+    .min(1, "Start date is required")
+    .regex(/^\d{4}-\d{2}$/, "Please select a valid start date"),
+  endDate: z.string()
+    .optional()
+    .refine((val) => !val || /^\d{4}-\d{2}$/.test(val), "Please select a valid end date"),
+  current: z.boolean(),
+  description: z.string()
+    .min(1, "Description is required")
+    .min(10, "Description must be at least 10 characters")
+    .max(1000, "Description must be 1000 characters or less"),
+  location: z.string()
+    .max(100, "Location must be less than 100 characters")
+    .optional(),
+}).refine((data) => {
+  if (!data.current && !data.endDate) {
+    return false;
+  }
+  if (data.current && data.endDate) {
+    return false;
+  }
+  if (data.startDate && data.endDate && data.startDate > data.endDate) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Please provide a valid date range",
+  path: ["endDate"],
+});
+
+const workExperienceFormSchema = z.object({
+  experiences: z.array(workExperienceSchema),
+});
 
 interface WorkExperienceEditorProps {
   data: WorkExperience[];
@@ -17,6 +65,35 @@ interface WorkExperienceEditorProps {
 }
 
 export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorProps) {
+  const form = useForm<z.infer<typeof workExperienceFormSchema>>({
+    resolver: zodResolver(workExperienceFormSchema),
+    defaultValues: {
+      experiences: data.length > 0 ? data : [],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "experiences",
+  });
+
+  // Update form when data changes
+  useEffect(() => {
+    form.reset({
+      experiences: data.length > 0 ? data : [],
+    });
+  }, [data, form]);
+
+  // Watch form changes and update parent
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      if (values.experiences) {
+        onUpdate(values.experiences as WorkExperience[]);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onUpdate]);
+
   const addExperience = () => {
     const newExperience: WorkExperience = {
       id: uuidv4(),
@@ -26,18 +103,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
       current: false,
       description: "",
     };
-    onUpdate([...data, newExperience]);
-  };
-
-  const updateExperience = (id: string, field: keyof WorkExperience, value: string | boolean) => {
-    const updated = data.map((exp) =>
-      exp.id === id ? { ...exp, [field]: value } : exp
-    );
-    onUpdate(updated);
-  };
-
-  const removeExperience = (id: string) => {
-    onUpdate(data.filter((exp) => exp.id !== id));
+    append(newExperience);
   };
 
   const formatDateRange = (startDate: string, endDate?: string, current?: boolean) => {
@@ -79,130 +145,189 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
           </CardContent>
         </Card>
       ) : (
-        data.map((experience, index) => (
-          <Card key={experience.id} className="transition-all duration-200 hover:shadow-md">
-            <CardHeader className="pb-3">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    Experience {index + 1}
-                    {experience.current && (
-                      <Badge variant="secondary" className="text-xs">
-                        Current
-                      </Badge>
+        <Form {...form}>
+          {fields.map((field, index) => (
+            <Card key={field.id} className="transition-all duration-200 hover:shadow-md">
+              <CardHeader className="pb-3">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <CardTitle className="text-base flex items-center gap-2">
+                      Experience {index + 1}
+                      {form.watch(`experiences.${index}.current`) && (
+                        <Badge variant="secondary" className="text-xs">
+                          Current
+                        </Badge>
+                      )}
+                    </CardTitle>
+                    {form.watch(`experiences.${index}.company`) && form.watch(`experiences.${index}.position`) && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {form.watch(`experiences.${index}.position`)} at {form.watch(`experiences.${index}.company`)}
+                      </p>
                     )}
-                  </CardTitle>
-                  {experience.company && experience.position && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {experience.position} at {experience.company}
-                    </p>
-                  )}
-                  {experience.startDate && (
-                    <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3" />
-                      {formatDateRange(experience.startDate, experience.endDate, experience.current)}
-                    </div>
-                  )}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeExperience(experience.id)}
-                  className="text-destructive hover:text-destructive/80"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Company *</Label>
-                  <Input
-                    value={experience.company}
-                    onChange={(e) => updateExperience(experience.id, "company", e.target.value)}
-                    placeholder="Company Name"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Position *</Label>
-                  <Input
-                    value={experience.position}
-                    onChange={(e) => updateExperience(experience.id, "position", e.target.value)}
-                    placeholder="Job Title"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Start Date *
-                  </Label>
-                  <Input
-                    type="month"
-                    value={experience.startDate}
-                    onChange={(e) => updateExperience(experience.id, "startDate", e.target.value)}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    End Date
-                  </Label>
-                  <Input
-                    type="month"
-                    value={experience.endDate || ""}
-                    onChange={(e) => updateExperience(experience.id, "endDate", e.target.value)}
-                    disabled={experience.current}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                  />
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`current-${experience.id}`}
-                      checked={experience.current}
-                      onCheckedChange={(checked) => {
-                        updateExperience(experience.id, "current", checked as boolean);
-                        if (checked) {
-                          updateExperience(experience.id, "endDate", "");
-                        }
-                      }}
-                    />
-                    <Label htmlFor={`current-${experience.id}`} className="text-sm">
-                      I currently work here
-                    </Label>
+                    {form.watch(`experiences.${index}.startDate`) && (
+                      <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+                        <Calendar className="h-3 w-3" />
+                        {formatDateRange(
+                          form.watch(`experiences.${index}.startDate`) || "",
+                          form.watch(`experiences.${index}.endDate`) || "",
+                          form.watch(`experiences.${index}.current`)
+                        )}
+                      </div>
+                    )}
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => remove(index)}
+                    className="text-destructive hover:text-destructive/80"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  Location
-                </Label>
-                <Input
-                  value={experience.location || ""}
-                  onChange={(e) => updateExperience(experience.id, "location", e.target.value)}
-                  placeholder="City, State"
-                  className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name={`experiences.${index}.company`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company *</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Company Name"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`experiences.${index}.position`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Position *</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Job Title"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`experiences.${index}.startDate`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          Start Date *
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="month"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`experiences.${index}.endDate`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          End Date
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="month"
+                            disabled={form.watch(`experiences.${index}.current`)}
+                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormField
+                          control={form.control}
+                          name={`experiences.${index}.current`}
+                          render={({ field: currentField }) => (
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                checked={currentField.value}
+                                onCheckedChange={(checked) => {
+                                  currentField.onChange(checked);
+                                  if (checked) {
+                                    form.setValue(`experiences.${index}.endDate`, "");
+                                  }
+                                }}
+                              />
+                              <FormLabel className="text-sm">
+                                I currently work here
+                              </FormLabel>
+                            </div>
+                          )}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name={`experiences.${index}.location`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        Location
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="City, State"
+                          className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-              <div className="space-y-2">
-                <Label>Description *</Label>
-                <Textarea
-                  value={experience.description}
-                  onChange={(e) => updateExperience(experience.id, "description", e.target.value)}
-                  placeholder="• Describe your key responsibilities and achievements&#10;• Use bullet points for better readability&#10;• Include quantifiable results when possible"
-                  rows={4}
-                  className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
+                <FormField
+                  control={form.control}
+                  name={`experiences.${index}.description`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description *</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="• Describe your key responsibilities and achievements&#10;• Use bullet points for better readability&#10;• Include quantifiable results when possible"
+                          rows={4}
+                          className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="text-xs text-muted-foreground">
+                        {field.value?.length || 0}/1000 characters
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                <p className="text-xs text-muted-foreground">
-                  {experience.description?.length || 0}/1000 characters
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ))
+              </CardContent>
+            </Card>
+          ))}
+        </Form>
       )}
     </div>
   );

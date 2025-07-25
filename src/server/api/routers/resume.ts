@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const personalInfoSchema = z.object({
   fullName: z.string(),
-  email: z.string().email(),
+  email: z.string().email("Please enter a valid email address"),
   phone: z.string(),
   location: z.string(),
   website: z.string().optional(),

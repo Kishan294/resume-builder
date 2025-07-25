@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Code, Plus, X, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import { toast } from "sonner";
+
+const skillCategorySchema = z.object({
+  id: z.string(),
+  category: z.string()
+    .min(1, "Category name is required")
+    .min(2, "Category name must be at least 2 characters")
+    .max(50, "Category name must be less than 50 characters"),
+  items: z.array(z.string().min(1, "Skill name cannot be empty"))
+    .min(1, "Please add at least one skill to this category"),
+});
+
+const skillsFormSchema = z.object({
+  skillCategories: z.array(skillCategorySchema),
+});
 
 interface SkillCategory {
   id: string;
@@ -20,7 +39,36 @@ interface SkillsEditorProps {
 }
 
 export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
-  const [newSkillInputs, setNewSkillInputs] = useState<{ [categoryId: string]: string }>({});
+  const [newSkillInputs, setNewSkillInputs] = useState<{ [categoryIndex: string]: string }>({});
+
+  const form = useForm<z.infer<typeof skillsFormSchema>>({
+    resolver: zodResolver(skillsFormSchema),
+    defaultValues: {
+      skillCategories: data.length > 0 ? data : [],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "skillCategories",
+  });
+
+  // Update form when data changes
+  useEffect(() => {
+    form.reset({
+      skillCategories: data.length > 0 ? data : [],
+    });
+  }, [data, form]);
+
+  // Watch form changes and update parent
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      if (values.skillCategories) {
+        onUpdate(values.skillCategories as SkillCategory[]);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onUpdate]);
 
   const addCategory = () => {
     const newCategory: SkillCategory = {
@@ -28,55 +76,41 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
       category: "New Category",
       items: [],
     };
-    onUpdate([...data, newCategory]);
+    append(newCategory);
   };
 
-  const updateCategory = (categoryId: string, newCategoryName: string) => {
-    const updatedData = data.map(category =>
-      category.id === categoryId
-        ? { ...category, category: newCategoryName }
-        : category
-    );
-    onUpdate(updatedData);
-  };
-
-  const deleteCategory = (categoryId: string) => {
-    const updatedData = data.filter(category => category.id !== categoryId);
-    onUpdate(updatedData);
-  };
-
-  const addSkill = (categoryId: string) => {
-    const skillName = newSkillInputs[categoryId]?.trim();
+  const addSkill = (categoryIndex: number) => {
+    const skillName = newSkillInputs[`category-${categoryIndex}`]?.trim();
     if (!skillName) return;
 
-    const updatedData = data.map(category =>
-      category.id === categoryId
-        ? { ...category, items: [...category.items, skillName] }
-        : category
-    );
-    onUpdate(updatedData);
+    const currentItems = form.getValues(`skillCategories.${categoryIndex}.items`) || [];
+
+    // Check for duplicates
+    if (currentItems.includes(skillName)) {
+      toast.error("This skill is already added to this category");
+      return;
+    }
+
+    form.setValue(`skillCategories.${categoryIndex}.items`, [...currentItems, skillName]);
 
     // Clear the input
-    setNewSkillInputs(prev => ({ ...prev, [categoryId]: "" }));
+    setNewSkillInputs(prev => ({ ...prev, [`category-${categoryIndex}`]: "" }));
   };
 
-  const removeSkill = (categoryId: string, skillIndex: number) => {
-    const updatedData = data.map(category =>
-      category.id === categoryId
-        ? { ...category, items: category.items.filter((_, index) => index !== skillIndex) }
-        : category
-    );
-    onUpdate(updatedData);
+  const removeSkill = (categoryIndex: number, skillIndex: number) => {
+    const currentItems = form.getValues(`skillCategories.${categoryIndex}.items`) || [];
+    const updatedItems = currentItems.filter((_, index) => index !== skillIndex);
+    form.setValue(`skillCategories.${categoryIndex}.items`, updatedItems);
   };
 
-  const handleSkillInputChange = (categoryId: string, value: string) => {
-    setNewSkillInputs(prev => ({ ...prev, [categoryId]: value }));
+  const handleSkillInputChange = (categoryIndex: number, value: string) => {
+    setNewSkillInputs(prev => ({ ...prev, [`category-${categoryIndex}`]: value }));
   };
 
-  const handleSkillInputKeyPress = (categoryId: string, e: React.KeyboardEvent) => {
+  const handleSkillInputKeyPress = (categoryIndex: number, e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      addSkill(categoryId);
+      addSkill(categoryIndex);
     }
   };
 
@@ -112,71 +146,83 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-4">
-          {data.map((category) => (
-            <Card key={category.id} className="shadow-sm">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <Input
-                      value={category.category}
-                      onChange={(e) => updateCategory(category.id, e.target.value)}
-                      className="text-lg font-semibold border-none p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
-                      placeholder="Category name"
-                    />
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteCategory(category.id)}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                {/* Skills List */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {category.items.map((skill, index) => (
-                    <Badge
-                      key={index}
-                      variant="secondary"
-                      className="flex items-center space-x-1 px-3 py-1"
+        <Form {...form}>
+          <div className="space-y-4">
+            {fields.map((field, index) => (
+              <Card key={field.id} className="shadow-sm">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name={`skillCategories.${index}.category`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                className="text-lg font-semibold border-none p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
+                                placeholder="Category name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => remove(index)}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
                     >
-                      <span>{skill}</span>
-                      <button
-                        onClick={() => removeSkill(category.id, index)}
-                        className="ml-1 hover:text-red-500 transition-colors"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-
-                {/* Add New Skill */}
-                <div className="flex items-center space-x-2">
-                  <div className="flex-1">
-                    <Input
-                      placeholder="Add a skill..."
-                      value={newSkillInputs[category.id] || ""}
-                      onChange={(e) => handleSkillInputChange(category.id, e.target.value)}
-                      onKeyPress={(e) => handleSkillInputKeyPress(category.id, e)}
-                    />
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button
-                    onClick={() => addSkill(category.id)}
-                    disabled={!newSkillInputs[category.id]?.trim()}
-                    size="sm"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  {/* Skills List */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {form.watch(`skillCategories.${index}.items`)?.map((skill: string, skillIndex: number) => (
+                      <Badge
+                        key={skillIndex}
+                        variant="secondary"
+                        className="flex items-center space-x-1 px-3 py-1"
+                      >
+                        <span>{skill}</span>
+                        <button
+                          onClick={() => removeSkill(index, skillIndex)}
+                          className="ml-1 hover:text-red-500 transition-colors"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+
+                  {/* Add New Skill */}
+                  <div className="flex items-center space-x-2">
+                    <div className="flex-1">
+                      <Input
+                        placeholder="Add a skill..."
+                        value={newSkillInputs[`category-${index}`] || ""}
+                        onChange={(e) => handleSkillInputChange(index, e.target.value)}
+                        onKeyPress={(e) => handleSkillInputKeyPress(index, e)}
+                      />
+                    </div>
+                    <Button
+                      onClick={() => addSkill(index)}
+                      disabled={!newSkillInputs[`category-${index}`]?.trim()}
+                      size="sm"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </Form>
       )}
     </div>
   );
