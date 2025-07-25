@@ -237,9 +237,9 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
       </div>
 
       {/* Editor Layout */}
-      <div className="flex h-[calc(100vh-73px)]">
+      <div className="flex flex-col lg:flex-row h-[calc(100vh-73px)]">
         {/* Editor Panel */}
-        <div className="w-1/2 overflow-y-auto border-r bg-white">
+        <div className="w-full lg:w-1/2 overflow-y-auto border-r lg:border-r border-b lg:border-b-0 bg-white">
           <ValidationProvider>
             <ResumeEditor
               resume={currentResume}
@@ -253,7 +253,7 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
         </div>
 
         {/* Preview Panel */}
-        <div className="w-1/2 overflow-y-auto bg-gray-100 p-8">
+        <div className="w-full lg:w-1/2 overflow-y-auto bg-gray-100 p-4 lg:p-8">
           <div className="max-w-[8.5in] mx-auto space-y-4">
             <PrintPreview resume={currentResume} />
 

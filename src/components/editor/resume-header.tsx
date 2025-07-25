@@ -121,13 +121,16 @@ export function ResumeHeader({
   };
 
   return (
-    <header className="bg-white border-b px-4 py-3">
+    <header className="bg-white border-b px-2 sm:px-4 py-3">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">
           <Link href="/dashboard">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" className="hidden sm:flex">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
+            </Button>
+            <Button variant="ghost" size="sm" className="sm:hidden">
+              <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
 
@@ -137,17 +140,17 @@ export function ResumeHeader({
               onChange={(e) => setNewTitle(e.target.value)}
               onBlur={handleRename}
               onKeyDown={handleKeyPress}
-              className="text-xl font-semibold border-none p-0 h-auto focus-visible:ring-0"
+              className="text-lg sm:text-xl font-semibold border-none p-0 h-auto focus-visible:ring-0 min-w-0"
               autoFocus
             />
           ) : (
-            <div className="flex items-center space-x-2">
-              <h1 className="text-xl font-semibold">{resume.title}</h1>
+            <div className="flex items-center space-x-2 min-w-0">
+              <h1 className="text-lg sm:text-xl font-semibold truncate">{resume.title}</h1>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsRenaming(true)}
-                className="h-6 w-6 p-0"
+                className="h-6 w-6 p-0 flex-shrink-0"
               >
                 <Edit2 className="h-3 w-3" />
               </Button>
@@ -155,12 +158,14 @@ export function ResumeHeader({
           )}
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+          {/* Always visible Save button */}
           <Button
             variant="outline"
             size="sm"
             onClick={onSave}
             disabled={isSaving}
+            className="hidden sm:flex"
           >
             {isSaving ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -170,11 +175,29 @@ export function ResumeHeader({
             {isSaving ? "Saving..." : "Save"}
           </Button>
 
+          {/* Mobile Save button - icon only */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onSave}
+            disabled={isSaving}
+            className="sm:hidden"
+            title="Save"
+          >
+            {isSaving ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
+          </Button>
+
+          {/* Desktop buttons - hidden on mobile */}
           <Button
             variant="outline"
             size="sm"
             onClick={onShare}
             disabled={isSharing}
+            className="hidden md:flex"
           >
             {isSharing ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -189,6 +212,7 @@ export function ResumeHeader({
             size="sm"
             onClick={onDownload}
             disabled={isDownloading}
+            className="hidden md:flex"
           >
             {isDownloading ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -203,6 +227,7 @@ export function ResumeHeader({
             size="sm"
             onClick={onPrint}
             title="Open simple print window (most reliable)"
+            className="hidden sm:flex md:flex"
           >
             <Printer className="h-4 w-4 mr-2" />
             Print
@@ -215,6 +240,33 @@ export function ResumeHeader({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              {/* Mobile-only actions */}
+              <div className="md:hidden">
+                <DropdownMenuItem onClick={onShare} disabled={isSharing}>
+                  {isSharing ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Share2 className="h-4 w-4 mr-2" />
+                  )}
+                  Share
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onDownload} disabled={isDownloading}>
+                  {isDownloading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4 mr-2" />
+                  )}
+                  Download PDF
+                </DropdownMenuItem>
+                <div className="sm:hidden">
+                  <DropdownMenuItem onClick={onPrint}>
+                    <Printer className="h-4 w-4 mr-2" />
+                    Print
+                  </DropdownMenuItem>
+                </div>
+                <DropdownMenuSeparator />
+              </div>
+
               <DropdownMenuItem onClick={() => setIsRenaming(true)}>
                 <Edit2 className="h-4 w-4 mr-2" />
                 Rename Resume
