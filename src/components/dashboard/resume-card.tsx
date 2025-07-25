@@ -116,7 +116,7 @@ export function ResumeCard({
                   autoFocus
                 />
               ) : (
-                <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                <CardTitle className="text-lg group-hover:text-orange-500 transition-colors">
                   {resume.title}
                 </CardTitle>
               )}
@@ -167,7 +167,7 @@ export function ResumeCard({
               variant="outline"
               size="sm"
               onClick={() => router.push(`/editor/${resume.id}`)}
-              className="flex items-center space-x-1 hover:bg-primary hover:text-primary-foreground transition-colors"
+              className="flex items-center space-x-1 hover:bg-orange-500 hover:text-white transition-colors"
             >
               <Edit className="h-3 w-3" />
               <span>Edit</span>

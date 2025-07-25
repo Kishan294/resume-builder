@@ -101,7 +101,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <FileText className="h-12 w-12 text-primary mx-auto mb-4" />
+          <FileText className="h-12 w-12 text-orange-500 mx-auto mb-4" />
           <p>Loading...</p>
         </div>
       </div>
@@ -109,15 +109,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <main className="container mx-auto px-4 py-6 sm:py-8">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Resumes</h1>
-          <p className="text-muted-foreground mt-2">Create and manage your professional resumes</p>
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            My Resumes
+          </h1>
+          <p className="text-gray-600 mt-2 text-sm sm:text-base">Create and manage your professional resumes</p>
         </div>
         <TemplateSelector onCreateResume={createNewResume}>
           <Button
-            className="flex items-center space-x-2 shadow-md hover:shadow-lg transition-shadow"
+            className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-md hover:shadow-lg transition-all duration-300 text-sm sm:text-base px-4 sm:px-6"
             disabled={createResumeMutation.isPending}
           >
             <Plus className="h-4 w-4" />
@@ -149,7 +151,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {resumes.map((resume) => (
             <ResumeCard
               key={resume.id}

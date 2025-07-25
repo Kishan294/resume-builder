@@ -27,24 +27,30 @@ export function AppHeader({ variant = "landing" }: AppHeaderProps) {
   };
 
   return (
-    <header className="border-b bg-white/90 backdrop-blur-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link
-          href={session ? "/dashboard" : "/"}
-          className="flex items-center space-x-2 group"
-        >
-          <FileText className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
-          <h1 className="text-2xl font-bold text-gray-900">Resume Builder</h1>
-        </Link>
+    <header className="border-b border-gray-200/50 bg-white/95 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex justify-between items-center">
+          <Link
+            href={session ? "/dashboard" : "/"}
+            className="flex items-center space-x-3 group"
+          >
+            <div className="p-1.5 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 group-hover:scale-105 transition-transform">
+              <FileText className="h-6 w-6 text-white" />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              Resume Builder
+            </h1>
+          </Link>
 
-        <div className="flex items-center space-x-4">
-          {isPending ? (
-            <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
-          ) : session ? (
-            <UserMenu user={session.user} onSignOut={handleSignOut} />
-          ) : variant === "landing" ? (
-            <GuestActions />
-          ) : null}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {isPending ? (
+              <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+            ) : session ? (
+              <UserMenu user={session.user} onSignOut={handleSignOut} />
+            ) : variant === "landing" ? (
+              <GuestActions />
+            ) : null}
+          </div>
         </div>
       </div>
     </header>
@@ -113,18 +119,26 @@ function UserMenu({
 function GuestActions() {
   return (
     <>
-      <Badge variant="secondary" className="hidden sm:flex">
-        <Star className="h-3 w-3 mr-1" />
+      <Badge variant="secondary" className="hidden md:flex items-center gap-1 px-3 py-1 bg-orange-50 text-orange-700 border-orange-200">
+        <Star className="h-3 w-3" />
         Free Forever
       </Badge>
       <Link href="/login">
-        <Button variant="outline" className="hover:bg-primary hover:text-primary-foreground transition-colors">
+        <Button
+          variant="outline"
+          className="hidden sm:flex hover:bg-orange-500 hover:text-white transition-all duration-300 border-gray-200 hover:border-orange-500"
+          size="sm"
+        >
           Sign In
         </Button>
       </Link>
       <Link href="/register">
-        <Button className="shadow-md hover:shadow-lg transition-shadow">
-          Get Started Free
+        <Button
+          className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-md hover:shadow-lg transition-all duration-300 text-sm sm:text-base px-3 sm:px-4"
+          size="sm"
+        >
+          <span className="hidden sm:inline">Get Started Free</span>
+          <span className="sm:hidden">Sign Up</span>
         </Button>
       </Link>
     </>

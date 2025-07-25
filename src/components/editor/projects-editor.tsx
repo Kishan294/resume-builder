@@ -138,7 +138,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                         href={project.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-primary hover:underline flex items-center gap-1"
+                        className="text-xs text-orange-500 hover:underline flex items-center gap-1"
                       >
                         <ExternalLink className="h-3 w-3" />
                         Live Demo
@@ -149,7 +149,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                         href={project.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-primary hover:underline flex items-center gap-1"
+                        className="text-xs text-orange-500 hover:underline flex items-center gap-1"
                       >
                         <Github className="h-3 w-3" />
                         Source Code
@@ -174,7 +174,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                   value={project.name}
                   onChange={(e) => updateProject(project.id, "name", e.target.value)}
                   placeholder="My Awesome Project"
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                 />
               </div>
 
@@ -185,7 +185,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                   onChange={(e) => updateProject(project.id, "description", e.target.value)}
                   placeholder="• Describe what this project does and your role in it...&#10;• Highlight key features and technologies used&#10;• Mention any challenges overcome or results achieved"
                   rows={3}
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 resize-none"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
                 />
                 <p className="text-xs text-muted-foreground">
                   {project.description?.length || 0}/500 characters
@@ -202,7 +202,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                     value={project.url || ""}
                     onChange={(e) => updateProject(project.id, "url", e.target.value)}
                     placeholder="https://myproject.com"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -214,7 +214,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                     value={project.github || ""}
                     onChange={(e) => updateProject(project.id, "github", e.target.value)}
                     placeholder="https://github.com/username/project"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -226,7 +226,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                     type="month"
                     value={project.startDate || ""}
                     onChange={(e) => updateProject(project.id, "startDate", e.target.value)}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -238,7 +238,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                     type="month"
                     value={project.endDate || ""}
                     onChange={(e) => updateProject(project.id, "endDate", e.target.value)}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
               </div>
@@ -251,7 +251,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                     onChange={(e) => handleTechInputChange(project.id, e.target.value)}
                     onKeyPress={(e) => handleTechInputKeyPress(project.id, e)}
                     placeholder="Add a technology and press Enter"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                   <Button
                     type="button"

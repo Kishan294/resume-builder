@@ -84,7 +84,7 @@ const fixColorCompatibility = (clonedDoc: Document) => {
       --card-foreground: #0f172a;
       --popover: #ffffff;
       --popover-foreground: #0f172a;
-      --primary: #3b82f6;
+      --primary: #f97316;
       --primary-foreground: #ffffff;
       --secondary: #f1f5f9;
       --secondary-foreground: #0f172a;
@@ -128,7 +128,7 @@ const fixColorCompatibility = (clonedDoc: Document) => {
     .font-bold { font-weight: 700; }
     
     /* Colors */
-    .text-primary { color: #3b82f6; }
+    .text-primary { color: #f97316; }
     .text-secondary { color: #64748b; }
     .text-muted-foreground { color: #64748b; }
     .text-gray-900 { color: #111827; }
@@ -140,7 +140,7 @@ const fixColorCompatibility = (clonedDoc: Document) => {
     .text-white { color: #ffffff; }
     
     .bg-white { background-color: #ffffff; }
-    .bg-primary { background-color: #3b82f6; }
+    .bg-primary { background-color: #f97316; }
     .bg-gray-50 { background-color: #f9fafb; }
     .bg-gray-100 { background-color: #f3f4f6; }
     
@@ -148,7 +148,7 @@ const fixColorCompatibility = (clonedDoc: Document) => {
     .border { border-width: 1px; border-style: solid; border-color: #e2e8f0; }
     .border-b { border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #e2e8f0; }
     .border-b-2 { border-bottom-width: 2px; border-bottom-style: solid; }
-    .border-primary { border-color: #3b82f6; }
+    .border-primary { border-color: #f97316; }
     .border-gray-200 { border-color: #e5e7eb; }
     .border-black { border-color: #000000; }
     
@@ -719,16 +719,16 @@ export const generateSimplePDF = (elementId: string) => {
             }
             
             h1 { font-size: 24px; font-weight: bold; margin-bottom: 8px; color: #000; }
-            h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 4px; }
+            h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #f97316; border-bottom: 2px solid #f97316; padding-bottom: 4px; }
             h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: #000; }
             p { margin-bottom: 4px; color: #374151; }
             
-            .text-primary { color: #3b82f6; }
+            .text-primary { color: #f97316; }
             .text-gray-900 { color: #111827; }
             .text-gray-700 { color: #374151; }
             .text-gray-600 { color: #4b5563; }
             .border-b-2 { border-bottom: 2px solid; }
-            .border-primary { border-color: #3b82f6; }
+            .border-primary { border-color: #f97316; }
             .pb-6 { padding-bottom: 24px; }
             .mb-6 { margin-bottom: 24px; }
             .mb-3 { margin-bottom: 12px; }

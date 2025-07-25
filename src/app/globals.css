@@ -53,7 +53,7 @@
   --card-foreground: #0f172a;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
-  --primary: #3b82f6;
+  --primary: #f97316;
   --primary-foreground: #ffffff;
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
@@ -65,7 +65,7 @@
   --border: #e2e8f0;
   --input: #e2e8f0;
   --ring: #94a3b8;
-  --chart-1: #3b82f6;
+  --chart-1: #f97316;
   --chart-2: #10b981;
   --chart-3: #f59e0b;
   --chart-4: #ef4444;
@@ -157,7 +157,43 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Ensure consistent font rendering across devices */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
+      "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  /* Responsive text scaling */
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    html {
+      font-size: 15px;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    html {
+      font-size: 16px;
+    }
   }
 }
 
@@ -185,6 +221,52 @@
   .animate-gradient {
     animation: gradientShift 3s ease infinite;
     background-size: 200% 200%;
+  }
+
+  /* Responsive utilities */
+  .container-responsive {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .text-responsive-xl {
+    @apply text-2xl sm:text-3xl lg:text-4xl;
+  }
+
+  .text-responsive-lg {
+    @apply text-xl sm:text-2xl lg:text-3xl;
+  }
+
+  .text-responsive-base {
+    @apply text-sm sm:text-base lg:text-lg;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent;
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-r from-orange-500 to-red-500;
+  }
+
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-orange-400 to-orange-600;
+  }
+
+  .gradient-accent {
+    @apply bg-gradient-to-r from-amber-500 to-orange-500;
+  }
+
+  .gradient-success {
+    @apply bg-gradient-to-r from-orange-500 to-red-500;
+  }
+
+  /* Mobile-first responsive spacing */
+  .section-padding {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  .card-padding {
+    @apply p-4 sm:p-6 lg:p-8;
   }
 }
 

@@ -28,28 +28,48 @@ export function ResumeEditor({ resume, onUpdate }: ResumeEditorProps) {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="personal" className="flex items-center space-x-2">
+        <TabsList className="grid w-full grid-cols-5 h-auto p-1 bg-gray-100/50 rounded-lg">
+          <TabsTrigger
+            value="personal"
+            className="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+          >
             <User className="h-4 w-4" />
             <span className="hidden sm:inline">Personal</span>
+            <span className="sm:hidden text-xs">Info</span>
           </TabsTrigger>
-          <TabsTrigger value="experience" className="flex items-center space-x-2">
+          <TabsTrigger
+            value="experience"
+            className="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+          >
             <Briefcase className="h-4 w-4" />
             <span className="hidden sm:inline">Experience</span>
+            <span className="sm:hidden text-xs">Work</span>
           </TabsTrigger>
-          <TabsTrigger value="education" className="flex items-center space-x-2">
+          <TabsTrigger
+            value="education"
+            className="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+          >
             <GraduationCap className="h-4 w-4" />
             <span className="hidden sm:inline">Education</span>
+            <span className="sm:hidden text-xs">Edu</span>
           </TabsTrigger>
-          <TabsTrigger value="skills" className="flex items-center space-x-2">
+          <TabsTrigger
+            value="skills"
+            className="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+          >
             <Code className="h-4 w-4" />
             <span className="hidden sm:inline">Skills</span>
+            <span className="sm:hidden text-xs">Skills</span>
           </TabsTrigger>
-          <TabsTrigger value="projects" className="flex items-center space-x-2">
+          <TabsTrigger
+            value="projects"
+            className="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2 py-2 sm:py-3 text-xs sm:text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm transition-all"
+          >
             <FolderOpen className="h-4 w-4" />
             <span className="hidden sm:inline">Projects</span>
+            <span className="sm:hidden text-xs">Proj</span>
           </TabsTrigger>
         </TabsList>
 

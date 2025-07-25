@@ -127,7 +127,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     value={education.institution}
                     onChange={(e) => updateEducation(education.id, "institution", e.target.value)}
                     placeholder="University Name"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -136,7 +136,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     value={education.degree}
                     onChange={(e) => updateEducation(education.id, "degree", e.target.value)}
                     placeholder="Bachelor's, Master's, etc."
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -145,7 +145,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     value={education.field}
                     onChange={(e) => updateEducation(education.id, "field", e.target.value)}
                     placeholder="Computer Science, Business, etc."
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -157,7 +157,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     value={education.gpa || ""}
                     onChange={(e) => updateEducation(education.id, "gpa", e.target.value)}
                     placeholder="3.8/4.0"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -169,7 +169,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     type="month"
                     value={education.startDate}
                     onChange={(e) => updateEducation(education.id, "startDate", e.target.value)}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -182,7 +182,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     value={education.endDate || ""}
                     onChange={(e) => updateEducation(education.id, "endDate", e.target.value)}
                     disabled={education.current}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -208,7 +208,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                   onChange={(e) => updateEducation(education.id, "description", e.target.value)}
                   placeholder="• Relevant coursework, achievements, activities...&#10;• Academic honors or awards&#10;• Thesis or capstone project details"
                   rows={3}
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 resize-none"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
                 />
                 <p className="text-xs text-muted-foreground">
                   {education.description?.length || 0}/500 characters

@@ -122,7 +122,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                     value={experience.company}
                     onChange={(e) => updateExperience(experience.id, "company", e.target.value)}
                     placeholder="Company Name"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -131,7 +131,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                     value={experience.position}
                     onChange={(e) => updateExperience(experience.id, "position", e.target.value)}
                     placeholder="Job Title"
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -143,7 +143,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                     type="month"
                     value={experience.startDate}
                     onChange={(e) => updateExperience(experience.id, "startDate", e.target.value)}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
                 <div className="space-y-2">
@@ -156,7 +156,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                     value={experience.endDate || ""}
                     onChange={(e) => updateExperience(experience.id, "endDate", e.target.value)}
                     disabled={experience.current}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                   />
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -184,7 +184,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                   value={experience.location || ""}
                   onChange={(e) => updateExperience(experience.id, "location", e.target.value)}
                   placeholder="City, State"
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                 />
               </div>
               <div className="space-y-2">
@@ -194,7 +194,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                   onChange={(e) => updateExperience(experience.id, "description", e.target.value)}
                   placeholder="• Describe your key responsibilities and achievements&#10;• Use bullet points for better readability&#10;• Include quantifiable results when possible"
                   rows={4}
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20 resize-none"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
                 />
                 <p className="text-xs text-muted-foreground">
                   {experience.description?.length || 0}/1000 characters
