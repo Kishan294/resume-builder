@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { ResumeEditor } from "@/components/editor/resume-editor";
 import { ResumeHeader } from "@/components/editor/resume-header";
+import { ValidationProvider } from "@/lib/validation-context";
 import { toast } from "sonner";
 import { api } from "@/lib/trpc/client";
 import { useResumeStore } from "@/lib/stores/resume-store";
@@ -239,14 +240,16 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
       <div className="flex h-[calc(100vh-73px)]">
         {/* Editor Panel */}
         <div className="w-1/2 overflow-y-auto border-r bg-white">
-          <ResumeEditor
-            resume={currentResume}
-            onUpdate={updateResume}
-            onSave={saveResume}
-            onValidate={(validateFn) => {
-              validateResumeRef.current = validateFn;
-            }}
-          />
+          <ValidationProvider>
+            <ResumeEditor
+              resume={currentResume}
+              onUpdate={updateResume}
+              onSave={saveResume}
+              onValidate={(validateFn) => {
+                validateResumeRef.current = validateFn;
+              }}
+            />
+          </ValidationProvider>
         </div>
 
         {/* Preview Panel */}

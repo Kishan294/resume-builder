@@ -11,11 +11,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { MonthYearPicker } from "@/components/ui/date-picker";
-import { Plus, Trash2, GraduationCap, Calendar, Award, AlertCircle } from "lucide-react";
+import { ValidatedInput } from "@/components/ui/validated-input";
+import { Plus, Trash2, GraduationCap, Calendar, Award } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { Education } from "@/types/resume";
 import { educationFormSchema, type EducationFormData } from "@/lib/validations";
-import { toast } from "sonner";
 
 interface EducationEditorProps {
   data: Education[];
@@ -155,7 +155,8 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                       <FormItem>
                         <FormLabel>Institution *</FormLabel>
                         <FormControl>
-                          <Input
+                          <ValidatedInput
+                            fieldPath={`education.${index}.institution`}
                             placeholder="University Name"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}

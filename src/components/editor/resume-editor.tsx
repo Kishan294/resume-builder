@@ -10,6 +10,7 @@ import { ProjectsEditor } from "./projects-editor";
 import { User, Briefcase, GraduationCap, Code, FolderOpen } from "lucide-react";
 import { Resume } from "@/types/resume";
 import { validateResumeSection } from "@/lib/validation-utils";
+import { ValidationProvider, useValidation } from "@/lib/validation-context";
 import {
   personalInfoSchema,
   workExperienceFormSchema,
@@ -25,9 +26,10 @@ interface ResumeEditorProps {
   onValidate?: (validateFn: () => boolean) => void;
 }
 
-export function ResumeEditor({ resume, onUpdate, onValidate }: ResumeEditorProps) {
+function ResumeEditorContent({ resume, onUpdate, onValidate }: ResumeEditorProps) {
   const [activeTab, setActiveTab] = useState("personal");
   const [validationErrors, setValidationErrors] = useState<Set<string>>(new Set());
+  const { setFieldError, clearAllErrors } = useValidation();
 
   const updateSection = (section: keyof Resume, data: unknown) => {
     const updatedResume = {
@@ -83,12 +85,16 @@ export function ResumeEditor({ resume, onUpdate, onValidate }: ResumeEditorProps
     let isValid = true;
     const invalidSections: string[] = [];
 
+    // Clear all field errors before validation
+    clearAllErrors();
+
     // Validate personal info
     if (resume.personalInfo) {
       const personalValid = validateResumeSection(
         resume.personalInfo,
         personalInfoSchema,
-        "personal"
+        "personal",
+        setFieldError
       );
       if (!personalValid) {
         isValid = false;
@@ -101,7 +107,8 @@ export function ResumeEditor({ resume, onUpdate, onValidate }: ResumeEditorProps
       const experienceValid = validateResumeSection(
         { experiences: resume.workExperience },
         workExperienceFormSchema,
-        "experience"
+        "experience",
+        setFieldError
       );
       if (!experienceValid) {
         isValid = false;
@@ -114,7 +121,8 @@ export function ResumeEditor({ resume, onUpdate, onValidate }: ResumeEditorProps
       const educationValid = validateResumeSection(
         { educations: resume.education },
         educationFormSchema,
-        "education"
+        "education",
+        setFieldError
       );
       if (!educationValid) {
         isValid = false;
@@ -127,7 +135,8 @@ export function ResumeEditor({ resume, onUpdate, onValidate }: ResumeEditorProps
       const skillsValid = validateResumeSection(
         { skillCategories: resume.skills },
         skillsFormSchema,
-        "skills"
+        "skills",
+        setFieldError
       );
       if (!skillsValid) {
         isValid = false;
@@ -140,7 +149,8 @@ export function ResumeEditor({ resume, onUpdate, onValidate }: ResumeEditorProps
       const projectsValid = validateResumeSection(
         { projects: resume.projects },
         projectsFormSchema,
-        "projects"
+        "projects",
+        setFieldError
       );
       if (!projectsValid) {
         isValid = false;
@@ -276,5 +286,13 @@ export function ResumeEditor({ resume, onUpdate, onValidate }: ResumeEditorProps
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export function ResumeEditor(props: ResumeEditorProps) {
+  return (
+    <ValidationProvider>
+      <ResumeEditorContent {...props} />
+    </ValidationProvider>
   );
 }

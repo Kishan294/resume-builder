@@ -3,13 +3,14 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { ValidatedInput, ValidatedTextarea } from "@/components/ui/validated-input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { PersonalInfo } from "@/types/resume";
 import { User, Mail, Phone, MapPin, Globe } from "lucide-react";
 import { personalInfoSchema, type PersonalInfoData } from "@/lib/validations";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 interface PersonalInfoEditorProps {
   data: PersonalInfo;
@@ -81,7 +82,8 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                     Full Name *
                   </FormLabel>
                   <FormControl>
-                    <Input
+                    <ValidatedInput
+                      fieldPath="personal.fullName"
                       placeholder="John Doe"
                       className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
                       {...field}
@@ -101,7 +103,8 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                     Email *
                   </FormLabel>
                   <FormControl>
-                    <Input
+                    <ValidatedInput
+                      fieldPath="personal.email"
                       type="email"
                       placeholder="john@example.com"
                       className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"

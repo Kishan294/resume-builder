@@ -112,6 +112,27 @@ export function showValidationErrors(errors: ValidationError[]) {
   });
 }
 
+function getFieldPath(error: ValidationError): string {
+  const fieldKey = error.field.toLowerCase().replace(/\s+/g, "");
+
+  // Map field names to actual form field names
+  const fieldMapping: Record<string, string> = {
+    fullname: "fullName",
+    fieldofstudy: "field",
+    categoryname: "category",
+    projectname: "name",
+    projecturl: "url",
+    startdate: "startDate",
+    enddate: "endDate",
+  };
+
+  const mappedField = fieldMapping[fieldKey] || fieldKey;
+
+  return error.index !== undefined
+    ? `${error.section}.${error.index}.${mappedField}`
+    : `${error.section}.${mappedField}`;
+}
+
 export function getValidationSummary(errors: ValidationError[]): string {
   if (errors.length === 0) return "";
 
@@ -151,7 +172,8 @@ function formatSectionName(section: string): string {
 export function validateResumeSection(
   data: any,
   schema: any,
-  sectionName: string
+  sectionName: string,
+  setFieldError?: (fieldPath: string) => void
 ): boolean {
   try {
     schema.parse(data);
@@ -159,6 +181,15 @@ export function validateResumeSection(
   } catch (error) {
     if (error instanceof ZodError) {
       const validationErrors = formatValidationErrors(error, sectionName);
+
+      // Set field errors for highlighting
+      if (setFieldError) {
+        validationErrors.forEach((error) => {
+          const fieldPath = getFieldPath(error);
+          setFieldError(fieldPath);
+        });
+      }
+
       showValidationErrors(validationErrors);
     }
     return false;
