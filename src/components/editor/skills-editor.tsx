@@ -2,7 +2,6 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -12,20 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Code, Plus, X, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
-
-const skillCategorySchema = z.object({
-  id: z.string(),
-  category: z.string()
-    .min(1, "Category name is required")
-    .min(2, "Category name must be at least 2 characters")
-    .max(50, "Category name must be less than 50 characters"),
-  items: z.array(z.string().min(1, "Skill name cannot be empty"))
-    .min(1, "Please add at least one skill to this category"),
-});
-
-const skillsFormSchema = z.object({
-  skillCategories: z.array(skillCategorySchema),
-});
+import { skillsFormSchema, type SkillsFormData } from "@/lib/validations";
 
 interface SkillCategory {
   id: string;
@@ -41,7 +27,7 @@ interface SkillsEditorProps {
 export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
   const [newSkillInputs, setNewSkillInputs] = useState<{ [categoryIndex: string]: string }>({});
 
-  const form = useForm<z.infer<typeof skillsFormSchema>>({
+  const form = useForm<SkillsFormData>({
     resolver: zodResolver(skillsFormSchema),
     defaultValues: {
       skillCategories: data.length > 0 ? data : [],
@@ -207,7 +193,7 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
                         placeholder="Add a skill..."
                         value={newSkillInputs[`category-${index}`] || ""}
                         onChange={(e) => handleSkillInputChange(index, e.target.value)}
-                        onKeyPress={(e) => handleSkillInputKeyPress(index, e)}
+                        onKeyDown={(e) => handleSkillInputKeyPress(index, e)}
                       />
                     </div>
                     <Button

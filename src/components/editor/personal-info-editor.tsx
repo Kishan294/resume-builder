@@ -3,45 +3,13 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { PersonalInfo } from "@/types/resume";
 import { User, Mail, Phone, MapPin, Globe } from "lucide-react";
-
-const personalInfoSchema = z.object({
-  fullName: z.string()
-    .min(1, "Full name is required")
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be less than 100 characters"),
-  email: z.string()
-    .min(1, "Email is required")
-    .email("Please enter a valid email address")
-    .max(100, "Email must be less than 100 characters"),
-  phone: z.string()
-    .optional()
-    .refine((val) => !val || val.length >= 10, "Phone number must be at least 10 digits")
-    .refine((val) => !val || /^[\+]?[1-9][\d]{0,15}$/.test(val.replace(/[\s\-\(\)]/g, "")), "Please enter a valid phone number"),
-  location: z.string()
-    .max(100, "Location must be less than 100 characters")
-    .optional(),
-  website: z.string()
-    .optional()
-    .refine((val) => !val || val === "" || z.string().url().safeParse(val).success, "Please enter a valid URL"),
-  linkedin: z.string()
-    .optional()
-    .refine((val) => !val || val === "" || z.string().url().safeParse(val).success, "Please enter a valid LinkedIn URL")
-    .refine((val) => !val || val === "" || val.includes("linkedin.com"), "Please enter a valid LinkedIn URL"),
-  github: z.string()
-    .optional()
-    .refine((val) => !val || val === "" || z.string().url().safeParse(val).success, "Please enter a valid GitHub URL")
-    .refine((val) => !val || val === "" || val.includes("github.com"), "Please enter a valid GitHub URL"),
-  summary: z.string()
-    .max(500, "Summary must be 500 characters or less")
-    .optional(),
-});
+import { personalInfoSchema, type PersonalInfoData } from "@/lib/validations";
 
 interface PersonalInfoEditorProps {
   data: PersonalInfo;
@@ -49,7 +17,7 @@ interface PersonalInfoEditorProps {
 }
 
 export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) {
-  const form = useForm<z.infer<typeof personalInfoSchema>>({
+  const form = useForm<PersonalInfoData>({
     resolver: zodResolver(personalInfoSchema),
     defaultValues: {
       fullName: data.fullName || "",

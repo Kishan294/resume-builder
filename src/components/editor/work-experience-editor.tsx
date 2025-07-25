@@ -2,7 +2,6 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,50 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Plus, Trash2, Briefcase, Calendar, MapPin } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { WorkExperience } from "@/types/resume";
-
-const workExperienceSchema = z.object({
-  id: z.string(),
-  company: z.string()
-    .min(1, "Company name is required")
-    .min(2, "Company name must be at least 2 characters")
-    .max(100, "Company name must be less than 100 characters"),
-  position: z.string()
-    .min(1, "Position is required")
-    .min(2, "Position must be at least 2 characters")
-    .max(100, "Position must be less than 100 characters"),
-  startDate: z.string()
-    .min(1, "Start date is required")
-    .regex(/^\d{4}-\d{2}$/, "Please select a valid start date"),
-  endDate: z.string()
-    .optional()
-    .refine((val) => !val || /^\d{4}-\d{2}$/.test(val), "Please select a valid end date"),
-  current: z.boolean(),
-  description: z.string()
-    .min(1, "Description is required")
-    .min(10, "Description must be at least 10 characters")
-    .max(1000, "Description must be 1000 characters or less"),
-  location: z.string()
-    .max(100, "Location must be less than 100 characters")
-    .optional(),
-}).refine((data) => {
-  if (!data.current && !data.endDate) {
-    return false;
-  }
-  if (data.current && data.endDate) {
-    return false;
-  }
-  if (data.startDate && data.endDate && data.startDate > data.endDate) {
-    return false;
-  }
-  return true;
-}, {
-  message: "Please provide a valid date range",
-  path: ["endDate"],
-});
-
-const workExperienceFormSchema = z.object({
-  experiences: z.array(workExperienceSchema),
-});
+import { workExperienceFormSchema, type WorkExperienceFormData } from "@/lib/validations";
 
 interface WorkExperienceEditorProps {
   data: WorkExperience[];
@@ -65,7 +21,7 @@ interface WorkExperienceEditorProps {
 }
 
 export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorProps) {
-  const form = useForm<z.infer<typeof workExperienceFormSchema>>({
+  const form = useForm<WorkExperienceFormData>({
     resolver: zodResolver(workExperienceFormSchema),
     defaultValues: {
       experiences: data.length > 0 ? data : [],

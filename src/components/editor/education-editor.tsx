@@ -2,7 +2,6 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,53 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Plus, Trash2, GraduationCap, Calendar, Award } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { Education } from "@/types/resume";
-
-const educationSchema = z.object({
-  id: z.string(),
-  institution: z.string()
-    .min(1, "Institution is required")
-    .min(2, "Institution name must be at least 2 characters")
-    .max(100, "Institution name must be less than 100 characters"),
-  degree: z.string()
-    .min(1, "Degree is required")
-    .min(2, "Degree must be at least 2 characters")
-    .max(100, "Degree must be less than 100 characters"),
-  field: z.string()
-    .min(1, "Field of study is required")
-    .min(2, "Field of study must be at least 2 characters")
-    .max(100, "Field of study must be less than 100 characters"),
-  startDate: z.string()
-    .min(1, "Start date is required")
-    .regex(/^\d{4}-\d{2}$/, "Please select a valid start date"),
-  endDate: z.string()
-    .optional()
-    .refine((val) => !val || /^\d{4}-\d{2}$/.test(val), "Please select a valid end date"),
-  current: z.boolean(),
-  gpa: z.string()
-    .optional()
-    .refine((val) => !val || /^\d+(\.\d+)?\/\d+(\.\d+)?$|^\d+(\.\d+)?$/.test(val), "Please enter a valid GPA (e.g., 3.8 or 3.8/4.0)"),
-  description: z.string()
-    .max(500, "Description must be 500 characters or less")
-    .optional(),
-}).refine((data) => {
-  if (!data.current && !data.endDate) {
-    return false;
-  }
-  if (data.current && data.endDate) {
-    return false;
-  }
-  if (data.startDate && data.endDate && data.startDate > data.endDate) {
-    return false;
-  }
-  return true;
-}, {
-  message: "Please provide a valid date range",
-  path: ["endDate"],
-});
-
-const educationFormSchema = z.object({
-  educations: z.array(educationSchema),
-});
+import { educationFormSchema, type EducationFormData } from "@/lib/validations";
 
 interface EducationEditorProps {
   data: Education[];
@@ -68,7 +21,7 @@ interface EducationEditorProps {
 }
 
 export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
-  const form = useForm<z.infer<typeof educationFormSchema>>({
+  const form = useForm<EducationFormData>({
     resolver: zodResolver(educationFormSchema),
     defaultValues: {
       educations: data.length > 0 ? data : [],

@@ -1,70 +1,10 @@
-import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { resumes } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { v4 as uuidv4 } from "uuid";
-
-const personalInfoSchema = z.object({
-  fullName: z.string(),
-  email: z.string().email("Please enter a valid email address"),
-  phone: z.string(),
-  location: z.string(),
-  website: z.string().optional(),
-  linkedin: z.string().optional(),
-  github: z.string().optional(),
-  summary: z.string().optional(),
-});
-
-const workExperienceSchema = z.object({
-  id: z.string(),
-  company: z.string(),
-  position: z.string(),
-  startDate: z.string(),
-  endDate: z.string().optional(),
-  current: z.boolean(),
-  description: z.string(),
-  location: z.string().optional(),
-});
-
-const educationSchema = z.object({
-  id: z.string(),
-  institution: z.string(),
-  degree: z.string(),
-  field: z.string(),
-  startDate: z.string(),
-  endDate: z.string().optional(),
-  current: z.boolean(),
-  gpa: z.string().optional(),
-  description: z.string().optional(),
-});
-
-const skillSchema = z.object({
-  id: z.string(),
-  category: z.string(),
-  items: z.array(z.string()),
-});
-
-const projectSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
-  technologies: z.array(z.string()),
-  url: z.string().optional(),
-  github: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
-});
-
-const resumeSchema = z.object({
-  title: z.string(),
-  template: z.string().default("modern"),
-  personalInfo: personalInfoSchema.optional(),
-  workExperience: z.array(workExperienceSchema).default([]),
-  education: z.array(educationSchema).default([]),
-  skills: z.array(skillSchema).default([]),
-  projects: z.array(projectSchema).default([]),
-});
+import { z } from "zod";
+import { resumeSchema } from "@/lib/validations";
 
 export const resumeRouter = createTRPCRouter({
   // Get all user's resumes
