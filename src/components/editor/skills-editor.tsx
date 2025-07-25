@@ -2,7 +2,7 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ interface SkillsEditorProps {
 
 export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
   const [newSkillInputs, setNewSkillInputs] = useState<{ [categoryIndex: string]: string }>({});
+  const isInitialMount = useRef(true);
 
   const form = useForm<SkillsFormData>({
     resolver: zodResolver(skillsFormSchema),
@@ -39,22 +40,18 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
     name: "skillCategories",
   });
 
-  // Update form when data changes
+  // Only update form when data changes from parent (not from internal form changes)
   useEffect(() => {
-    form.reset({
-      skillCategories: data.length > 0 ? data : [],
-    });
-  }, [data, form]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
 
-  // Watch form changes and update parent
-  useEffect(() => {
-    const subscription = form.watch((values) => {
-      if (values.skillCategories) {
-        onUpdate(values.skillCategories as SkillCategory[]);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form, onUpdate]);
+    const currentFormData = form.getValues("skillCategories");
+    if (JSON.stringify(currentFormData) !== JSON.stringify(data)) {
+      form.reset({ skillCategories: data });
+    }
+  }, [data, form]);
 
   const addCategory = () => {
     const newCategory: SkillCategory = {
@@ -63,6 +60,7 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
       items: [],
     };
     append(newCategory);
+    setTimeout(() => onUpdate(form.getValues("skillCategories") as SkillCategory[]), 0);
   };
 
   const addSkill = (categoryIndex: number) => {
@@ -78,6 +76,7 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
     }
 
     form.setValue(`skillCategories.${categoryIndex}.items`, [...currentItems, skillName]);
+    onUpdate(form.getValues("skillCategories") as SkillCategory[]);
 
     // Clear the input
     setNewSkillInputs(prev => ({ ...prev, [`category-${categoryIndex}`]: "" }));
@@ -87,6 +86,7 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
     const currentItems = form.getValues(`skillCategories.${categoryIndex}.items`) || [];
     const updatedItems = currentItems.filter((_, index) => index !== skillIndex);
     form.setValue(`skillCategories.${categoryIndex}.items`, updatedItems);
+    onUpdate(form.getValues("skillCategories") as SkillCategory[]);
   };
 
   const handleSkillInputChange = (categoryIndex: number, value: string) => {
@@ -149,6 +149,10 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
                                 className="text-lg font-semibold border-none p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
                                 placeholder="Category name"
                                 {...field}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  onUpdate(form.getValues("skillCategories") as SkillCategory[]);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -159,7 +163,10 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => remove(index)}
+                      onClick={() => {
+                        remove(index);
+                        setTimeout(() => onUpdate(form.getValues("skillCategories") as SkillCategory[]), 0);
+                      }}
                       className="text-red-500 hover:text-red-700 hover:bg-red-50"
                     >
                       <Trash2 className="h-4 w-4" />

@@ -2,7 +2,7 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { MonthYearPicker } from "@/components/ui/date-picker";
 import { Plus, Trash2, GraduationCap, Calendar, Award } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { Education } from "@/types/resume";
@@ -21,6 +22,8 @@ interface EducationEditorProps {
 }
 
 export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
+  const isInitialMount = useRef(true);
+
   const form = useForm<EducationFormData>({
     resolver: zodResolver(educationFormSchema),
     defaultValues: {
@@ -33,22 +36,18 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
     name: "educations",
   });
 
-  // Update form when data changes
+  // Only update form when data changes from parent (not from internal form changes)
   useEffect(() => {
-    form.reset({
-      educations: data.length > 0 ? data : [],
-    });
-  }, [data, form]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
 
-  // Watch form changes and update parent
-  useEffect(() => {
-    const subscription = form.watch((values) => {
-      if (values.educations) {
-        onUpdate(values.educations as Education[]);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form, onUpdate]);
+    const currentFormData = form.getValues("educations");
+    if (JSON.stringify(currentFormData) !== JSON.stringify(data)) {
+      form.reset({ educations: data });
+    }
+  }, [data, form]);
 
   const addEducation = () => {
     const newEducation: Education = {
@@ -159,6 +158,10 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             placeholder="University Name"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              onUpdate(form.getValues("educations") as Education[]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -176,6 +179,10 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             placeholder="Bachelor's, Master's, etc."
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              onUpdate(form.getValues("educations") as Education[]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -193,6 +200,10 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             placeholder="Computer Science, Business, etc."
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              onUpdate(form.getValues("educations") as Education[]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -213,6 +224,10 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             placeholder="3.8/4.0"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              onUpdate(form.getValues("educations") as Education[]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -229,10 +244,15 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                           Start Date *
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
+                          <MonthYearPicker
+                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            onSelect={(date) => {
+                              const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
+                              field.onChange(monthString);
+                              onUpdate(form.getValues("educations") as Education[]);
+                            }}
+                            placeholder="Select start date"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -249,11 +269,16 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                           End Date
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
+                          <MonthYearPicker
+                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            onSelect={(date) => {
+                              const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
+                              field.onChange(monthString);
+                              onUpdate(form.getValues("educations") as Education[]);
+                            }}
+                            placeholder="Select end date"
                             disabled={form.watch(`educations.${index}.current`)}
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                            {...field}
                           />
                         </FormControl>
                         <FormField
@@ -268,6 +293,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                                   if (checked) {
                                     form.setValue(`educations.${index}.endDate`, "");
                                   }
+                                  onUpdate(form.getValues("educations") as Education[]);
                                 }}
                               />
                               <FormLabel className="text-sm">
@@ -293,6 +319,10 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                           rows={3}
                           className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            onUpdate(form.getValues("educations") as Education[]);
+                          }}
                         />
                       </FormControl>
                       <div className="text-xs text-muted-foreground">

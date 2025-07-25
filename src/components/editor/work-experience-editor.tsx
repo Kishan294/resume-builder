@@ -2,7 +2,7 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { MonthYearPicker } from "@/components/ui/date-picker";
 import { Plus, Trash2, Briefcase, Calendar, MapPin } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { WorkExperience } from "@/types/resume";
@@ -21,6 +22,8 @@ interface WorkExperienceEditorProps {
 }
 
 export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorProps) {
+  const isInitialMount = useRef(true);
+
   const form = useForm<WorkExperienceFormData>({
     resolver: zodResolver(workExperienceFormSchema),
     defaultValues: {
@@ -33,22 +36,18 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
     name: "experiences",
   });
 
-  // Update form when data changes
+  // Only update form when data changes from parent (not from internal form changes)
   useEffect(() => {
-    form.reset({
-      experiences: data.length > 0 ? data : [],
-    });
-  }, [data, form]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
 
-  // Watch form changes and update parent
-  useEffect(() => {
-    const subscription = form.watch((values) => {
-      if (values.experiences) {
-        onUpdate(values.experiences as WorkExperience[]);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form, onUpdate]);
+    const currentFormData = form.getValues("experiences");
+    if (JSON.stringify(currentFormData) !== JSON.stringify(data)) {
+      form.reset({ experiences: data });
+    }
+  }, [data, form]);
 
   const addExperience = () => {
     const newExperience: WorkExperience = {
@@ -154,6 +153,10 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                             placeholder="Company Name"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              onUpdate(form.getValues("experiences") as WorkExperience[]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -171,6 +174,10 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                             placeholder="Job Title"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              onUpdate(form.getValues("experiences") as WorkExperience[]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -187,10 +194,15 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                           Start Date *
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
+                          <MonthYearPicker
+                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            onSelect={(date) => {
+                              const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
+                              field.onChange(monthString);
+                              onUpdate(form.getValues("experiences") as WorkExperience[]);
+                            }}
+                            placeholder="Select start date"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -207,11 +219,16 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                           End Date
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
+                          <MonthYearPicker
+                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            onSelect={(date) => {
+                              const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
+                              field.onChange(monthString);
+                              onUpdate(form.getValues("experiences") as WorkExperience[]);
+                            }}
+                            placeholder="Select end date"
                             disabled={form.watch(`experiences.${index}.current`)}
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                            {...field}
                           />
                         </FormControl>
                         <FormField
@@ -226,6 +243,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                                   if (checked) {
                                     form.setValue(`experiences.${index}.endDate`, "");
                                   }
+                                  onUpdate(form.getValues("experiences") as WorkExperience[]);
                                 }}
                               />
                               <FormLabel className="text-sm">
@@ -253,6 +271,10 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                           placeholder="City, State"
                           className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            onUpdate(form.getValues("experiences") as WorkExperience[]);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -271,6 +293,10 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                           rows={4}
                           className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            onUpdate(form.getValues("experiences") as WorkExperience[]);
+                          }}
                         />
                       </FormControl>
                       <div className="text-xs text-muted-foreground">

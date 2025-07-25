@@ -2,13 +2,14 @@
 
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { MonthYearPicker } from "@/components/ui/date-picker";
 import { Plus, Trash2, X, FolderOpen, Calendar, ExternalLink } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { Project } from "@/types/resume";
@@ -22,6 +23,7 @@ interface ProjectsEditorProps {
 
 export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
   const [newTechInputs, setNewTechInputs] = useState<{ [key: string]: string }>({});
+  const isInitialMount = useRef(true);
 
   const form = useForm<ProjectsFormData>({
     resolver: zodResolver(projectsFormSchema),
@@ -35,22 +37,18 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
     name: "projects",
   });
 
-  // Update form when data changes
+  // Only update form when data changes from parent (not from internal form changes)
   useEffect(() => {
-    form.reset({
-      projects: data.length > 0 ? data : [],
-    });
-  }, [data, form]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
 
-  // Watch form changes and update parent
-  useEffect(() => {
-    const subscription = form.watch((values) => {
-      if (values.projects) {
-        onUpdate(values.projects as Project[]);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form, onUpdate]);
+    const currentFormData = form.getValues("projects");
+    if (JSON.stringify(currentFormData) !== JSON.stringify(data)) {
+      form.reset({ projects: data });
+    }
+  }, [data, form]);
 
   const addProject = () => {
     const newProject: Project = {
@@ -61,6 +59,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
       startDate: "",
     };
     append(newProject);
+    setTimeout(() => onUpdate(form.getValues("projects") as Project[]), 0);
   };
 
   const addTechnology = (projectIndex: number) => {
@@ -76,6 +75,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
     }
 
     form.setValue(`projects.${projectIndex}.technologies`, [...currentTechnologies, techText]);
+    onUpdate(form.getValues("projects") as Project[]);
     setNewTechInputs({ ...newTechInputs, [`project-${projectIndex}`]: "" });
   };
 
@@ -83,6 +83,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
     const currentTechnologies = form.getValues(`projects.${projectIndex}.technologies`) || [];
     const updatedTechnologies = currentTechnologies.filter((_, index) => index !== techIndex);
     form.setValue(`projects.${projectIndex}.technologies`, updatedTechnologies);
+    onUpdate(form.getValues("projects") as Project[]);
   };
 
   const handleTechInputChange = (projectIndex: number, value: string) => {
@@ -187,7 +188,10 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => remove(index)}
+                    onClick={() => {
+                      remove(index);
+                      setTimeout(() => onUpdate(form.getValues("projects") as Project[]), 0);
+                    }}
                     className="text-destructive hover:text-destructive/80"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -206,6 +210,10 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                           placeholder="My Awesome Project"
                           className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            onUpdate(form.getValues("projects") as Project[]);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -225,6 +233,10 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                           rows={3}
                           className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            onUpdate(form.getValues("projects") as Project[]);
+                          }}
                         />
                       </FormControl>
                       <div className="text-xs text-muted-foreground">
@@ -250,6 +262,10 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                             placeholder="https://myproject.com"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              onUpdate(form.getValues("projects") as Project[]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -272,6 +288,10 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                             placeholder="https://github.com/username/project"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              onUpdate(form.getValues("projects") as Project[]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -288,10 +308,15 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                           Start Date
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
+                          <MonthYearPicker
+                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            onSelect={(date) => {
+                              const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
+                              field.onChange(monthString);
+                              onUpdate(form.getValues("projects") as Project[]);
+                            }}
+                            placeholder="Select start date"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -308,10 +333,15 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                           End Date
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            type="month"
+                          <MonthYearPicker
+                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            onSelect={(date) => {
+                              const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
+                              field.onChange(monthString);
+                              onUpdate(form.getValues("projects") as Project[]);
+                            }}
+                            placeholder="Select end date"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
