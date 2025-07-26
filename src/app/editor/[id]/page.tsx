@@ -7,15 +7,16 @@ import { ValidationProvider } from "@/lib/validation-context";
 import { toast } from "sonner";
 import { api } from "@/lib/trpc/client";
 import { useResumeStore } from "@/lib/stores/resume-store";
-import { triggerBrowserPrint } from "@/utils/pdf-generator";
+// import { triggerBrowserPrint } from "@/utils/pdf-generator"; // Removed - using mobile print hook instead
 import { PDFDebug } from "@/components/debug/pdf-debug";
 import { PrintInstructions } from "@/components/editor/print-instructions";
 import { PrintPreview } from "@/components/editor/print-preview";
 import { PrintReminder } from "@/components/editor/print-reminder";
+import { useMobilePrint } from "@/hooks/use-mobile-print";
+import { MobilePrintDebug } from "@/components/debug/mobile-print-debug";
 
 export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
   const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
 
   const {
@@ -25,6 +26,12 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     setHasUnsavedChanges,
     resetState
   } = useResumeStore();
+
+  // Use mobile print hook
+  const { isDownloading, handleDownload } = useMobilePrint({
+    elementId: 'resume-preview',
+    filename: `${currentResume?.title || 'resume'}.pdf`
+  });
 
   useEffect(() => {
     const resolveParams = async () => {
@@ -105,20 +112,15 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     });
   };
 
-  const handlePrint = useCallback(() => {
+  const handlePrint = useCallback(async () => {
     if (!currentResume) return;
 
-    setIsDownloading(true);
     try {
-      triggerBrowserPrint();
-      toast.success("Print dialog opened! Choose 'Save as PDF' to download or print directly.");
+      await handleDownload();
     } catch (error) {
       console.error("Print failed:", error);
-      toast.error("Failed to open print dialog. Please try using Ctrl+P (Cmd+P on Mac) and select 'Save as PDF'.");
-    } finally {
-      setIsDownloading(false);
     }
-  }, [currentResume]);
+  }, [currentResume, handleDownload]);
 
   // Handle auto-download if coming from dashboard
   useEffect(() => {
@@ -233,9 +235,12 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
           <div className="max-w-[8.5in] mx-auto space-y-4">
             <PrintPreview resume={currentResume} />
 
-            {/* Debug component - remove in production */}
+            {/* Debug components - remove in production */}
             {process.env.NODE_ENV === 'development' && (
-              <PDFDebug elementId="resume-preview" />
+              <>
+                <PDFDebug elementId="resume-preview" />
+                <MobilePrintDebug elementId="resume-preview" />
+              </>
             )}
           </div>
         </div>

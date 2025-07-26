@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ import {
   Share2,
   Loader2,
   Printer,
+  Download,
   MoreVertical,
   Edit2,
   Trash2
@@ -61,6 +62,23 @@ export function ResumeHeader({
   const [newTitle, setNewTitle] = useState(resume.title || "");
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const mobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+      const tablet = /ipad|android(?!.*mobile)/i.test(userAgent);
+      const touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+      setIsMobile(mobile || tablet || (touch && window.innerWidth <= 1024));
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const deleteResumeMutation = api.resume.delete.useMutation({
     onSuccess: () => {
@@ -214,10 +232,12 @@ export function ResumeHeader({
           >
             {isDownloading ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : isMobile ? (
+              <Download className="h-4 w-4 mr-2" />
             ) : (
               <Printer className="h-4 w-4 mr-2" />
             )}
-            Print / Save PDF
+            {isMobile ? "Download PDF" : "Print / Save PDF"}
           </Button>
 
 
@@ -242,10 +262,12 @@ export function ResumeHeader({
                 <DropdownMenuItem onClick={onDownload} disabled={isDownloading}>
                   {isDownloading ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : isMobile ? (
+                    <Download className="h-4 w-4 mr-2" />
                   ) : (
                     <Printer className="h-4 w-4 mr-2" />
                   )}
-                  Print / Save PDF
+                  {isMobile ? "Download PDF" : "Print / Save PDF"}
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />

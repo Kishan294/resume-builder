@@ -1,31 +1,177 @@
-// Simplified PDF generation - now using only browser print functionality
+// Enhanced PDF generation with mobile/tablet support
 
-// Legacy functions removed - now using only browser print functionality
+// Detect if user is on mobile/tablet
+const isMobileDevice = () => {
+  if (typeof window === "undefined") return false;
 
-// Simple print trigger that ensures content is visible
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isMobile =
+    /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+      userAgent
+    );
+  const isTablet = /ipad|android(?!.*mobile)/i.test(userAgent);
+  const isTouchDevice =
+    "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
+  return isMobile || isTablet || (isTouchDevice && window.innerWidth <= 1024);
+};
+
+// Enhanced print trigger with mobile/tablet support
 export const triggerBrowserPrint = () => {
   try {
-    // Show instructions to user about disabling headers/footers
-    const shouldContinue = window.confirm(
-      "Print Instructions:\n\n" +
-        "1. In the print dialog, click 'More settings'\n" +
-        "2. IMPORTANT: Uncheck 'Headers and footers'\n" +
-        "3. Set margins to 'Minimum'\n" +
-        "4. Choose 'Save as PDF' to download or select printer to print\n\n" +
-        "Click OK to open print dialog"
-    );
+    const isMobile = isMobileDevice();
 
-    if (!shouldContinue) {
-      return false;
+    if (isMobile) {
+      // Mobile-specific handling
+      return handleMobilePrint();
+    } else {
+      // Desktop handling with confirmation
+      const shouldContinue = window.confirm(
+        "Print Instructions:\n\n" +
+          "1. In the print dialog, click 'More settings'\n" +
+          "2. IMPORTANT: Uncheck 'Headers and footers'\n" +
+          "3. Set margins to 'Minimum'\n" +
+          "4. Choose 'Save as PDF' to download or select printer to print\n\n" +
+          "Click OK to open print dialog"
+      );
+
+      if (!shouldContinue) {
+        return false;
+      }
     }
 
-    // Find the resume preview element
+    return openPrintWindow();
+  } catch (error) {
+    console.error("Error triggering browser print:", error);
+    throw error;
+  }
+};
+
+// Mobile-specific print handling
+const handleMobilePrint = () => {
+  try {
+    // On mobile, we'll use a different approach
     const resumeElement = document.getElementById("resume-preview");
     if (!resumeElement) {
       throw new Error("Resume preview not found");
     }
 
-    // Get the actual template content from the nested div
+    // For mobile, we'll try to use the Web Share API if available
+    if (
+      typeof navigator !== "undefined" &&
+      "share" in navigator &&
+      "canShare" in navigator
+    ) {
+      // Try to generate a blob and share it
+      return generateAndSharePDF();
+    } else {
+      // Fallback to opening print window with mobile-optimized styles
+      return openMobilePrintWindow();
+    }
+  } catch (error) {
+    console.error("Mobile print failed:", error);
+    // Fallback to regular print window
+    return openPrintWindow();
+  }
+};
+
+// Generate PDF and handle mobile download/share
+const generateAndSharePDF = async () => {
+  try {
+    console.log("Starting mobile PDF generation...");
+
+    // Import the simple PDF generator for mobile
+    const { generateSimplePDF } = await import("./simple-pdf-generator");
+    const success = await generateSimplePDF("resume-preview", "resume.pdf");
+
+    if (success) {
+      console.log("PDF generated successfully on mobile");
+      return true;
+    } else {
+      throw new Error("PDF generation returned false");
+    }
+  } catch (error) {
+    console.error("PDF generation failed:", error);
+    // Fallback to print window
+    return openMobilePrintWindow();
+  }
+};
+
+// Mobile-optimized print window
+const openMobilePrintWindow = () => {
+  try {
+    const resumeElement = document.getElementById("resume-preview");
+    if (!resumeElement) {
+      throw new Error("Resume preview not found");
+    }
+
+    const templateContainer = resumeElement.querySelector("div");
+    if (!templateContainer) {
+      throw new Error("Template container not found");
+    }
+
+    // For mobile, open in same window with print-friendly styles
+    const resumeContent = templateContainer.innerHTML;
+
+    // Replace page content with print-friendly version
+    document.body.innerHTML = `
+      <div style="
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.4;
+        color: #000;
+        background: #fff;
+        padding: 20px;
+        max-width: 100%;
+        margin: 0;
+      ">
+        <div style="margin-bottom: 20px; text-align: center; border-bottom: 2px solid #f97316; padding-bottom: 10px;">
+          <button onclick="window.print()" style="
+            background: #f97316;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+          ">Print Resume</button>
+          <button onclick="history.back()" style="
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+          ">Back to Editor</button>
+        </div>
+        <div style="background: white; padding: 0;">
+          ${resumeContent}
+        </div>
+      </div>
+      <style>
+        @media print {
+          button { display: none !important; }
+          body { padding: 0 !important; margin: 0 !important; }
+        }
+      </style>
+    `;
+
+    return true;
+  } catch (error) {
+    console.error("Mobile print window failed:", error);
+    throw error;
+  }
+};
+
+// Regular print window for desktop
+const openPrintWindow = () => {
+  try {
+    const resumeElement = document.getElementById("resume-preview");
+    if (!resumeElement) {
+      throw new Error("Resume preview not found");
+    }
+
     const templateContainer = resumeElement.querySelector("div");
     if (!templateContainer) {
       throw new Error("Template container not found");
@@ -195,7 +341,7 @@ export const triggerBrowserPrint = () => {
     printWindow.document.close();
     return true;
   } catch (error) {
-    console.error("Error triggering browser print:", error);
+    console.error("Error opening print window:", error);
     throw error;
   }
 };

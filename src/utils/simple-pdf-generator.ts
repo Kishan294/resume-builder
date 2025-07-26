@@ -300,24 +300,66 @@ export const generateSimplePDF = async (
   filename: string = "resume.pdf"
 ): Promise<boolean> => {
   try {
+    console.log("Starting PDF generation for element:", elementId);
+
     const element = document.getElementById(elementId);
     if (!element) {
       throw new Error(`Element with ID "${elementId}" not found`);
     }
 
-    // Wait for any images or fonts to load
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log("Element found, dimensions:", {
+      width: element.scrollWidth,
+      height: element.scrollHeight,
+      offsetWidth: element.offsetWidth,
+      offsetHeight: element.offsetHeight,
+    });
 
-    // Create canvas with optimized settings
+    // Detect mobile device
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isMobile =
+      /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+        userAgent
+      );
+    const isTablet = /ipad|android(?!.*mobile)/i.test(userAgent);
+    const isTouchDevice =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    const isMobileDevice =
+      isMobile || isTablet || (isTouchDevice && window.innerWidth <= 1024);
+
+    console.log("Device detection:", {
+      isMobile,
+      isTablet,
+      isTouchDevice,
+      isMobileDevice,
+      userAgent,
+    });
+
+    // Wait for any images or fonts to load - longer on mobile
+    console.log("Waiting for resources to load...");
+    await new Promise((resolve) =>
+      setTimeout(resolve, isMobileDevice ? 3000 : 1500)
+    );
+
+    // Create canvas with mobile-optimized settings
+    console.log("Starting html2canvas conversion...");
     const canvas = await html2canvas(element, {
-      scale: 1.5,
+      scale: isMobileDevice ? 1.0 : 1.5, // Even lower scale on mobile for better performance
       useCORS: true,
       allowTaint: false,
       backgroundColor: "#ffffff",
-      logging: false,
+      logging: isMobileDevice, // Enable logging on mobile for debugging
       width: element.scrollWidth,
       height: element.scrollHeight,
+      // Mobile-specific optimizations
+      ...(isMobileDevice && {
+        foreignObjectRendering: false, // Disable for better mobile compatibility
+        imageTimeout: 20000, // Longer timeout on mobile
+        removeContainer: true,
+        scrollX: 0,
+        scrollY: 0,
+      }),
       onclone: (clonedDoc) => {
+        console.log("Cloning document for canvas...");
         // Add base styles to cloned document
         addBaseStyles(clonedDoc);
 
@@ -328,6 +370,11 @@ export const generateSimplePDF = async (
           clonedElement.parentNode?.replaceChild(cleanElement, clonedElement);
         }
       },
+    });
+
+    console.log("Canvas created successfully:", {
+      width: canvas.width,
+      height: canvas.height,
     });
 
     const imgData = canvas.toDataURL("image/png", 1.0);
@@ -360,9 +407,70 @@ export const generateSimplePDF = async (
     // Add image to PDF
     pdf.addImage(imgData, "PNG", xOffset, yOffset, imgWidth, imgHeight);
 
-    // Save the PDF
-    pdf.save(filename);
-    return true;
+    console.log("PDF created, attempting to save...");
+
+    // Save the PDF with mobile-specific handling
+    if (isMobileDevice) {
+      // On mobile, try multiple approaches
+      try {
+        console.log("Attempting mobile PDF save...");
+
+        // First try: Direct save
+        pdf.save(filename);
+        console.log("Direct save attempted");
+
+        return true;
+      } catch (error) {
+        console.error("Direct mobile PDF save failed:", error);
+
+        try {
+          // Second try: Create blob and trigger download
+          console.log("Trying blob download fallback...");
+          const blob = pdf.output("blob");
+          const url = URL.createObjectURL(blob);
+
+          // Create download link
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          a.style.display = "none";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+
+          // Clean up
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+          console.log("Blob download attempted");
+          return true;
+        } catch (blobError) {
+          console.error("Blob download failed:", blobError);
+
+          // Third try: Open in new window
+          try {
+            console.log("Trying new window fallback...");
+            const blob = pdf.output("blob");
+            const url = URL.createObjectURL(blob);
+            const newWindow = window.open(url, "_blank");
+
+            if (newWindow) {
+              console.log("New window opened successfully");
+              return true;
+            } else {
+              throw new Error("Failed to open new window");
+            }
+          } catch (windowError) {
+            console.error("New window fallback failed:", windowError);
+            throw windowError;
+          }
+        }
+      }
+    } else {
+      // Desktop handling
+      console.log("Desktop PDF save...");
+      pdf.save(filename);
+      return true;
+    }
   } catch (error) {
     console.error("Error generating PDF:", error);
     throw new Error(
