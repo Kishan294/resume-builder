@@ -1,4 +1,4 @@
-# Resume Builder
+# ProfilCraft
 
 A modern, full-stack resume builder application built with Next.js, better-auth, and PostgreSQL.
 
@@ -28,57 +28,62 @@ A modern, full-stack resume builder application built with Next.js, better-auth,
 
 - Node.js 18+
 - PostgreSQL database
-- pnpm package manager
+- npm or pnpm package manager
 
-### Installation
+### Quick Start
 
 1. **Clone the repository**
 
    ```bash
    git clone <repository-url>
-   cd resume-builder
+   cd profilcraft
    ```
 
 2. **Install dependencies**
 
    ```bash
+   npm install
+   # or
    pnpm install
    ```
 
 3. **Set up environment variables**
 
-   Copy `.env.local` and update with your values:
-
    ```bash
-   DATABASE_URL="postgresql://username:password@localhost:5432/resume_builder"
-   BETTER_AUTH_SECRET="your-secret-key-here"
-   BETTER_AUTH_URL="http://localhost:3000"
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+   cp .env.example .env
    ```
+
+   Update `.env` with your values:
+
+   - `DATABASE_URL`: Your PostgreSQL connection string
+   - `BETTER_AUTH_SECRET`: Generate a secure random string
+   - `BETTER_AUTH_URL`: Your domain URL (http://localhost:3000 for development)
+   - `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET`: Google OAuth credentials (optional)
 
 4. **Set up the database**
 
    ```bash
-   # Generate migration files
-   pnpm db:generate
-
-   # Run migrations
-   pnpm db:migrate
+   # Generate and run migrations
+   npm run db:generate
+   npm run db:migrate
 
    # Or push schema directly (for development)
-   pnpm db:push
+   npm run db:push
    ```
 
 5. **Start the development server**
 
    ```bash
-   pnpm dev
+   npm run dev
    ```
 
 6. **Open your browser**
 
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+### Production Deployment
+
+For production deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ## Project Structure
 
@@ -114,13 +119,19 @@ The application uses the following main tables:
 
 ## Available Scripts
 
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm start` - Start production server
-- `pnpm lint` - Run ESLint
-- `pnpm db:generate` - Generate Drizzle migrations
-- `pnpm db:migrate` - Run database migrations
-- `pnpm db:push` - Push schema changes to database
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm run build:prod` - Build for production with optimizations
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Run ESLint with auto-fix
+- `npm run type-check` - Run TypeScript type checking
+- `npm run build:analyze` - Build with bundle analyzer
+- `npm run db:generate` - Generate Drizzle migrations
+- `npm run db:migrate` - Run database migrations
+- `npm run db:push` - Push schema changes to database
+- `npm run db:studio` - Open Drizzle Studio
+- `npm run clean` - Clean build cache
 
 ## Authentication Setup
 

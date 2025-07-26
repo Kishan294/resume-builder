@@ -38,7 +38,7 @@ export function AppHeader({ variant = "landing" }: AppHeaderProps) {
               <FileText className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Resume Builder
+              ProfilCraft
             </h1>
           </Link>
 

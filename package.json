@@ -1,15 +1,21 @@
 {
-  "name": "resume-builder",
+  "name": "profilcraft",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:prod": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "build:analyze": "ANALYZE=true npm run build",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "clean": "rm -rf .next && rm -rf node_modules/.cache"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.10.0",
@@ -49,7 +55,6 @@
     "react-day-picker": "^9.8.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.60.0",
-    "react-to-print": "^3.1.1",
     "sonner": "^2.0.6",
     "superjson": "^2.2.2",
     "tailwind-merge": "^3.3.1",

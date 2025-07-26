@@ -81,7 +81,7 @@ export default function Home() {
               Features
             </Badge>
             <h3 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Why Choose Our Resume Builder?
+              Why Choose ProfilCraft?
             </h3>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
               Everything you need to create a professional resume that gets you hired
@@ -191,7 +191,7 @@ export default function Home() {
               <div className="p-1.5 rounded-lg bg-gradient-to-r from-orange-500 to-red-500">
                 <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              <span className="text-xl sm:text-2xl font-bold">Resume Builder</span>
+              <span className="text-xl sm:text-2xl font-bold">ProfilCraft</span>
             </div>
             <p className="text-gray-400 max-w-md mx-auto text-sm sm:text-base px-4">
               Build professional resumes that get you hired. Free, fast, and ATS-optimized.
@@ -200,7 +200,7 @@ export default function Home() {
 
           <div className="border-t border-gray-800 pt-6 sm:pt-8 text-center">
             <p className="text-gray-400 text-xs sm:text-sm px-4">
-              © 2024 Resume Builder. All rights reserved. Made with ❤️ for job seekers everywhere.
+              © 2024 ProfilCraft. All rights reserved. Made with ❤️ for job seekers everywhere.
             </p>
           </div>
         </div>

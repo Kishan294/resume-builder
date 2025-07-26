@@ -8,12 +8,10 @@ import { toast } from "sonner";
 import { api } from "@/lib/trpc/client";
 import { useResumeStore } from "@/lib/stores/resume-store";
 // import { triggerBrowserPrint } from "@/utils/pdf-generator"; // Removed - using mobile print hook instead
-import { PDFDebug } from "@/components/debug/pdf-debug";
 import { PrintInstructions } from "@/components/editor/print-instructions";
 import { PrintPreview } from "@/components/editor/print-preview";
 import { PrintReminder } from "@/components/editor/print-reminder";
 import { useMobilePrint } from "@/hooks/use-mobile-print";
-import { MobilePrintDebug } from "@/components/debug/mobile-print-debug";
 
 export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
   const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
@@ -213,13 +211,7 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
           <div className="max-w-[8.5in] mx-auto space-y-4">
             <PrintPreview resume={currentResume} />
 
-            {/* Debug components - remove in production */}
-            {process.env.NODE_ENV === 'development' && (
-              <>
-                <PDFDebug elementId="resume-preview" />
-                <MobilePrintDebug elementId="resume-preview" />
-              </>
-            )}
+
           </div>
         </div>
       </div>

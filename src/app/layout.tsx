@@ -17,8 +17,45 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Resume Builder",
-  description: "Create professional resumes with ease",
+  title: {
+    default: "ProfilCraft - Professional Resume Builder",
+    template: "%s | ProfilCraft"
+  },
+  description: "Create professional resumes with ease using our modern resume builder. Choose from multiple templates, export to PDF, and share your resume online.",
+  keywords: ["resume builder", "CV maker", "professional resume", "job application", "career"],
+  authors: [{ name: "ProfilCraft Team" }],
+  creator: "ProfilCraft",
+  publisher: "ProfilCraft",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000'),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000',
+    title: "ProfilCraft - Professional Resume Builder",
+    description: "Create professional resumes with ease using our modern resume builder.",
+    siteName: "ProfilCraft",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ProfilCraft - Professional Resume Builder",
+    description: "Create professional resumes with ease using our modern resume builder.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({
