@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TRPCProvider } from "@/lib/providers/trpc-provider";
+import { ErrorBoundary } from "@/components/error/error-boundary";
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 
@@ -30,11 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <TRPCProvider>
-          {children}
-          <Toaster />
-          <Analytics />
-        </TRPCProvider>
+        <ErrorBoundary>
+          <TRPCProvider>
+            {children}
+            <Toaster />
+            <Analytics />
+          </TRPCProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

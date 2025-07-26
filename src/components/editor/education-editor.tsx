@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { MonthYearPicker } from "@/components/ui/date-picker";
-import { ValidatedInput } from "@/components/ui/validated-input";
+
 import { Plus, Trash2, GraduationCap, Calendar, Award } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { Education } from "@/types/resume";
@@ -112,29 +112,29 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                   <div className="flex-1">
                     <CardTitle className="text-base flex items-center gap-2">
                       Education {index + 1}
-                      {form.watch(`educations.${index}.current`) && (
+                      {field.current && (
                         <Badge variant="secondary" className="text-xs">
                           Current
                         </Badge>
                       )}
                     </CardTitle>
-                    {form.watch(`educations.${index}.degree`) && form.watch(`educations.${index}.field`) && (
+                    {field.degree && field.field && (
                       <p className="text-sm text-muted-foreground mt-1">
-                        {form.watch(`educations.${index}.degree`)} in {form.watch(`educations.${index}.field`)}
+                        {field.degree} in {field.field}
                       </p>
                     )}
-                    {form.watch(`educations.${index}.institution`) && (
+                    {field.institution && (
                       <p className="text-sm text-muted-foreground">
-                        {form.watch(`educations.${index}.institution`)}
+                        {field.institution}
                       </p>
                     )}
-                    {form.watch(`educations.${index}.startDate`) && (
+                    {field.startDate && (
                       <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
                         {formatDateRange(
-                          form.watch(`educations.${index}.startDate`) || "",
-                          form.watch(`educations.${index}.endDate`) || "",
-                          form.watch(`educations.${index}.current`)
+                          field.startDate || "",
+                          field.endDate || "",
+                          field.current
                         )}
                       </div>
                     )}
@@ -164,8 +164,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                       <FormItem>
                         <FormLabel>Institution *</FormLabel>
                         <FormControl>
-                          <ValidatedInput
-                            fieldPath={`education.${index}.institution`}
+                          <Input
                             placeholder="University Name"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
@@ -288,7 +287,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                               onUpdate(form.getValues("educations") as Education[]);
                             }}
                             placeholder="Select end date"
-                            disabled={form.watch(`educations.${index}.current`)}
+                            disabled={form.getValues(`educations.${index}.current`)}
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                           />
                         </FormControl>

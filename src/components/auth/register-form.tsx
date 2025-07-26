@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormErrorBoundary } from "@/components/error/form-error-boundary";
 import { toast } from "sonner";
 import { Loader2, User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { signUp, signIn } from "@/lib/auth-client";
 import { registerSchema, type RegisterFormData } from "@/lib/validations";
 
-export function RegisterForm() {
+function RegisterFormContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -298,5 +299,13 @@ export function RegisterForm() {
         </Button>
       </CardContent>
     </Card>
+  );
+}
+
+export function RegisterForm() {
+  return (
+    <FormErrorBoundary>
+      <RegisterFormContent />
+    </FormErrorBoundary>
   );
 }

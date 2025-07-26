@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ValidatedInput } from "@/components/ui/validated-input";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { PersonalInfo } from "@/types/resume";
@@ -46,14 +46,11 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
     });
   }, [data, form]);
 
-  // Watch form changes and update parent
-  useEffect(() => {
-    const subscription = form.watch(async (values) => {
-      // Trigger validation
-      await form.trigger();
-      onUpdate(values as PersonalInfo);
-    });
-    return () => subscription.unsubscribe();
+  // Handle form changes without excessive re-renders
+  const handleFormChange = useCallback((field: string, value: string) => {
+    const currentValues = form.getValues();
+    const updatedValues = { ...currentValues, [field]: value };
+    onUpdate(updatedValues as PersonalInfo);
   }, [form, onUpdate]);
 
   return (
@@ -82,11 +79,14 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                     Full Name *
                   </FormLabel>
                   <FormControl>
-                    <ValidatedInput
-                      fieldPath="personal.fullName"
+                    <Input
                       placeholder="John Doe"
                       className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleFormChange('fullName', e.target.value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -103,12 +103,15 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                     Email *
                   </FormLabel>
                   <FormControl>
-                    <ValidatedInput
-                      fieldPath="personal.email"
+                    <Input
                       type="email"
                       placeholder="john@example.com"
                       className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
                       {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleFormChange('email', e.target.value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

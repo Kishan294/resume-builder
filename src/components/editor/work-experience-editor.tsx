@@ -111,24 +111,24 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                   <div className="flex-1">
                     <CardTitle className="text-base flex items-center gap-2">
                       Experience {index + 1}
-                      {form.watch(`experiences.${index}.current`) && (
+                      {field.current && (
                         <Badge variant="secondary" className="text-xs">
                           Current
                         </Badge>
                       )}
                     </CardTitle>
-                    {form.watch(`experiences.${index}.company`) && form.watch(`experiences.${index}.position`) && (
+                    {field.company && field.position && (
                       <p className="text-sm text-muted-foreground mt-1">
-                        {form.watch(`experiences.${index}.position`)} at {form.watch(`experiences.${index}.company`)}
+                        {field.position} at {field.company}
                       </p>
                     )}
-                    {form.watch(`experiences.${index}.startDate`) && (
+                    {field.startDate && (
                       <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
                         {formatDateRange(
-                          form.watch(`experiences.${index}.startDate`) || "",
-                          form.watch(`experiences.${index}.endDate`) || "",
-                          form.watch(`experiences.${index}.current`)
+                          field.startDate || "",
+                          field.endDate || "",
+                          field.current
                         )}
                       </div>
                     )}
@@ -236,7 +236,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                               onUpdate(form.getValues("experiences") as WorkExperience[]);
                             }}
                             placeholder="Select end date"
-                            disabled={form.watch(`experiences.${index}.current`)}
+                            disabled={form.getValues(`experiences.${index}.current`)}
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                           />
                         </FormControl>

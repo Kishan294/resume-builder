@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ResumeEditor } from "@/components/editor/resume-editor";
 import { ResumeHeader } from "@/components/editor/resume-header";
-import { ValidationProvider } from "@/lib/validation-context";
+
 import { toast } from "sonner";
 import { api } from "@/lib/trpc/client";
 import { useResumeStore } from "@/lib/stores/resume-store";
@@ -78,25 +78,8 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     },
   });
 
-  const validateResumeRef = useRef<(() => boolean) | null>(null);
-
   const saveResume = async () => {
     if (!currentResume || !resolvedParams) return;
-
-    // Validate resume before saving
-    if (validateResumeRef.current && !validateResumeRef.current()) {
-      toast.error("Cannot save resume - validation errors found", {
-        description: "Please check the highlighted sections and fix all required fields before saving.",
-        duration: 8000,
-        action: {
-          label: "Review Errors",
-          onClick: () => {
-            // The validation function already switches to the first invalid tab
-          }
-        }
-      });
-      return;
-    }
 
     updateResumeMutation.mutate({
       id: resolvedParams.id,
@@ -218,16 +201,11 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
       <div className="flex flex-col lg:flex-row h-[calc(100vh-73px)]">
         {/* Editor Panel */}
         <div className="w-full lg:w-1/2 overflow-y-auto border-r lg:border-r border-b lg:border-b-0 bg-white">
-          <ValidationProvider>
-            <ResumeEditor
-              resume={currentResume}
-              onUpdate={updateResume}
-              onSave={saveResume}
-              onValidate={(validateFn) => {
-                validateResumeRef.current = validateFn;
-              }}
-            />
-          </ValidationProvider>
+          <ResumeEditor
+            resume={currentResume}
+            onUpdate={updateResume}
+            onSave={saveResume}
+          />
         </div>
 
         {/* Preview Panel */}

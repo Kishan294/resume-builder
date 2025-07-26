@@ -2,7 +2,23 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+function Input({ className, type, onClick, onFocus, ...props }: React.ComponentProps<"input">) {
+  const handleClick = React.useCallback((e: React.MouseEvent<HTMLInputElement>) => {
+    try {
+      onClick?.(e);
+    } catch (error) {
+      console.error("Input click error:", error);
+    }
+  }, [onClick]);
+
+  const handleFocus = React.useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    try {
+      onFocus?.(e);
+    } catch (error) {
+      console.error("Input focus error:", error);
+    }
+  }, [onFocus]);
+
   return (
     <input
       type={type}
@@ -13,6 +29,8 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}
+      onClick={handleClick}
+      onFocus={handleFocus}
       {...props}
     />
   )

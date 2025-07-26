@@ -176,7 +176,7 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
                 <CardContent className="pt-0">
                   {/* Skills List */}
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {form.watch(`skillCategories.${index}.items`)?.map((skill: string, skillIndex: number) => (
+                    {field.items?.map((skill: string, skillIndex: number) => (
                       <Badge
                         key={skillIndex}
                         variant="secondary"

@@ -144,24 +144,24 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                     <CardTitle className="text-base flex items-center gap-2">
                       Project {index + 1}
                     </CardTitle>
-                    {form.watch(`projects.${index}.name`) && (
+                    {field.name && (
                       <p className="text-sm text-muted-foreground mt-1 font-medium">
-                        {form.watch(`projects.${index}.name`)}
+                        {field.name}
                       </p>
                     )}
-                    {form.watch(`projects.${index}.startDate`) && (
+                    {field.startDate && (
                       <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
                         {formatDateRange(
-                          form.watch(`projects.${index}.startDate`) || "",
-                          form.watch(`projects.${index}.endDate`) || ""
+                          field.startDate || "",
+                          field.endDate || ""
                         )}
                       </div>
                     )}
                     <div className="flex items-center gap-2 mt-2">
-                      {form.watch(`projects.${index}.url`) && (
+                      {field.url && (
                         <a
-                          href={form.watch(`projects.${index}.url`)}
+                          href={field.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-xs text-orange-500 hover:underline flex items-center gap-1"
@@ -170,9 +170,9 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                           Live Demo
                         </a>
                       )}
-                      {form.watch(`projects.${index}.github`) && (
+                      {field.github && (
                         <a
-                          href={form.watch(`projects.${index}.github`)}
+                          href={field.github}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-xs text-orange-500 hover:underline flex items-center gap-1"
@@ -370,9 +370,9 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                     </Button>
                   </div>
 
-                  {form.watch(`projects.${index}.technologies`)?.length > 0 && (
+                  {field.technologies?.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-3">
-                      {form.watch(`projects.${index}.technologies`).map((tech: string, techIndex: number) => (
+                      {field.technologies.map((tech: string, techIndex: number) => (
                         <Badge
                           key={techIndex}
                           variant="secondary"

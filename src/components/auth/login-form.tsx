@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormErrorBoundary } from "@/components/error/form-error-boundary";
 import { toast } from "sonner";
 import { Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
 import { loginSchema, type LoginFormData } from "@/lib/validations";
 
-export function LoginForm() {
+function LoginFormContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
@@ -220,5 +221,13 @@ export function LoginForm() {
         </Button>
       </CardContent>
     </Card>
+  );
+}
+
+export function LoginForm() {
+  return (
+    <FormErrorBoundary>
+      <LoginFormContent />
+    </FormErrorBoundary>
   );
 }
