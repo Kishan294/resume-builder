@@ -32,7 +32,7 @@ export default function PublicResumePage({ params }: { params: Promise<{ slug: s
 
     setIsDownloading(true);
     try {
-      generateSimplePDF('resume-preview');
+      generateSimplePDF();
       toast.success("Print window opened! Choose &apos;Save as PDF&apos; to download.");
     } catch (error) {
       console.error("Failed to download PDF:", error);

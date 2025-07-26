@@ -103,7 +103,7 @@ export function CompactTemplate({ resume }: CompactTemplateProps) {
           {/* Work Experience - Compact */}
           {workExperience.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-2 print:mb-1 uppercase border-b border-gray-300 pb-1">
+              <h2 className="text-sm font-bold text-orange-600 mb-2 print:mb-1 uppercase border-b border-orange-500 pb-1">
                 Experience
               </h2>
               <div className="space-y-3 print:space-y-1">
@@ -112,7 +112,7 @@ export function CompactTemplate({ resume }: CompactTemplateProps) {
                     <div className="flex justify-between items-start mb-1">
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900 leading-tight">{exp.position}</h3>
-                        <p className="text-gray-700 font-medium">{exp.company}</p>
+                        <p className="text-orange-600 font-medium">{exp.company}</p>
                       </div>
                       <div className="text-right text-gray-600 text-xs ml-2">
                         <p>{formatDateRange(exp.startDate, exp.endDate, exp.current)}</p>
@@ -129,7 +129,7 @@ export function CompactTemplate({ resume }: CompactTemplateProps) {
           {/* Projects - Compact */}
           {projects.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-2 print:mb-1 uppercase border-b border-gray-300 pb-1">
+              <h2 className="text-sm font-bold text-orange-600 mb-2 print:mb-1 uppercase border-b border-orange-500 pb-1">
                 Projects
               </h2>
               <div className="space-y-2 print:space-y-1">
@@ -165,7 +165,7 @@ export function CompactTemplate({ resume }: CompactTemplateProps) {
           {/* Skills - Compact */}
           {skills.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-2 print:mb-1 uppercase border-b border-gray-300 pb-1">
+              <h2 className="text-sm font-bold text-orange-600 mb-2 print:mb-1 uppercase border-b border-orange-500 pb-1">
                 Skills
               </h2>
               <div className="space-y-2 print:space-y-1">
@@ -184,7 +184,7 @@ export function CompactTemplate({ resume }: CompactTemplateProps) {
           {/* Education - Compact */}
           {education.length > 0 && (
             <div>
-              <h2 className="text-sm font-bold text-gray-900 mb-2 print:mb-1 uppercase border-b border-gray-300 pb-1">
+              <h2 className="text-sm font-bold text-orange-600 mb-2 print:mb-1 uppercase border-b border-orange-500 pb-1">
                 Education
               </h2>
               <div className="space-y-2 print:space-y-1">

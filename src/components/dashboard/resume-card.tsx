@@ -55,7 +55,7 @@ export function ResumeCard({
 }: ResumeCardProps) {
   const router = useRouter();
   const [isRenaming, setIsRenaming] = useState(false);
-  const [newTitle, setNewTitle] = useState(resume.title);
+  const [newTitle, setNewTitle] = useState(resume.title || "");
   const isDeleting = loadingStates.deleting || false;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 

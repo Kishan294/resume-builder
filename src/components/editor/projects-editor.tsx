@@ -309,7 +309,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                         </FormLabel>
                         <FormControl>
                           <MonthYearPicker
-                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            date={field.value ? new Date(field.value + "-01") : null}
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);
@@ -334,7 +334,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                         </FormLabel>
                         <FormControl>
                           <MonthYearPicker
-                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            date={field.value ? new Date(field.value + "-01") : null}
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);
@@ -354,7 +354,7 @@ export function ProjectsEditor({ data, onUpdate }: ProjectsEditorProps) {
                   <FormLabel>Technologies Used</FormLabel>
                   <div className="flex space-x-2">
                     <Input
-                      value={newTechInputs[`project-${index}`] || ""}
+                      value={newTechInputs[`project-${index}`] ?? ""}
                       onChange={(e) => handleTechInputChange(index, e.target.value)}
                       onKeyDown={(e) => handleTechInputKeyPress(index, e)}
                       placeholder="Add a technology and press Enter"

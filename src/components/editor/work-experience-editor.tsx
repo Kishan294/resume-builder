@@ -45,7 +45,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
 
     const currentFormData = form.getValues("experiences");
     if (JSON.stringify(currentFormData) !== JSON.stringify(data)) {
-      form.reset({ experiences: data });
+      form.reset({ experiences: data.length > 0 ? data : [] });
     }
   }, [data, form]);
 
@@ -59,6 +59,9 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
       description: "",
     };
     append(newExperience);
+    // Immediately update parent with new data
+    const updatedExperiences = [...form.getValues("experiences"), newExperience];
+    onUpdate(updatedExperiences as WorkExperience[]);
   };
 
   const formatDateRange = (startDate: string, endDate?: string, current?: boolean) => {
@@ -133,7 +136,13 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => remove(index)}
+                    onClick={() => {
+                      remove(index);
+                      // Update parent with remaining data
+                      const currentExperiences = form.getValues("experiences");
+                      const updatedExperiences = currentExperiences.filter((_, i) => i !== index);
+                      onUpdate(updatedExperiences as WorkExperience[]);
+                    }}
                     className="text-destructive hover:text-destructive/80"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -195,7 +204,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                         </FormLabel>
                         <FormControl>
                           <MonthYearPicker
-                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            date={field.value ? new Date(field.value + "-01") : null}
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);
@@ -220,7 +229,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                         </FormLabel>
                         <FormControl>
                           <MonthYearPicker
-                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            date={field.value ? new Date(field.value + "-01") : null}
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);

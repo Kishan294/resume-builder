@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover"
 
 interface DatePickerProps {
-  date?: Date
+  date?: Date | null
   onSelect?: (date: Date | undefined) => void
   placeholder?: string
   disabled?: boolean
@@ -45,14 +45,14 @@ export function DatePicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={onSelect} />
+        <Calendar mode="single" selected={date || undefined} onSelect={onSelect} />
       </PopoverContent>
     </Popover>
   )
 }
 
 interface MonthYearPickerProps {
-  date?: Date
+  date?: Date | null
   onSelect?: (date: Date | undefined) => void
   placeholder?: string
   disabled?: boolean
@@ -85,7 +85,7 @@ export function MonthYearPicker({
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={date}
+          selected={date || undefined}
           onSelect={onSelect}
           captionLayout="dropdown"
           startMonth={new Date(1990, 0)}

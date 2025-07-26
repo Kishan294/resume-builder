@@ -7,7 +7,7 @@ import { ValidationProvider } from "@/lib/validation-context";
 import { toast } from "sonner";
 import { api } from "@/lib/trpc/client";
 import { useResumeStore } from "@/lib/stores/resume-store";
-import { generatePDF, generatePDFViaPrint, triggerBrowserPrint, openCleanPrintWindow, generateSimplePDF } from "@/utils/pdf-generator";
+import { triggerBrowserPrint } from "@/utils/pdf-generator";
 import { PDFDebug } from "@/components/debug/pdf-debug";
 import { PrintInstructions } from "@/components/editor/print-instructions";
 import { PrintPreview } from "@/components/editor/print-preview";
@@ -105,40 +105,16 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
     });
   };
 
-  const downloadPDF = useCallback(async () => {
+  const handlePrint = useCallback(() => {
     if (!currentResume) return;
 
     setIsDownloading(true);
     try {
-      generateSimplePDF('resume-preview');
-      toast.success("Print window opened! This is the most reliable method for PDF generation.");
+      triggerBrowserPrint();
+      toast.success("Print dialog opened! Choose 'Save as PDF' to download or print directly.");
     } catch (error) {
-      console.error("Simple PDF generation failed, trying canvas method:", error);
-      try {
-        await generatePDF('resume-preview', `${currentResume.title || 'resume'}.pdf`);
-        toast.success("PDF downloaded successfully!");
-      } catch (canvasError) {
-        console.error("Canvas PDF generation failed, trying print window method:", canvasError);
-        try {
-          generatePDFViaPrint('resume-preview', `${currentResume.title || 'resume'}.pdf`);
-          toast.success("PDF download initiated! Please save the file when prompted.");
-        } catch (printError) {
-          console.error("Print window method also failed, trying clean print window:", printError);
-          try {
-            openCleanPrintWindow('resume-preview');
-            toast.success("Clean print window opened! Follow the instructions to save as PDF.");
-          } catch (cleanPrintError) {
-            console.error("Clean print window failed, trying browser print:", cleanPrintError);
-            try {
-              triggerBrowserPrint();
-              toast.success("Print dialog opened! Choose &apos;Save as PDF&apos; to download.");
-            } catch (browserPrintError) {
-              console.error("All PDF generation methods failed:", browserPrintError);
-              toast.error("Failed to download PDF. Please try using Ctrl+P (Cmd+P on Mac) and select &apos;Save as PDF&apos;.");
-            }
-          }
-        }
-      }
+      console.error("Print failed:", error);
+      toast.error("Failed to open print dialog. Please try using Ctrl+P (Cmd+P on Mac) and select 'Save as PDF'.");
     } finally {
       setIsDownloading(false);
     }
@@ -157,14 +133,14 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
         setTimeout(() => {
           const element = document.getElementById('resume-preview');
           if (element) {
-            downloadPDF();
+            handlePrint();
           } else {
-            toast.error('Resume preview not ready. Please try the download button manually.');
+            toast.error('Resume preview not ready. Please try the print button manually.');
           }
         }, 1500);
       }
     }
-  }, [currentResume, downloadPDF]);
+  }, [currentResume, handlePrint]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -221,9 +197,9 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
         resume={currentResume}
         onTitleUpdate={handleTitleUpdate}
         onSave={saveResume}
-        onDownload={downloadPDF}
+        onDownload={handlePrint}
         onShare={handleShare}
-        onPrint={() => generateSimplePDF('resume-preview')}
+        onPrint={handlePrint}
         isSaving={updateResumeMutation.isPending}
         isDownloading={isDownloading}
         isSharing={isSharing}
@@ -231,8 +207,8 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
 
       <div className="px-4 py-2 bg-white border-b">
         <PrintInstructions
-          onPrint={() => generateSimplePDF('resume-preview')}
-          onDownload={downloadPDF}
+          onPrint={handlePrint}
+          onDownload={handlePrint}
         />
       </div>
 

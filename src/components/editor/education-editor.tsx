@@ -46,7 +46,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
 
     const currentFormData = form.getValues("educations");
     if (JSON.stringify(currentFormData) !== JSON.stringify(data)) {
-      form.reset({ educations: data });
+      form.reset({ educations: data.length > 0 ? data : [] });
     }
   }, [data, form]);
 
@@ -60,6 +60,9 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
       current: false,
     };
     append(newEducation);
+    // Immediately update parent with new data
+    const updatedEducations = [...form.getValues("educations"), newEducation];
+    onUpdate(updatedEducations as Education[]);
   };
 
   const formatDateRange = (startDate: string, endDate?: string, current?: boolean) => {
@@ -139,7 +142,13 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => remove(index)}
+                    onClick={() => {
+                      remove(index);
+                      // Update parent with remaining data
+                      const currentEducations = form.getValues("educations");
+                      const updatedEducations = currentEducations.filter((_, i) => i !== index);
+                      onUpdate(updatedEducations as Education[]);
+                    }}
                     className="text-destructive hover:text-destructive/80"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -247,7 +256,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                         </FormLabel>
                         <FormControl>
                           <MonthYearPicker
-                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            date={field.value ? new Date(field.value + "-01") : null}
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);
@@ -272,7 +281,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                         </FormLabel>
                         <FormControl>
                           <MonthYearPicker
-                            date={field.value ? new Date(field.value + "-01") : undefined}
+                            date={field.value ? new Date(field.value + "-01") : null}
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);

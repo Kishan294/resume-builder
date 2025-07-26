@@ -12,14 +12,14 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
-import { Info, Printer, Download, Settings } from "lucide-react";
+import { Info, Printer, Settings } from "lucide-react";
 
 interface PrintInstructionsProps {
   onPrint: () => void;
-  onDownload: () => void;
+  onDownload: () => void; // Keep for compatibility but both do the same thing now
 }
 
-export function PrintInstructions({ onPrint, onDownload }: PrintInstructionsProps) {
+export function PrintInstructions({ onPrint }: PrintInstructionsProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -41,13 +41,9 @@ export function PrintInstructions({ onPrint, onDownload }: PrintInstructionsProp
         <div className="space-y-6">
           {/* Quick Actions */}
           <div className="flex gap-3">
-            <Button onClick={onDownload} className="flex-1">
-              <Download className="h-4 w-4 mr-2" />
-              Auto Download PDF
-            </Button>
-            <Button onClick={onPrint} variant="outline" className="flex-1">
+            <Button onClick={onPrint} className="flex-1">
               <Printer className="h-4 w-4 mr-2" />
-              Open Print Dialog
+              Print / Save as PDF
             </Button>
           </div>
 

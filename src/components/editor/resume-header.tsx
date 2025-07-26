@@ -23,7 +23,6 @@ import { toast } from "sonner";
 import {
   ArrowLeft,
   Save,
-  Download,
   Share2,
   Loader2,
   Printer,
@@ -39,9 +38,9 @@ interface ResumeHeaderProps {
   resume: Resume;
   onTitleUpdate: (newTitle: string) => void;
   onSave: () => void;
-  onDownload: () => void;
+  onDownload: () => void; // Now same as onPrint - both trigger print dialog
   onShare: () => void;
-  onPrint: () => void;
+  onPrint: () => void; // Keep for compatibility
   isSaving: boolean;
   isDownloading: boolean;
   isSharing: boolean;
@@ -53,14 +52,13 @@ export function ResumeHeader({
   onSave,
   onDownload,
   onShare,
-  onPrint,
   isSaving,
   isDownloading,
   isSharing,
 }: ResumeHeaderProps) {
   const router = useRouter();
   const [isRenaming, setIsRenaming] = useState(false);
-  const [newTitle, setNewTitle] = useState(resume.title);
+  const [newTitle, setNewTitle] = useState(resume.title || "");
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -217,21 +215,12 @@ export function ResumeHeader({
             {isDownloading ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
-              <Download className="h-4 w-4 mr-2" />
+              <Printer className="h-4 w-4 mr-2" />
             )}
-            Download PDF
+            Print / Save PDF
           </Button>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onPrint}
-            title="Open simple print window (most reliable)"
-            className="hidden sm:flex md:flex"
-          >
-            <Printer className="h-4 w-4 mr-2" />
-            Print
-          </Button>
+
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -254,16 +243,11 @@ export function ResumeHeader({
                   {isDownloading ? (
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
-                    <Download className="h-4 w-4 mr-2" />
-                  )}
-                  Download PDF
-                </DropdownMenuItem>
-                <div className="sm:hidden">
-                  <DropdownMenuItem onClick={onPrint}>
                     <Printer className="h-4 w-4 mr-2" />
-                    Print
-                  </DropdownMenuItem>
-                </div>
+                  )}
+                  Print / Save PDF
+                </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
               </div>
 

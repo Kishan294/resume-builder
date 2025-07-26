@@ -79,12 +79,12 @@ export function TemplateSelector({ onCreateResume, children }: TemplateSelectorP
           {templates.map((template) => (
             <div
               key={template.id}
-              className={`relative group cursor-pointer transition-all hover:shadow-lg ${selectedTemplate === template.id ? "ring-2 ring-blue-500" : ""
+              className={`relative group cursor-pointer transition-all hover:shadow-lg ${selectedTemplate === template.id ? "ring-2 ring-orange-500" : ""
                 }`}
               onClick={() => setSelectedTemplate(template.id)}
             >
               {selectedTemplate === template.id && (
-                <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1.5 z-10 shadow-lg">
+                <div className="absolute -top-2 -right-2 bg-orange-500 text-white rounded-full p-1.5 z-10 shadow-lg">
                   <Check className="h-3 w-3" />
                 </div>
               )}
@@ -104,7 +104,7 @@ export function TemplateSelector({ onCreateResume, children }: TemplateSelectorP
               </div>
 
               {/* Hover overlay */}
-              <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg pointer-events-none" />
+              <div className="absolute inset-0 bg-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg pointer-events-none" />
             </div>
           ))}
         </div>

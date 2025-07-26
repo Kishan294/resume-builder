@@ -198,7 +198,7 @@ export function SkillsEditor({ data, onUpdate }: SkillsEditorProps) {
                     <div className="flex-1">
                       <Input
                         placeholder="Add a skill..."
-                        value={newSkillInputs[`category-${index}`] || ""}
+                        value={newSkillInputs[`category-${index}`] ?? ""}
                         onChange={(e) => handleSkillInputChange(index, e.target.value)}
                         onKeyDown={(e) => handleSkillInputKeyPress(index, e)}
                       />

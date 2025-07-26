@@ -68,8 +68,8 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
   return (
     <div className="w-full h-full p-8 text-sm bg-white font-serif print:p-4 print:text-xs print:h-auto print:max-h-none print:overflow-visible">
       {/* Header */}
-      <div className="text-center border-b-2 border-black pb-4 mb-6 print:pb-2 print:mb-3">
-        <h1 className="text-2xl font-bold text-black mb-2 uppercase tracking-wide print:text-xl print:mb-1">
+      <div className="text-center border-b-2 border-orange-500 pb-4 mb-6 print:pb-2 print:mb-3">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2 uppercase tracking-wide print:text-xl print:mb-1">
           {personalInfo?.fullName || "Your Name"}
         </h1>
 
@@ -90,7 +90,7 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
       {/* Professional Summary */}
       {personalInfo?.summary && (
         <div className="mb-6">
-          <h2 className="text-base font-bold text-black mb-2 uppercase tracking-wide border-b border-black">
+          <h2 className="text-base font-bold text-orange-600 mb-2 uppercase tracking-wide border-b border-orange-500">
             Objective
           </h2>
           <p className="text-gray-800 leading-relaxed text-justify">{personalInfo.summary}</p>
@@ -100,7 +100,7 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
       {/* Work Experience */}
       {workExperience.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-base font-bold text-black mb-2 uppercase tracking-wide border-b border-black">
+          <h2 className="text-base font-bold text-orange-600 mb-2 uppercase tracking-wide border-b border-orange-500">
             Professional Experience
           </h2>
           <div className="space-y-4">
@@ -108,8 +108,8 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
               <div key={index}>
                 <div className="flex justify-between items-start mb-1">
                   <div>
-                    <h3 className="font-bold text-black">{exp.position}</h3>
-                    <p className="font-semibold text-gray-800">{exp.company}</p>
+                    <h3 className="font-bold text-gray-900">{exp.position}</h3>
+                    <p className="font-semibold text-orange-600">{exp.company}</p>
                   </div>
                   <div className="text-right text-gray-700">
                     <p>{formatDateRange(exp.startDate, exp.endDate, exp.current)}</p>
@@ -126,7 +126,7 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
       {/* Education */}
       {education.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-base font-bold text-black mb-2 uppercase tracking-wide border-b border-black">
+          <h2 className="text-base font-bold text-orange-600 mb-2 uppercase tracking-wide border-b border-orange-500">
             Education
           </h2>
           <div className="space-y-3">
@@ -134,10 +134,10 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
               <div key={index}>
                 <div className="flex justify-between items-start mb-1">
                   <div>
-                    <h3 className="font-bold text-black">
+                    <h3 className="font-bold text-gray-900">
                       {edu.degree} in {edu.field}
                     </h3>
-                    <p className="font-semibold text-gray-800">{edu.institution}</p>
+                    <p className="font-semibold text-orange-600">{edu.institution}</p>
                     {edu.gpa && <p className="text-sm text-gray-700">GPA: {edu.gpa}</p>}
                   </div>
                   <p className="text-gray-700">
@@ -156,13 +156,13 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
       {/* Skills */}
       {skills.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-base font-bold text-black mb-2 uppercase tracking-wide border-b border-black">
+          <h2 className="text-base font-bold text-orange-600 mb-2 uppercase tracking-wide border-b border-orange-500">
             Technical Skills
           </h2>
           <div className="space-y-1">
             {skills.map((skillCategory, index) => (
               <div key={index}>
-                <span className="font-bold text-black">{skillCategory.category}: </span>
+                <span className="font-bold text-gray-900">{skillCategory.category}: </span>
                 <span className="text-gray-800">{skillCategory.items.join(", ")}</span>
               </div>
             ))}
@@ -173,7 +173,7 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
       {/* Projects */}
       {projects.length > 0 && (
         <div className="mb-6">
-          <h2 className="text-base font-bold text-black mb-2 uppercase tracking-wide border-b border-black">
+          <h2 className="text-base font-bold text-orange-600 mb-2 uppercase tracking-wide border-b border-orange-500">
             Projects
           </h2>
           <div className="space-y-4">
@@ -181,7 +181,7 @@ export function ClassicTemplate({ resume }: ClassicTemplateProps) {
               <div key={index}>
                 <div className="flex justify-between items-start mb-1">
                   <div>
-                    <h3 className="font-bold text-black">{project.name}</h3>
+                    <h3 className="font-bold text-gray-900">{project.name}</h3>
                     {project.technologies.length > 0 && (
                       <p className="text-sm text-gray-700 italic">
                         Technologies: {project.technologies.join(", ")}

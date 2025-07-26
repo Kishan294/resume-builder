@@ -12,8 +12,8 @@ export function TemplatePreview({ templateId, isSelected }: TemplatePreviewProps
       case 'modern':
         return (
           <div className="p-3 h-full space-y-2 bg-white">
-            {/* Header with blue accent */}
-            <div className="border-b-2 border-blue-500 pb-1">
+            {/* Header with orange accent */}
+            <div className="border-b-2 border-orange-500 pb-1">
               <div className="h-2.5 bg-gray-800 rounded w-2/3 mb-1"></div>
               <div className="flex gap-1">
                 <div className="h-1 bg-gray-500 rounded w-1/4"></div>
@@ -22,12 +22,12 @@ export function TemplatePreview({ templateId, isSelected }: TemplatePreviewProps
             </div>
             {/* Content sections */}
             <div className="space-y-1.5">
-              <div className="h-1 bg-blue-500 rounded w-1/3"></div>
+              <div className="h-1 bg-orange-500 rounded w-1/3"></div>
               <div className="h-1 bg-gray-300 rounded w-full"></div>
               <div className="h-1 bg-gray-300 rounded w-4/5"></div>
             </div>
             <div className="space-y-1">
-              <div className="h-1 bg-blue-500 rounded w-1/4"></div>
+              <div className="h-1 bg-orange-500 rounded w-1/4"></div>
               <div className="h-1 bg-gray-300 rounded w-full"></div>
             </div>
           </div>
@@ -61,8 +61,8 @@ export function TemplatePreview({ templateId, isSelected }: TemplatePreviewProps
       case 'creative':
         return (
           <div className="flex h-full">
-            {/* Purple sidebar */}
-            <div className="w-1/3 bg-gradient-to-b from-purple-600 to-blue-600 p-2 space-y-1">
+            {/* Orange sidebar */}
+            <div className="w-1/3 bg-gradient-to-b from-orange-500 to-red-500 p-2 space-y-1">
               <div className="w-4 h-4 bg-white/30 rounded-full mx-auto"></div>
               <div className="h-0.5 bg-white/40 rounded"></div>
               <div className="h-0.5 bg-white/30 rounded w-3/4"></div>
@@ -74,7 +74,7 @@ export function TemplatePreview({ templateId, isSelected }: TemplatePreviewProps
             </div>
             {/* Main content */}
             <div className="flex-1 p-2 bg-white space-y-1">
-              <div className="bg-gray-50 p-1 rounded border-l-2 border-purple-500">
+              <div className="bg-gray-50 p-1 rounded border-l-2 border-orange-500">
                 <div className="h-1 bg-gray-400 rounded w-4/5"></div>
               </div>
               <div className="space-y-0.5">
@@ -141,21 +141,21 @@ export function TemplatePreview({ templateId, isSelected }: TemplatePreviewProps
         return (
           <div className="p-3 h-full space-y-2 bg-white font-serif">
             {/* Centered header with border */}
-            <div className="text-center border-b-2 border-black pb-1">
-              <div className="h-2 bg-black rounded w-1/2 mx-auto mb-0.5"></div>
+            <div className="text-center border-b-2 border-orange-500 pb-1">
+              <div className="h-2 bg-gray-900 rounded w-1/2 mx-auto mb-0.5"></div>
               <div className="h-0.5 bg-gray-600 rounded w-2/3 mx-auto"></div>
             </div>
             {/* Traditional sections */}
             <div className="space-y-1">
-              <div className="border-b border-black pb-0.5">
-                <div className="h-1 bg-black rounded w-1/3 uppercase"></div>
+              <div className="border-b border-orange-500 pb-0.5">
+                <div className="h-1 bg-orange-600 rounded w-1/3 uppercase"></div>
               </div>
               <div className="h-0.5 bg-gray-600 rounded w-full"></div>
               <div className="h-0.5 bg-gray-600 rounded w-5/6"></div>
             </div>
             <div className="space-y-0.5">
-              <div className="border-b border-black pb-0.5">
-                <div className="h-1 bg-black rounded w-1/4 uppercase"></div>
+              <div className="border-b border-orange-500 pb-0.5">
+                <div className="h-1 bg-orange-600 rounded w-1/4 uppercase"></div>
               </div>
               <div className="h-0.5 bg-gray-600 rounded w-4/5"></div>
             </div>
@@ -175,7 +175,7 @@ export function TemplatePreview({ templateId, isSelected }: TemplatePreviewProps
   };
 
   return (
-    <div className={`h-40 rounded-lg border overflow-hidden transition-all ${isSelected ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-gray-200 bg-white hover:border-gray-300'
+    <div className={`h-40 rounded-lg border overflow-hidden transition-all ${isSelected ? 'border-orange-500 bg-orange-50 shadow-md' : 'border-gray-200 bg-white hover:border-gray-300'
       }`}>
       {renderPreview()}
     </div>
