@@ -50,6 +50,16 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
     }
   }, [data, form]);
 
+  // Watch for form changes and update parent
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (value.educations && !isInitialMount.current) {
+        onUpdate(value.educations as Education[]);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onUpdate]);
+
   const addEducation = () => {
     const newEducation: Education = {
       id: uuidv4(),
@@ -60,9 +70,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
       current: false,
     };
     append(newEducation);
-    // Immediately update parent with new data
-    const updatedEducations = [...form.getValues("educations"), newEducation];
-    onUpdate(updatedEducations as Education[]);
+    // Remove the manual onUpdate call - let the form watcher handle it
   };
 
   const formatDateRange = (startDate: string, endDate?: string, current?: boolean) => {
@@ -144,10 +152,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                     size="sm"
                     onClick={() => {
                       remove(index);
-                      // Update parent with remaining data
-                      const currentEducations = form.getValues("educations");
-                      const updatedEducations = currentEducations.filter((_, i) => i !== index);
-                      onUpdate(updatedEducations as Education[]);
+                      // Remove the manual onUpdate call - let the form watcher handle it
                     }}
                     className="text-destructive hover:text-destructive/80"
                   >
@@ -168,10 +173,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             placeholder="University Name"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              onUpdate(form.getValues("educations") as Education[]);
-                            }}
+                          // Remove manual onUpdate calls - let the form watcher handle it
                           />
                         </FormControl>
                         <FormMessage />
@@ -189,10 +191,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             placeholder="Bachelor's, Master's, etc."
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              onUpdate(form.getValues("educations") as Education[]);
-                            }}
+                          // Remove manual onUpdate calls - let the form watcher handle it
                           />
                         </FormControl>
                         <FormMessage />
@@ -210,10 +209,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             placeholder="Computer Science, Business, etc."
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              onUpdate(form.getValues("educations") as Education[]);
-                            }}
+                          // Remove manual onUpdate calls - let the form watcher handle it
                           />
                         </FormControl>
                         <FormMessage />
@@ -234,10 +230,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             placeholder="3.8/4.0"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              onUpdate(form.getValues("educations") as Education[]);
-                            }}
+                          // Remove manual onUpdate calls - let the form watcher handle it
                           />
                         </FormControl>
                         <FormMessage />
@@ -259,7 +252,6 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);
-                              onUpdate(form.getValues("educations") as Education[]);
                             }}
                             placeholder="Select start date"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
@@ -284,7 +276,6 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);
-                              onUpdate(form.getValues("educations") as Education[]);
                             }}
                             placeholder="Select end date"
                             disabled={form.getValues(`educations.${index}.current`)}
@@ -303,7 +294,6 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                                   if (checked) {
                                     form.setValue(`educations.${index}.endDate`, "");
                                   }
-                                  onUpdate(form.getValues("educations") as Education[]);
                                 }}
                               />
                               <FormLabel className="text-sm">
@@ -329,10 +319,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                           rows={3}
                           className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
                           {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            onUpdate(form.getValues("educations") as Education[]);
-                          }}
+                        // Remove manual onUpdate calls - let the form watcher handle it
                         />
                       </FormControl>
                       <div className="text-xs text-muted-foreground">

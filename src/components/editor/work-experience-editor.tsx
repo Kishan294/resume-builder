@@ -49,6 +49,16 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
     }
   }, [data, form]);
 
+  // Watch for form changes and update parent
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      if (value.experiences && !isInitialMount.current) {
+        onUpdate(value.experiences as WorkExperience[]);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, onUpdate]);
+
   const addExperience = () => {
     const newExperience: WorkExperience = {
       id: uuidv4(),
@@ -59,9 +69,6 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
       description: "",
     };
     append(newExperience);
-    // Immediately update parent with new data
-    const updatedExperiences = [...form.getValues("experiences"), newExperience];
-    onUpdate(updatedExperiences as WorkExperience[]);
   };
 
   const formatDateRange = (startDate: string, endDate?: string, current?: boolean) => {
@@ -162,10 +169,6 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                             placeholder="Company Name"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              onUpdate(form.getValues("experiences") as WorkExperience[]);
-                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -183,10 +186,6 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                             placeholder="Job Title"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                             {...field}
-                            onChange={(e) => {
-                              field.onChange(e);
-                              onUpdate(form.getValues("experiences") as WorkExperience[]);
-                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -208,7 +207,6 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);
-                              onUpdate(form.getValues("experiences") as WorkExperience[]);
                             }}
                             placeholder="Select start date"
                             className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
@@ -233,7 +231,6 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                             onSelect={(date) => {
                               const monthString = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : "";
                               field.onChange(monthString);
-                              onUpdate(form.getValues("experiences") as WorkExperience[]);
                             }}
                             placeholder="Select end date"
                             disabled={form.getValues(`experiences.${index}.current`)}
@@ -252,7 +249,6 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                                   if (checked) {
                                     form.setValue(`experiences.${index}.endDate`, "");
                                   }
-                                  onUpdate(form.getValues("experiences") as WorkExperience[]);
                                 }}
                               />
                               <FormLabel className="text-sm">
@@ -280,10 +276,6 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                           placeholder="City, State"
                           className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
                           {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            onUpdate(form.getValues("experiences") as WorkExperience[]);
-                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -302,10 +294,6 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                           rows={4}
                           className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
                           {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            onUpdate(form.getValues("experiences") as WorkExperience[]);
-                          }}
                         />
                       </FormControl>
                       <div className="text-xs text-muted-foreground">
