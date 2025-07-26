@@ -62,44 +62,47 @@ export function useMobilePrint({
         });
 
         try {
-          // Primary method: Native mobile print (most reliable)
-          const { nativeMobilePrint } = await import(
-            "@/utils/native-mobile-print"
+          // Primary method: Direct mobile print (most reliable - no popups)
+          const { directMobilePrint } = await import(
+            "@/utils/direct-mobile-print"
           );
-          const nativeSuccess = nativeMobilePrint(elementId);
+          const directSuccess = directMobilePrint(elementId);
 
-          if (nativeSuccess) {
-            toast.success("Print view opened!", {
+          if (directSuccess) {
+            toast.success("Print view ready!", {
               description:
-                "Use the 'Print / Save as PDF' button to download your resume.",
+                "Your resume is now ready to print. Use the 'Print / Save as PDF' button.",
             });
             return true;
           }
 
-          throw new Error("Native mobile print failed");
-        } catch (nativeError) {
-          console.warn("Native print failed, trying fallback:", nativeError);
+          throw new Error("Direct mobile print failed");
+        } catch (directError) {
+          console.warn(
+            "Direct print failed, trying native method:",
+            directError
+          );
 
           try {
-            // Fallback method: Enhanced mobile print fallback
-            const { mobilePrintFallback } = await import(
-              "@/utils/mobile-pdf-fallback"
+            // Fallback method: Native mobile print with modal
+            const { nativeMobilePrint } = await import(
+              "@/utils/native-mobile-print"
             );
-            const fallbackSuccess = mobilePrintFallback(elementId);
+            const nativeSuccess = nativeMobilePrint(elementId);
 
-            if (fallbackSuccess) {
+            if (nativeSuccess) {
               toast.success("Print view opened!", {
                 description:
-                  "Use the 'Print Resume' button to save as PDF or print directly.",
+                  "Use the 'Print / Save as PDF' button to download your resume.",
               });
               return true;
             }
 
-            throw new Error("Mobile print fallback failed");
-          } catch (fallbackError) {
+            throw new Error("Native mobile print failed");
+          } catch (nativeError) {
             console.warn(
-              "All print methods failed, trying browser print:",
-              fallbackError
+              "All advanced methods failed, trying browser print:",
+              nativeError
             );
 
             // Last resort: Direct browser print

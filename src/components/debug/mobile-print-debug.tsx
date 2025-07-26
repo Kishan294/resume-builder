@@ -48,6 +48,16 @@ export function MobilePrintDebug({ elementId }: MobilePrintDebugProps) {
     console.log("Mobile Print Debug Info:", info);
   };
 
+  const testDirectPrint = async () => {
+    try {
+      const { directMobilePrint } = await import("@/utils/direct-mobile-print");
+      const success = directMobilePrint(elementId);
+      console.log("Direct print test result:", success);
+    } catch (error) {
+      console.error("Direct print test failed:", error);
+    }
+  };
+
   const testNativePrint = async () => {
     try {
       const { nativeMobilePrint } = await import("@/utils/native-mobile-print");
@@ -95,6 +105,9 @@ export function MobilePrintDebug({ elementId }: MobilePrintDebugProps) {
           <Button size="sm" onClick={runDiagnostics}>
             Run Diagnostics
           </Button>
+          <Button size="sm" onClick={testDirectPrint} variant="outline">
+            Test Direct Print
+          </Button>
           <Button size="sm" onClick={testNativePrint} variant="outline">
             Test Native Print
           </Button>
@@ -127,7 +140,8 @@ export function MobilePrintDebug({ elementId }: MobilePrintDebugProps) {
           <p><strong>Instructions:</strong></p>
           <ul className="list-disc list-inside space-y-1">
             <li>Run diagnostics to check device capabilities</li>
-            <li>Test native print to verify the primary mobile method</li>
+            <li>Test direct print to verify the primary method (no popups)</li>
+            <li>Test native print to verify the modal-based method</li>
             <li>Test print fallback to verify the backup method works</li>
             <li>Test PDF generation to isolate PDF-specific issues</li>
             <li>Test full flow to see the complete user experience</li>

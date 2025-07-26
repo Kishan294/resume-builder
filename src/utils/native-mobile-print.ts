@@ -208,71 +208,137 @@ export const nativeMobilePrint = (elementId: string): boolean => {
       </html>
     `;
 
-    // Try different methods to open the print view
+    // For mobile devices, avoid popup windows which are often blocked
+    // Instead, use in-page modal or page replacement
 
-    // Method 1: Data URL (most compatible)
+    console.log("Attempting mobile-friendly print view...");
+
+    // Method 1: Create an in-page modal overlay (most mobile-friendly)
     try {
-      const dataUrl =
-        "data:text/html;charset=utf-8," + encodeURIComponent(printHTML);
-      const printWindow = window.open(
-        dataUrl,
-        "_blank",
-        "width=800,height=600,scrollbars=yes"
-      );
+      const modalOverlay = document.createElement("div");
+      modalOverlay.id = "mobile-print-modal";
+      modalOverlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+      `;
 
-      if (printWindow && !printWindow.closed) {
-        console.log("Opened print view via data URL");
-        return true;
-      }
+      const modalContent = document.createElement("div");
+      modalContent.style.cssText = `
+        background: white;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      `;
+
+      modalContent.innerHTML = `
+        <div style="padding: 20px; border-bottom: 1px solid #ddd; background: #f8f9fa;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="margin: 0; color: #007bff; font-size: 18px;">Resume - Ready to Print</h2>
+            <button onclick="closePrintModal()" style="background: #dc3545; color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 14px;">✕ Close</button>
+          </div>
+          <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;">
+            Click the button below to print or save as PDF
+          </p>
+          <button onclick="printFromModal()" style="background: #007bff; color: white; border: none; border-radius: 4px; padding: 12px 24px; cursor: pointer; font-size: 16px; width: 100%; margin-bottom: 10px;">
+            📄 Print / Save as PDF
+          </button>
+        </div>
+        <div style="padding: 20px;">
+          ${resumeContent}
+        </div>
+      `;
+
+      modalOverlay.appendChild(modalContent);
+
+      // Add global functions for modal interaction
+      (window as unknown as { closePrintModal: () => void }).closePrintModal =
+        () => {
+          const modal = document.getElementById("mobile-print-modal");
+          if (modal) {
+            modal.remove();
+          }
+        };
+
+      (window as unknown as { printFromModal: () => void }).printFromModal =
+        () => {
+          try {
+            // Hide the modal header for printing
+            const header = modalContent.querySelector(
+              'div[style*="border-bottom"]'
+            ) as HTMLElement;
+            if (header) header.style.display = "none";
+
+            // Trigger print
+            window.print();
+
+            // Show header again after print
+            setTimeout(() => {
+              if (header) header.style.display = "block";
+            }, 1000);
+          } catch (error) {
+            console.error("Print failed:", error);
+            alert(
+              "Print failed. Please try using Ctrl+P or Cmd+P to print this page."
+            );
+          }
+        };
+
+      // Add to page
+      document.body.appendChild(modalOverlay);
+
+      // Add print styles for the modal
+      const printStyle = document.createElement("style");
+      printStyle.textContent = `
+        @media print {
+          #mobile-print-modal {
+            position: static !important;
+            background: white !important;
+            padding: 0 !important;
+            z-index: auto !important;
+          }
+          #mobile-print-modal > div {
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            max-height: none !important;
+            overflow: visible !important;
+          }
+          #mobile-print-modal div[style*="border-bottom"] {
+            display: none !important;
+          }
+        }
+      `;
+      document.head.appendChild(printStyle);
+
+      console.log("Created in-page print modal");
+      return true;
     } catch (error) {
-      console.warn("Data URL method failed:", error);
+      console.warn("Modal method failed:", error);
     }
 
-    // Method 2: Blob URL
+    // Method 2: Replace current page content (fallback)
     try {
-      const blob = new Blob([printHTML], { type: "text/html" });
-      const blobUrl = URL.createObjectURL(blob);
-      const printWindow = window.open(
-        blobUrl,
-        "_blank",
-        "width=800,height=600,scrollbars=yes"
-      );
+      // Store current state for restoration
+      const currentHTML = document.documentElement.outerHTML;
+      const currentUrl = window.location.href;
 
-      if (printWindow && !printWindow.closed) {
-        console.log("Opened print view via blob URL");
-        // Clean up after 10 seconds
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-        return true;
-      }
+      sessionStorage.setItem("resumeBuilderOriginalHTML", currentHTML);
+      sessionStorage.setItem("resumeBuilderReturnUrl", currentUrl);
 
-      URL.revokeObjectURL(blobUrl);
-    } catch (error) {
-      console.warn("Blob URL method failed:", error);
-    }
-
-    // Method 3: Direct window write
-    try {
-      const printWindow = window.open(
-        "",
-        "_blank",
-        "width=800,height=600,scrollbars=yes"
-      );
-      if (printWindow && !printWindow.closed) {
-        printWindow.document.write(printHTML);
-        printWindow.document.close();
-        console.log("Opened print view via direct write");
-        return true;
-      }
-    } catch (error) {
-      console.warn("Direct write method failed:", error);
-    }
-
-    // Method 4: Replace current page (last resort)
-    try {
-      // Store current state
-      sessionStorage.setItem("resumeBuilderReturnUrl", window.location.href);
-
-      // Replace current page
+      // Replace page content
       document.open();
       document.write(printHTML);
       document.close();
@@ -292,12 +358,26 @@ export const nativeMobilePrint = (elementId: string): boolean => {
 // Simple function to restore the original page
 export const restoreFromPrint = (): boolean => {
   try {
+    // First try to restore from HTML backup
+    const originalHTML = sessionStorage.getItem("resumeBuilderOriginalHTML");
+    if (originalHTML) {
+      sessionStorage.removeItem("resumeBuilderOriginalHTML");
+      sessionStorage.removeItem("resumeBuilderReturnUrl");
+
+      document.open();
+      document.write(originalHTML);
+      document.close();
+      return true;
+    }
+
+    // Fallback to URL navigation
     const returnUrl = sessionStorage.getItem("resumeBuilderReturnUrl");
     if (returnUrl) {
       sessionStorage.removeItem("resumeBuilderReturnUrl");
       window.location.href = returnUrl;
       return true;
     }
+
     return false;
   } catch (error) {
     console.error("Failed to restore from print:", error);
