@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Phone, MapPin, Globe, ExternalLink, Linkedin } from "lucide-react";
+import { Mail, Phone, MapPin, ExternalLink, Linkedin } from "lucide-react";
 
 interface ResumeData {
   personalInfo: {

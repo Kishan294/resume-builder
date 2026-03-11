@@ -12,7 +12,7 @@ export async function GET() {
       version: process.env.npm_package_version || "unknown",
       environment: process.env.NODE_ENV || "unknown",
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         status: "unhealthy",

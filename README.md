@@ -1,182 +1,108 @@
-# ProfilCraft
+# ProfilCraft 🚀
 
-A modern, full-stack resume builder application built with Next.js, better-auth, and PostgreSQL.
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Better Auth](https://img.shields.io/badge/Better_Auth-latest-indigo?style=for-the-badge)](https://better-auth.com/)
+[![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-latest-C5F74F?style=for-the-badge&logo=drizzle)](https://orm.drizzle.team/)
 
-## Features
+**ProfilCraft** is a premium, full-stack resume builder designed for modern professionals. Built with a focus on aesthetics, speed, and ATS compatibility, it empowers developers and job seekers to craft high-impact career narratives in minutes.
 
-- 🔐 **Authentication**: Email/password and Google OAuth with better-auth
-- 📝 **Resume Editor**: Intuitive form-based editor with live preview
-- 🎨 **Multiple Templates**: Modern and Classic resume templates
-- 💾 **Auto-save**: Automatic saving of resume data
-- 📱 **Responsive Design**: Works on desktop and mobile devices
-- 🔗 **Shareable Links**: Generate public links for your resumes
-- 📄 **PDF Export**: Download resumes as PDF (coming soon)
-- 🎯 **ATS Optimized**: Templates designed for Applicant Tracking Systems
+---
 
-## Tech Stack
+## ✨ Features
 
-- **Framework**: Next.js 15 with App Router
-- **Authentication**: better-auth with Google OAuth
-- **Database**: PostgreSQL with Drizzle ORM
-- **Styling**: TailwindCSS with custom orange theme
-- **UI Components**: ShadCN UI (Radix UI + TailwindCSS)
-- **Package Manager**: pnpm
+- 🔐 **Secure Authentication**: Enterprise-grade auth via **Better Auth**, supporting both Email/Password and Google OAuth.
+- 📝 **Live Professional Editor**: Intuitive, real-time editing experience with instant visual feedback.
+- 🎨 **Modern Design System**: A sleek, indigo-themed interface featuring frosted glass effects, smooth transitions, and a mobile-first philosophy.
+- 📄 **Smart PDF Export**: High-fidelity PDF generation optimized for both browser and mobile printing.
+- 🔗 **Instant Sharing**: Publish your resume with a single click and share a professional public URL with recruiters.
+- 🎯 **ATS-Ready Templates**: Multiple curated templates designed to bypass modern Applicant Tracking Systems.
+- 💾 **Robust Auto-save**: Never lose your progress with seamless, background state persistence.
+- 📱 **Fully Responsive**: Edge-to-edge perfection on mobile, tablet, and desktop.
 
-## Getting Started
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router & Route Groups)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with a custom **Indigo-Violet** professional theme
+- **UI Components**: [Shadcn UI](https://ui.shadcn.com/) (Radix UI)
+- **Authentication**: [Better Auth](https://better-auth.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
+- **API**: [tRPC](https://trpc.io/) for end-to-end type safety
+- **State Management**: [Zustand](https://zustand-demo.pmnd.rs/)
+
+## 🏗️ Architecture
+
+The project follows a modern, scalable architecture using **Next.js Route Groups** to logically separate application concerns:
+
+```text
+src/
+├── app/
+│   ├── (marketing)/        # High-conversion landing page
+│   ├── (auth)/             # Reusable Login/Register shells
+│   ├── (dashboard)/        # Main user workspace
+│   ├── (editor)/           # Specialized resume editing environment
+│   └── (public)/           # Public-facing sharable resumes
+├── components/
+│   ├── common/             # Reusable UI primitives (Container, PageHeader, etc.)
+│   ├── layout/             # Shared AppHeader and MarketingFooter
+│   ├── dashboard/          # Specialized workspace components
+│   └── templates/          # Professional resume logic (Indigo-themed)
+├── lib/
+│   ├── auth-client.ts      # Better Auth client config
+│   └── trpc/               # Type-safe API client
+└── utils/                  # Smart PDF and utility scripts
+```
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- PostgreSQL database
-- npm or pnpm package manager
+- **Node.js**: 18.x or higher
+- **PostgreSQL**: A local instance or managed service (e.g., Neon, Railway)
+- **Package Manager**: `pnpm` (highly recommended)
 
-### Quick Start
+### Installation
 
-1. **Clone the repository**
-
+1. **Clone & Enter**
    ```bash
-   git clone <repository-url>
+   git clone <your-repo-url>
    cd profilcraft
    ```
 
-2. **Install dependencies**
-
+2. **Install Dependencies**
    ```bash
-   npm install
-   # or
    pnpm install
    ```
 
-3. **Set up environment variables**
-
+3. **Configure Environment**
    ```bash
    cp .env.example .env
    ```
+   *Update your `.env` with your `DATABASE_URL` and Auth secrets.*
 
-   Update `.env` with your values:
-
-   - `DATABASE_URL`: Your PostgreSQL connection string
-   - `BETTER_AUTH_SECRET`: Generate a secure random string
-   - `BETTER_AUTH_URL`: Your domain URL (http://localhost:3000 for development)
-   - `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET`: Google OAuth credentials (optional)
-
-4. **Set up the database**
-
+4. **Initialize Database**
    ```bash
-   # Generate and run migrations
-   npm run db:generate
-   npm run db:migrate
-
-   # Or push schema directly (for development)
-   npm run db:push
+   pnpm db:push
    ```
 
-5. **Start the development server**
-
+5. **Launch**
    ```bash
-   npm run dev
+   pnpm dev
    ```
 
-6. **Open your browser**
+## 📜 Key Scripts
 
-   Navigate to [http://localhost:3000](http://localhost:3000)
+| Script | description |
+| :--- | :--- |
+| `pnpm dev` | Starts development server with Turbopack |
+| `pnpm build` | Compiles a production-ready build |
+| `pnpm db:studio` | Opens the GUI for database management |
+| `pnpm lint` | Performs static code analysis |
 
-### Production Deployment
+## 🛡️ License
 
-For production deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+Distributed under the **MIT License**. See `LICENSE` for more information.
 
-## Project Structure
+---
 
-```
-src/
-├── app/                    # Next.js app router pages
-│   ├── api/               # API routes
-│   ├── auth/              # Authentication pages
-│   ├── dashboard/         # User dashboard
-│   ├── editor/            # Resume editor
-│   └── globals.css        # Global styles
-├── components/            # React components
-│   ├── auth/              # Authentication components
-│   ├── dashboard/         # Dashboard components
-│   ├── editor/            # Resume editor components
-│   ├── templates/         # Resume templates
-│   └── ui/                # ShadCN UI components
-├── lib/                   # Utility libraries
-│   ├── auth.ts            # better-auth configuration
-│   ├── auth-client.ts     # Client-side auth utilities
-│   └── db/                # Database configuration and schema
-└── middleware.ts          # Route protection middleware
-```
-
-## Database Schema
-
-The application uses the following main tables:
-
-- **users**: User accounts and profiles
-- **accounts**: OAuth account connections
-- **sessions**: User sessions
-- **resumes**: Resume data with JSONB fields for flexible content
-
-## Available Scripts
-
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
-- `npm run build:prod` - Build for production with optimizations
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Run ESLint with auto-fix
-- `npm run type-check` - Run TypeScript type checking
-- `npm run build:analyze` - Build with bundle analyzer
-- `npm run db:generate` - Generate Drizzle migrations
-- `npm run db:migrate` - Run database migrations
-- `npm run db:push` - Push schema changes to database
-- `npm run db:studio` - Open Drizzle Studio
-- `npm run clean` - Clean build cache
-
-## Authentication Setup
-
-### Google OAuth Setup
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select existing one
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials
-5. Add authorized redirect URIs:
-   - `http://localhost:3000/api/auth/callback/google` (development)
-   - `https://yourdomain.com/api/auth/callback/google` (production)
-6. Copy Client ID and Client Secret to your `.env.local`
-
-## Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Connect your repository to Vercel
-3. Set up environment variables in Vercel dashboard
-4. Deploy!
-
-### Other Platforms
-
-The application can be deployed to any platform that supports Node.js:
-
-- Railway
-- Render
-- DigitalOcean App Platform
-- AWS Amplify
-- Netlify (with serverless functions)
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-If you encounter any issues or have questions, please open an issue on GitHub.
+Built with 💜 by the ProfilCraft Team.
