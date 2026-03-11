@@ -94,7 +94,7 @@ export function MinimalTemplate({ resume }: MinimalTemplateProps) {
       {/* Professional Summary */}
       {personalInfo?.summary && (
         <div className="mb-6 print:mb-3">
-          <p className="text-gray-700 leading-relaxed text-center italic border-l-2 border-orange-500 pl-4">
+          <p className="text-gray-700 leading-relaxed text-center italic border-l-2 border-indigo-600 pl-4">
             {personalInfo.summary}
           </p>
         </div>
@@ -108,7 +108,7 @@ export function MinimalTemplate({ resume }: MinimalTemplateProps) {
           </h2>
           <div className="space-y-4 print:space-y-2">
             {workExperience.map((exp, index) => (
-              <div key={index} className="border-l-2 border-orange-300 pl-4">
+              <div key={index} className="border-l-2 border-indigo-200 pl-4">
                 <div className="flex justify-between items-start mb-1">
                   <div>
                     <h3 className="font-medium text-gray-900">{exp.position}</h3>
@@ -134,7 +134,7 @@ export function MinimalTemplate({ resume }: MinimalTemplateProps) {
           </h2>
           <div className="space-y-3 print:space-y-2">
             {education.map((edu, index) => (
-              <div key={index} className="border-l-2 border-orange-300 pl-4">
+              <div key={index} className="border-l-2 border-indigo-200 pl-4">
                 <div className="flex justify-between items-start mb-1">
                   <div>
                     <h3 className="font-medium text-gray-900">
@@ -181,7 +181,7 @@ export function MinimalTemplate({ resume }: MinimalTemplateProps) {
           </h2>
           <div className="space-y-4 print:space-y-2">
             {projects.map((project, index) => (
-              <div key={index} className="border-l-2 border-orange-300 pl-4">
+              <div key={index} className="border-l-2 border-indigo-200 pl-4">
                 <div className="flex justify-between items-start mb-1">
                   <div>
                     <h3 className="font-medium text-gray-900">{project.name}</h3>

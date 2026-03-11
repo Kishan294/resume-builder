@@ -69,7 +69,7 @@ export function CreativeTemplate({ resume }: CreativeTemplateProps) {
     <div className="w-full h-full bg-white print:p-0 print:text-sm print:h-auto print:max-h-none print:overflow-visible">
       <div className="flex">
         {/* Left Sidebar */}
-        <div className="w-1/3 bg-gradient-to-b from-orange-500 to-red-500 text-white p-6 print:p-4">
+        <div className="w-1/3 bg-gradient-to-b from-indigo-600 to-violet-600 text-white p-6 print:p-4">
           {/* Profile Section */}
           <div className="mb-6 print:mb-3">
             <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mb-4 print:w-16 print:h-16 print:mb-2">
@@ -186,7 +186,7 @@ export function CreativeTemplate({ resume }: CreativeTemplateProps) {
               <h2 className="text-lg font-bold text-gray-900 mb-3 print:mb-2 print:text-base">
                 Professional Summary
               </h2>
-              <div className="bg-gray-50 p-4 print:p-2 rounded-lg border-l-4 border-orange-500">
+              <div className="bg-gray-50 p-4 print:p-2 rounded-lg border-l-4 border-indigo-600">
                 <p className="text-gray-700 leading-relaxed text-sm">{personalInfo.summary}</p>
               </div>
             </div>
@@ -201,14 +201,14 @@ export function CreativeTemplate({ resume }: CreativeTemplateProps) {
               <div className="space-y-4 print:space-y-2">
                 {workExperience.map((exp, index) => (
                   <div key={index} className="relative pl-6 print:pl-4">
-                    <div className="absolute left-0 top-2 w-3 h-3 bg-orange-500 rounded-full print:w-2 print:h-2 print:top-1"></div>
-                    <div className="absolute left-1.5 top-5 w-0.5 h-full bg-orange-200 print:left-1 print:top-3"></div>
+                    <div className="absolute left-0 top-2 w-3 h-3 bg-indigo-600 rounded-full print:w-2 print:h-2 print:top-1"></div>
+                    <div className="absolute left-1.5 top-5 w-0.5 h-full bg-indigo-100 print:left-1 print:top-3"></div>
 
                     <div className="bg-white border border-gray-200 rounded-lg p-4 print:p-2 shadow-sm">
                       <div className="flex justify-between items-start mb-2 print:mb-1">
                         <div>
                           <h3 className="font-semibold text-gray-900 text-base print:text-sm">{exp.position}</h3>
-                          <p className="text-orange-600 font-medium">{exp.company}</p>
+                          <p className="text-indigo-700 font-medium">{exp.company}</p>
                         </div>
                         <div className="text-right text-gray-500 text-sm print:text-xs">
                           <p>{formatDateRange(exp.startDate, exp.endDate, exp.current)}</p>
@@ -231,7 +231,7 @@ export function CreativeTemplate({ resume }: CreativeTemplateProps) {
               </h2>
               <div className="grid gap-4 print:gap-2">
                 {projects.map((project, index) => (
-                  <div key={index} className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-4 print:p-2">
+                  <div key={index} className="bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-100 rounded-lg p-4 print:p-2">
                     <div className="flex justify-between items-start mb-2 print:mb-1">
                       <div>
                         <h3 className="font-semibold text-gray-900">{project.name}</h3>
@@ -240,7 +240,7 @@ export function CreativeTemplate({ resume }: CreativeTemplateProps) {
                             {project.technologies.map((tech, techIndex) => (
                               <span
                                 key={techIndex}
-                                className="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded"
+                                className="bg-indigo-50 text-indigo-800 text-xs px-2 py-1 rounded"
                               >
                                 {tech}
                               </span>
@@ -255,7 +255,7 @@ export function CreativeTemplate({ resume }: CreativeTemplateProps) {
                       )}
                     </div>
                     <p className="text-gray-700 leading-relaxed text-sm mb-2">{project.description}</p>
-                    <div className="flex gap-4 text-sm text-orange-600">
+                    <div className="flex gap-4 text-sm text-indigo-700">
                       {project.url && <span>🔗 Live Demo</span>}
                       {project.github && <span>📁 Source Code</span>}
                     </div>

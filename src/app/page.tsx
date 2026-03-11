@@ -2,9 +2,17 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { FileText, Users, Download, Share2, Zap, Shield, Clock } from "lucide-react";
+import {
+  FileText,
+  Download,
+  Zap,
+  Shield,
+  ArrowRight,
+  Layers,
+  Palette,
+  Share2,
+  CheckCircle2,
+} from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { AppHeader } from "@/components/layout/app-header";
 
@@ -12,195 +20,246 @@ export default function Home() {
   const { data: session } = useSession();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+    <div className="min-h-screen bg-white">
       <AppHeader variant="landing" />
 
       {/* Hero Section */}
-      <section className="py-16 sm:py-24 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5 rounded-full blur-3xl transform -rotate-12 scale-150"></div>
-        <div className="container mx-auto text-center relative">
-          <Badge variant="outline" className="mb-6 px-4 py-2 text-xs sm:text-sm">
-            <Zap className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-            Build Professional Resumes in Minutes
-          </Badge>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Build Your Perfect
-            <span className="text-orange-500 block">Resume</span>
-          </h2>
-          <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed px-4">
-            Create professional, ATS-friendly resumes with our intuitive builder.
-            Choose from beautiful templates, customize with ease, and export to PDF in minutes.
-            <span className="font-semibold text-orange-500"> No design skills required.</span>
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-8 sm:mb-12 px-4">
-            {session ? (
-              <Link href="/dashboard">
-                <Button size="lg" className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  Go to Dashboard
-                </Button>
-              </Link>
-            ) : (
-              <>
-                <Link href="/register">
-                  <Button size="lg" className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                    Start Building Free
+      <section className="relative overflow-hidden">
+        {/* Animated grid background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+
+        {/* Gradient orbs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-200/40 rounded-full blur-[120px]" />
+        <div className="absolute top-20 right-1/4 w-72 h-72 bg-violet-200/30 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-40 bg-gradient-to-t from-white to-transparent" />
+
+        <div className="relative container mx-auto max-w-6xl px-4 sm:px-6 pt-20 sm:pt-32 pb-24 sm:pb-36">
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+            {/* Pill badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 mb-8 animate-fade-in">
+              <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse" />
+              <span className="text-sm font-medium text-indigo-700">
+                Professional Resume Builder
+              </span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl lg:text-[4.5rem] font-extrabold text-slate-950 mb-6 leading-[1.05] tracking-tight">
+              Build resumes that
+              <br />
+              <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent bg-[size:200%_auto] animate-gradient">
+                land interviews.
+              </span>
+            </h1>
+
+            <p className="text-lg sm:text-xl text-slate-500 mb-10 max-w-2xl leading-relaxed font-medium">
+              Create ATS-optimized, beautifully crafted resumes in minutes. 
+              Choose from professional templates and export pixel-perfect PDFs.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              {session ? (
+                <Link href="/dashboard" className="w-full sm:w-auto">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto h-14 px-8 text-base bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 rounded-2xl font-bold gap-2 transition-all duration-300 hover:-translate-y-0.5"
+                  >
+                    <FileText className="h-5 w-5" />
+                    Go to Dashboard
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/login">
-                  <Button variant="outline" size="lg" className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg hover:bg-orange-500 hover:text-white transition-colors border-2 border-orange-200 hover:border-orange-500">
-                    View Templates
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 text-xs sm:text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-orange-500" />
-              <span>100% Free</span>
+              ) : (
+                <>
+                  <Link href="/register" className="w-full sm:w-auto">
+                    <Button
+                      size="lg"
+                      className="w-full sm:w-auto h-14 px-8 text-base bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 rounded-2xl font-bold gap-2 transition-all duration-300 hover:-translate-y-0.5"
+                    >
+                      Start Building Free
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Link href="/login" className="w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full sm:w-auto h-14 px-8 text-base border-slate-200 hover:bg-slate-50 rounded-2xl font-bold text-slate-700 hover:border-slate-300 transition-all duration-200"
+                    >
+                      View Templates
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-red-500" />
-              <span>Ready in 5 minutes</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-amber-500" />
-              <span>10,000+ users</span>
+
+            {/* Trust indicators */}
+            <div className="flex flex-wrap justify-center items-center gap-8 mt-14 text-sm text-slate-400">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                <span className="font-medium">ATS Optimized</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                <span className="font-medium">Free to Start</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                <span className="font-medium">PDF Export</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-16 sm:py-20 px-4 bg-white/50 backdrop-blur-sm">
-        <div className="container mx-auto">
-          <div className="text-center mb-12 sm:mb-16">
-            <Badge variant="outline" className="mb-4 text-xs sm:text-sm">
+      {/* Features Section */}
+      <section className="py-24 sm:py-32 bg-slate-50/50">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm font-bold uppercase tracking-widest text-indigo-600 mb-3">
               Features
-            </Badge>
-            <h3 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Why Choose ProfilCraft?
-            </h3>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-              Everything you need to create a professional resume that gets you hired
             </p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-950 tracking-tight">
+              Everything you need to stand out
+            </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 p-3 bg-orange-500/10 rounded-full w-fit group-hover:bg-orange-500/20 transition-colors">
-                  <FileText className="h-8 w-8 text-orange-500" />
-                </div>
-                <CardTitle className="text-xl">Professional Templates</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-center leading-relaxed">
-                  Choose from multiple professionally designed templates that make you stand out from the competition.
-                </CardDescription>
-              </CardContent>
-            </Card>
 
-            <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 p-3 bg-orange-500/10 rounded-full w-fit group-hover:bg-orange-500/20 transition-colors">
-                  <Shield className="h-8 w-8 text-orange-500" />
-                </div>
-                <CardTitle className="text-xl">ATS Optimized</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-center leading-relaxed">
-                  Our resumes are optimized for Applicant Tracking Systems used by 99% of employers.
-                </CardDescription>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Feature 1 */}
+            <div className="group relative bg-white rounded-2xl border border-slate-100 p-8 hover:border-indigo-100 hover:shadow-lg hover:shadow-indigo-50 transition-all duration-300">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center text-white mb-5 shadow-lg shadow-indigo-200/50 group-hover:scale-110 transition-transform">
+                <Zap className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                Lightning Fast Editor
+              </h3>
+              <p className="text-slate-500 leading-relaxed text-[15px]">
+                Smart sections and intuitive controls — your resume is ready in
+                minutes, not hours.
+              </p>
+            </div>
 
-            <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 p-3 bg-red-500/10 rounded-full w-fit group-hover:bg-red-500/20 transition-colors">
-                  <Download className="h-8 w-8 text-red-500" />
-                </div>
-                <CardTitle className="text-xl">PDF Export</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-center leading-relaxed">
-                  Download your resume as a high-quality PDF ready for job applications and printing.
-                </CardDescription>
-              </CardContent>
-            </Card>
+            {/* Feature 2 */}
+            <div className="group relative bg-white rounded-2xl border border-slate-100 p-8 hover:border-violet-100 hover:shadow-lg hover:shadow-violet-50 transition-all duration-300">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-600 flex items-center justify-center text-white mb-5 shadow-lg shadow-violet-200/50 group-hover:scale-110 transition-transform">
+                <Shield className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                ATS-Ready Templates
+              </h3>
+              <p className="text-slate-500 leading-relaxed text-[15px]">
+                Every template is tested against modern applicant tracking
+                systems to keep you on the shortlist.
+              </p>
+            </div>
 
-            <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 p-3 bg-amber-500/10 rounded-full w-fit group-hover:bg-amber-500/20 transition-colors">
-                  <Share2 className="h-8 w-8 text-amber-500" />
-                </div>
-                <CardTitle className="text-xl">Easy Sharing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-center leading-relaxed">
-                  Generate shareable links to showcase your resume online to potential employers instantly.
-                </CardDescription>
-              </CardContent>
-            </Card>
+            {/* Feature 3 */}
+            <div className="group relative bg-white rounded-2xl border border-slate-100 p-8 hover:border-blue-100 hover:shadow-lg hover:shadow-blue-50 transition-all duration-300">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white mb-5 shadow-lg shadow-blue-200/50 group-hover:scale-110 transition-transform">
+                <Download className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                Pixel Perfect PDF
+              </h3>
+              <p className="text-slate-500 leading-relaxed text-[15px]">
+                High-definition exports that look consistent across every device
+                and printer.
+              </p>
+            </div>
+
+            {/* Feature 4 */}
+            <div className="group relative bg-white rounded-2xl border border-slate-100 p-8 hover:border-emerald-100 hover:shadow-lg hover:shadow-emerald-50 transition-all duration-300">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white mb-5 shadow-lg shadow-emerald-200/50 group-hover:scale-110 transition-transform">
+                <Layers className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                8+ Pro Templates
+              </h3>
+              <p className="text-slate-500 leading-relaxed text-[15px]">
+                From Modern Pro to Executive Elite — choose a style that matches
+                your industry and seniority.
+              </p>
+            </div>
+
+            {/* Feature 5 */}
+            <div className="group relative bg-white rounded-2xl border border-slate-100 p-8 hover:border-amber-100 hover:shadow-lg hover:shadow-amber-50 transition-all duration-300">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white mb-5 shadow-lg shadow-amber-200/50 group-hover:scale-110 transition-transform">
+                <Palette className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                Full Customization
+              </h3>
+              <p className="text-slate-500 leading-relaxed text-[15px]">
+                Add skills, projects, work history with rich text — each section
+                is fully customizable.
+              </p>
+            </div>
+
+            {/* Feature 6 */}
+            <div className="group relative bg-white rounded-2xl border border-slate-100 p-8 hover:border-rose-100 hover:shadow-lg hover:shadow-rose-50 transition-all duration-300">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center text-white mb-5 shadow-lg shadow-rose-200/50 group-hover:scale-110 transition-transform">
+                <Share2 className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                Share Anywhere
+              </h3>
+              <p className="text-slate-500 leading-relaxed text-[15px]">
+                Generate a public link to share your resume instantly with
+                recruiters and hiring managers.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 px-4 bg-gradient-to-r from-orange-500 to-red-500 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="container mx-auto text-center relative">
-          <h3 className="text-3xl sm:text-4xl font-bold mb-6">Ready to Land Your Dream Job?</h3>
-          <p className="text-lg sm:text-xl mb-8 sm:mb-10 opacity-90 max-w-2xl mx-auto leading-relaxed px-4">
-            Join thousands of job seekers who have successfully created their resumes with us.
-            Start building your professional resume today - it&apos;s completely free!
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4">
-            {session ? (
-              <Link href="/dashboard">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                  Go to Dashboard
+      <section className="py-24 px-4 bg-white">
+        <div className="container mx-auto max-w-5xl">
+          <div className="relative rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 p-12 sm:p-20 text-center overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px]" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-violet-500/10 rounded-full blur-[120px]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-indigo-500/5 to-violet-500/5 rounded-full" />
+
+            <div className="relative z-10">
+              <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-6 tracking-tight">
+                Ready to land your
+                <br />
+                <span className="bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+                  dream role?
+                </span>
+              </h2>
+              <p className="text-lg text-slate-400 mb-10 max-w-xl mx-auto leading-relaxed">
+                Create a professional resume that gets past ATS filters and
+                impresses hiring managers. It only takes a few minutes.
+              </p>
+              <Link href="/register">
+                <Button
+                  size="lg"
+                  className="h-14 px-10 text-base bg-white text-slate-900 hover:bg-slate-100 rounded-2xl font-bold shadow-2xl shadow-black/20 gap-2 transition-all hover:-translate-y-0.5"
+                >
+                  Start Building Now
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-            ) : (
-              <>
-                <Link href="/register">
-                  <Button size="lg" variant="secondary" className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300 bg-white text-orange-600 hover:bg-orange-50 border-0">
-                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                    Create Your Resume Now
-                  </Button>
-                </Link>
-                <Button asChild size="lg" variant="outline" className="w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg text-white border-white/30 hover:bg-white/10 hover:text-white transition-colors">
-                  <Link href="/login">
-                    Sign In to Continue
-                  </Link>
-                </Button>
-              </>
-            )}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 sm:py-12 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-6 sm:mb-8">
-            <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-4">
-              <div className="p-1.5 rounded-lg bg-gradient-to-r from-orange-500 to-red-500">
-                <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+      <footer className="border-t border-slate-100 bg-slate-50/50">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6 py-10">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600">
+                <FileText className="h-4 w-4 text-white" />
               </div>
-              <span className="text-xl sm:text-2xl font-bold">ProfilCraft</span>
+              <span className="text-base font-bold text-slate-900">
+                Profil<span className="text-indigo-600">Craft</span>
+              </span>
             </div>
-            <p className="text-gray-400 max-w-md mx-auto text-sm sm:text-base px-4">
-              Build professional resumes that get you hired. Free, fast, and ATS-optimized.
-            </p>
-          </div>
-
-          <div className="border-t border-gray-800 pt-6 sm:pt-8 text-center">
-            <p className="text-gray-400 text-xs sm:text-sm px-4">
-              © 2024 ProfilCraft. All rights reserved. Made with ❤️ for job seekers everywhere.
+            <p className="text-sm text-slate-400">
+              © {new Date().getFullYear()} ProfilCraft. All rights reserved.
             </p>
           </div>
         </div>

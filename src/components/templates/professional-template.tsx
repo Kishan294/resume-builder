@@ -122,10 +122,10 @@ export function ProfessionalTemplate({ resume }: ProfessionalTemplateProps) {
       {/* Professional Summary */}
       {personalInfo?.summary && (
         <div className="mb-6 print:mb-3">
-          <h2 className="text-lg font-bold text-orange-600 mb-3 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-orange-500 pb-1">
+          <h2 className="text-lg font-bold text-indigo-700 mb-3 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-indigo-600 pb-1">
             Executive Summary
           </h2>
-          <div className="bg-gray-50 border-l-4 border-orange-500 p-4 print:p-2">
+          <div className="bg-gray-50 border-l-4 border-indigo-600 p-4 print:p-2">
             <p className="text-gray-700 leading-relaxed">{personalInfo.summary}</p>
           </div>
         </div>
@@ -138,12 +138,12 @@ export function ProfessionalTemplate({ resume }: ProfessionalTemplateProps) {
           {/* Work Experience */}
           {workExperience.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-orange-600 mb-4 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-orange-500 pb-1">
+              <h2 className="text-lg font-bold text-indigo-700 mb-4 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-indigo-600 pb-1">
                 Professional Experience
               </h2>
               <div className="space-y-4 print:space-y-2">
                 {workExperience.map((exp, index) => (
-                  <div key={index} className="border-l-4 border-orange-300 pl-4 print:pl-2">
+                  <div key={index} className="border-l-4 border-indigo-200 pl-4 print:pl-2">
                     <div className="flex justify-between items-start mb-2 print:mb-1">
                       <div>
                         <h3 className="text-base font-bold text-gray-900 print:text-sm">{exp.position}</h3>
@@ -168,12 +168,12 @@ export function ProfessionalTemplate({ resume }: ProfessionalTemplateProps) {
           {/* Projects */}
           {projects.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-orange-600 mb-4 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-orange-500 pb-1">
+              <h2 className="text-lg font-bold text-indigo-700 mb-4 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-indigo-600 pb-1">
                 Key Projects
               </h2>
               <div className="space-y-4 print:space-y-2">
                 {projects.map((project, index) => (
-                  <div key={index} className="border border-orange-300 rounded p-4 print:p-2">
+                  <div key={index} className="border border-indigo-200 rounded p-4 print:p-2">
                     <div className="flex justify-between items-start mb-2 print:mb-1">
                       <div>
                         <h3 className="font-bold text-gray-900">{project.name}</h3>
@@ -214,7 +214,7 @@ export function ProfessionalTemplate({ resume }: ProfessionalTemplateProps) {
           {/* Skills */}
           {skills.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-orange-600 mb-4 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-orange-500 pb-1">
+              <h2 className="text-lg font-bold text-indigo-700 mb-4 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-indigo-600 pb-1">
                 Core Competencies
               </h2>
               <div className="space-y-4 print:space-y-2">
@@ -226,7 +226,7 @@ export function ProfessionalTemplate({ resume }: ProfessionalTemplateProps) {
                     <div className="space-y-1">
                       {skillCategory.items.map((skill, skillIndex) => (
                         <div key={skillIndex} className="flex items-center">
-                          <div className="w-2 h-2 bg-orange-500 rounded-full mr-2 flex-shrink-0"></div>
+                          <div className="w-2 h-2 bg-indigo-600 rounded-full mr-2 flex-shrink-0"></div>
                           <span className="text-gray-700 text-sm">{skill}</span>
                         </div>
                       ))}
@@ -240,7 +240,7 @@ export function ProfessionalTemplate({ resume }: ProfessionalTemplateProps) {
           {/* Education */}
           {education.length > 0 && (
             <div>
-              <h2 className="text-lg font-bold text-orange-600 mb-4 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-orange-500 pb-1">
+              <h2 className="text-lg font-bold text-indigo-700 mb-4 print:mb-2 print:text-base uppercase tracking-wide border-b-2 border-indigo-600 pb-1">
                 Education
               </h2>
               <div className="space-y-4 print:space-y-2">

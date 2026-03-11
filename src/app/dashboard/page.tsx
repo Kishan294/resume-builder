@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { FileText, Plus } from "lucide-react";
+import { FileText, Plus, Loader2 } from "lucide-react";
 import { api } from "@/lib/trpc/client";
 import { TemplateSelector } from "@/components/dashboard/template-selector";
 import { ResumeCard } from "@/components/dashboard/resume-card";
@@ -99,59 +99,63 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <FileText className="h-12 w-12 text-orange-500 mx-auto mb-4" />
-          <p>Loading...</p>
+          <Loader2 className="h-10 w-10 text-indigo-600 mx-auto mb-4 animate-spin" />
+          <p className="text-slate-500 font-medium">Loading your portfolio...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <main className="container mx-auto px-4 py-6 sm:py-8">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+    <main className="container-responsive py-12 sm:py-16">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6 mb-12">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            My Resumes
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            My Portfolio
           </h1>
-          <p className="text-gray-600 mt-2 text-sm sm:text-base">Create and manage your professional resumes</p>
+          <p className="text-slate-500 mt-2 font-medium">Manage your professional career narratives</p>
         </div>
         <TemplateSelector onCreateResume={createNewResume}>
           <Button
-            className="flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 shadow-md hover:shadow-lg transition-all duration-300 text-sm sm:text-base px-4 sm:px-6"
+            className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all duration-300 px-8 py-6 text-base font-bold rounded-xl"
             disabled={createResumeMutation.isPending}
           >
-            <Plus className="h-4 w-4" />
-            <span>{createResumeMutation.isPending ? "Creating..." : "New Resume"}</span>
+            <Plus className="h-5 w-5" />
+            <span>{createResumeMutation.isPending ? "Configuring..." : "Create New Resume"}</span>
           </Button>
         </TemplateSelector>
       </div>
 
       {!resumes || resumes.length === 0 ? (
-        <Card className="border-dashed border-2 border-gray-300">
+        <Card className="border-dashed border-2 border-slate-200 bg-white/50 backdrop-blur-sm rounded-[32px] overflow-hidden">
           <CardContent className="pt-6">
-            <div className="text-center py-16">
-              <FileText className="h-24 w-24 text-muted-foreground mx-auto mb-6" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No resumes yet</h3>
-              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                Create your first professional resume with our easy-to-use builder. Choose from modern templates and get started in minutes.
+            <div className="text-center py-24 px-6">
+              <div className="relative inline-block mb-8">
+                <div className="absolute inset-0 bg-indigo-500/20 blur-2xl rounded-full"></div>
+                <FileText className="h-24 w-24 text-indigo-500 relative z-10 mx-auto animate-pulse" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">No resumes crafted yet</h3>
+              <p className="text-slate-500 mb-10 max-w-md mx-auto leading-relaxed">
+                Every great career story starts with a single page. 
+                Choose a professional template and let&apos;s build your future today.
               </p>
               <TemplateSelector onCreateResume={createNewResume}>
                 <Button
                   size="lg"
-                  className="flex items-center space-x-2 shadow-md"
+                  className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 shadow-lg px-8 py-4 h-auto font-bold rounded-xl"
                   disabled={createResumeMutation.isPending}
                 >
                   <Plus className="h-5 w-5" />
-                  <span>{createResumeMutation.isPending ? "Creating..." : "Create Your First Resume"}</span>
+                  <span>{createResumeMutation.isPending ? "Creating..." : "Build Your First Resume"}</span>
                 </Button>
               </TemplateSelector>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {resumes.map((resume) => (
             <ResumeCard
               key={resume.id}

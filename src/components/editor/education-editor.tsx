@@ -171,7 +171,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                         <FormControl>
                           <Input
                             placeholder="University Name"
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                             {...field}
                           // Remove manual onUpdate calls - let the form watcher handle it
                           />
@@ -189,7 +189,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                         <FormControl>
                           <Input
                             placeholder="Bachelor's, Master's, etc."
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                             {...field}
                           // Remove manual onUpdate calls - let the form watcher handle it
                           />
@@ -207,7 +207,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                         <FormControl>
                           <Input
                             placeholder="Computer Science, Business, etc."
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                             {...field}
                           // Remove manual onUpdate calls - let the form watcher handle it
                           />
@@ -228,7 +228,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                         <FormControl>
                           <Input
                             placeholder="3.8/4.0"
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                             {...field}
                           // Remove manual onUpdate calls - let the form watcher handle it
                           />
@@ -254,7 +254,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                               field.onChange(monthString);
                             }}
                             placeholder="Select start date"
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                           />
                         </FormControl>
                         <FormMessage />
@@ -279,7 +279,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                             }}
                             placeholder="Select end date"
                             disabled={form.getValues(`educations.${index}.current`)}
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                           />
                         </FormControl>
                         <FormField
@@ -317,7 +317,7 @@ export function EducationEditor({ data, onUpdate }: EducationEditorProps) {
                         <Textarea
                           placeholder="• Relevant coursework, achievements, activities...&#10;• Academic honors or awards&#10;• Thesis or capstone project details"
                           rows={3}
-                          className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
+                          className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 resize-none"
                           {...field}
                         // Remove manual onUpdate calls - let the form watcher handle it
                         />

@@ -92,7 +92,7 @@ export const nativeMobilePrint = (elementId: string): boolean => {
             h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: #000; }
             p { margin-bottom: 4px; color: #333; }
             
-            .text-orange-500, .text-orange-600 { color: #007bff; }
+            .text-indigo-600, .text-indigo-700 { color: #007bff; }
             .text-gray-900 { color: #000; }
             .text-gray-700 { color: #333; }
             .text-gray-600 { color: #666; }

@@ -42,10 +42,10 @@ export function PrintReminder() {
 
   return (
     <div className="fixed top-4 right-4 z-50 animate-slide-up">
-      <Card className="border-orange-200 bg-orange-50 shadow-lg max-w-sm">
+      <Card className="border-orange-200 bg-indigo-50 shadow-lg max-w-sm">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-orange-600 mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="h-5 w-5 text-indigo-700 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <h4 className="font-medium text-orange-800 mb-1">
                 Print Reminder
@@ -53,7 +53,7 @@ export function PrintReminder() {
               <p className="text-sm text-orange-700 mb-3">
                 To remove date, time, and filename from your PDF:
               </p>
-              <ol className="text-xs text-orange-600 space-y-1 mb-3">
+              <ol className="text-xs text-indigo-700 space-y-1 mb-3">
                 <li>1. Click &quot;More settings&quot; in print dialog</li>
                 <li>2. Uncheck &quot;Headers and footers&quot;</li>
                 <li>3. Set margins to &quot;Minimum&quot;</li>
@@ -63,7 +63,7 @@ export function PrintReminder() {
               variant="ghost"
               size="sm"
               onClick={() => setIsVisible(false)}
-              className="h-6 w-6 p-0 text-orange-600 hover:text-orange-800"
+              className="h-6 w-6 p-0 text-indigo-700 hover:text-orange-800"
             >
               <X className="h-4 w-4" />
             </Button>

@@ -158,12 +158,12 @@ export const directMobilePrint = (elementId: string): boolean => {
         
         /* Resume content styling */
         #resume-content h1 { font-size: 24px; font-weight: bold; margin-bottom: 8px; color: #111827; }
-        #resume-content h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #f97316; border-bottom: 2px solid #f97316; padding-bottom: 4px; }
+        #resume-content h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #4f46e5; border-bottom: 2px solid #4f46e5; padding-bottom: 4px; }
         #resume-content h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: #111827; }
         #resume-content p { margin-bottom: 4px; color: #374151; }
         
-        #resume-content .text-orange-500, 
-        #resume-content .text-orange-600 { color: #f97316; }
+        #resume-content .text-indigo-600, 
+        #resume-content .text-indigo-700 { color: #4f46e5; }
         #resume-content .text-gray-900 { color: #111827; }
         #resume-content .text-gray-700 { color: #374151; }
         #resume-content .text-gray-600 { color: #4b5563; }

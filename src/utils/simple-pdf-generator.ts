@@ -58,9 +58,9 @@ const cleanElementStyles = (element: HTMLElement): HTMLElement => {
       // Map common Tailwind classes to safe inline styles
       classes.forEach((cls) => {
         switch (cls) {
-          case "text-orange-500":
-          case "text-orange-600":
-            safeStyles += "color: #f97316; ";
+          case "text-indigo-600":
+          case "text-indigo-700":
+            safeStyles += "color: #4f46e5; ";
             break;
           case "text-red-500":
           case "text-red-600":
@@ -81,17 +81,17 @@ const cleanElementStyles = (element: HTMLElement): HTMLElement => {
           case "bg-white":
             safeStyles += "background-color: #ffffff; ";
             break;
-          case "bg-orange-500":
-            safeStyles += "background-color: #f97316; ";
+          case "bg-indigo-600":
+            safeStyles += "background-color: #4f46e5; ";
             break;
           case "bg-red-500":
             safeStyles += "background-color: #ef4444; ";
             break;
-          case "border-orange-500":
-            safeStyles += "border-color: #f97316; ";
+          case "border-indigo-600":
+            safeStyles += "border-color: #4f46e5; ";
             break;
-          case "border-orange-300":
-            safeStyles += "border-color: #fdba74; ";
+          case "border-indigo-200":
+            safeStyles += "border-color: #a5b4fc; ";
             break;
           case "font-bold":
             safeStyles += "font-weight: 700; ";
@@ -233,7 +233,7 @@ const addBaseStyles = (doc: Document) => {
     
     p { margin: 0; color: #374151; }
     
-    .text-orange-500, .text-orange-600 { color: #f97316 !important; }
+    .text-indigo-600, .text-indigo-700 { color: #4f46e5 !important; }
     .text-red-500, .text-red-600 { color: #ef4444 !important; }
     .text-gray-900 { color: #111827 !important; }
     .text-gray-700 { color: #374151 !important; }
@@ -241,11 +241,11 @@ const addBaseStyles = (doc: Document) => {
     .text-white { color: #ffffff !important; }
     
     .bg-white { background-color: #ffffff !important; }
-    .bg-orange-500 { background-color: #f97316 !important; }
+    .bg-indigo-600 { background-color: #4f46e5 !important; }
     .bg-red-500 { background-color: #ef4444 !important; }
     
-    .border-orange-500 { border-color: #f97316 !important; }
-    .border-orange-300 { border-color: #fdba74 !important; }
+    .border-indigo-600 { border-color: #4f46e5 !important; }
+    .border-indigo-200 { border-color: #a5b4fc !important; }
     
     .font-bold { font-weight: 700 !important; }
     .font-semibold { font-weight: 600 !important; }
@@ -269,9 +269,9 @@ const addBaseStyles = (doc: Document) => {
     .pb-4 { padding-bottom: 16px !important; }
     
     .border-b { border-bottom: 1px solid #e2e8f0 !important; }
-    .border-b-2 { border-bottom: 2px solid #f97316 !important; }
-    .border-l-2 { border-left: 2px solid #fdba74 !important; }
-    .border-l-4 { border-left: 4px solid #f97316 !important; }
+    .border-b-2 { border-bottom: 2px solid #4f46e5 !important; }
+    .border-l-2 { border-left: 2px solid #a5b4fc !important; }
+    .border-l-4 { border-left: 4px solid #4f46e5 !important; }
     
     .uppercase { text-transform: uppercase !important; }
     .tracking-wide { letter-spacing: 0.025em !important; }
@@ -590,16 +590,16 @@ export const openPrintWindow = (elementId: string): boolean => {
             }
             
             h1 { font-size: 24px; font-weight: bold; margin-bottom: 8px; color: #111827; }
-            h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #f97316; border-bottom: 2px solid #f97316; padding-bottom: 4px; }
+            h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #4f46e5; border-bottom: 2px solid #4f46e5; padding-bottom: 4px; }
             h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: #111827; }
             p { margin-bottom: 4px; color: #374151; }
             
-            .text-orange-500, .text-orange-600 { color: #f97316; }
+            .text-indigo-600, .text-indigo-700 { color: #4f46e5; }
             .text-gray-900 { color: #111827; }
             .text-gray-700 { color: #374151; }
             .text-gray-600 { color: #4b5563; }
             .border-b-2 { border-bottom: 2px solid; }
-            .border-orange-500 { border-color: #f97316; }
+            .border-indigo-600 { border-color: #4f46e5; }
             .pb-6 { padding-bottom: 24px; }
             .mb-6 { margin-bottom: 24px; }
             .mb-3 { margin-bottom: 12px; }
@@ -622,8 +622,8 @@ export const openPrintWindow = (elementId: string): boolean => {
             .tracking-wide { letter-spacing: 0.025em; }
             .text-center { text-align: center; }
             .text-right { text-align: right; }
-            .border-l-2 { border-left: 2px solid #fdba74; }
-            .border-l-4 { border-left: 4px solid #f97316; }
+            .border-l-2 { border-left: 2px solid #a5b4fc; }
+            .border-l-4 { border-left: 4px solid #4f46e5; }
             
             @media print {
               body { margin: 0; padding: 0; }

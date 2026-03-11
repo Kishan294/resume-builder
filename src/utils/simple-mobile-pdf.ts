@@ -171,11 +171,11 @@ export const createPrintableHTML = (elementId: string): string => {
           }
           
           h1 { font-size: 18px; font-weight: bold; margin-bottom: 8px; color: #000; }
-          h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #f97316; border-bottom: 1px solid #f97316; padding-bottom: 2px; }
+          h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #4f46e5; border-bottom: 1px solid #4f46e5; padding-bottom: 2px; }
           h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: #000; }
           p { margin-bottom: 4px; color: #333; }
           
-          .text-orange-500, .text-orange-600 { color: #f97316 !important; }
+          .text-indigo-600, .text-indigo-700 { color: #4f46e5 !important; }
           .text-gray-900 { color: #000 !important; }
           .text-gray-700 { color: #333 !important; }
           .text-gray-600 { color: #666 !important; }

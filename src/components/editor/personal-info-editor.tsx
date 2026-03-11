@@ -80,8 +80,8 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="John Doe"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
+                      placeholder="Enter your full name"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 h-11 border-gray-200 focus:border-indigo-600"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -105,8 +105,8 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="john@example.com"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
+                      placeholder="email@example.com"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 h-11 border-gray-200 focus:border-indigo-600"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -130,7 +130,7 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                   <FormControl>
                     <Input
                       placeholder="+1 (555) 123-4567"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 h-11 border-gray-200 focus:border-indigo-600"
                       {...field}
                     />
                   </FormControl>
@@ -150,7 +150,7 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                   <FormControl>
                     <Input
                       placeholder="New York, NY"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 h-11 border-gray-200 focus:border-indigo-600"
                       {...field}
                     />
                   </FormControl>
@@ -172,8 +172,8 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="https://johndoe.com"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
+                      placeholder="https://yourportfolio.com"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 h-11 border-gray-200 focus:border-indigo-600"
                       {...field}
                     />
                   </FormControl>
@@ -194,8 +194,8 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="https://linkedin.com/in/johndoe"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
+                      placeholder="https://linkedin.com/in/yourprofile"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 h-11 border-gray-200 focus:border-indigo-600"
                       {...field}
                     />
                   </FormControl>
@@ -216,8 +216,8 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="https://github.com/johndoe"
-                      className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 h-11 border-gray-200 focus:border-orange-500"
+                      placeholder="https://github.com/yourusername"
+                      className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 h-11 border-gray-200 focus:border-indigo-600"
                       {...field}
                     />
                   </FormControl>
@@ -237,7 +237,7 @@ export function PersonalInfoEditor({ data, onUpdate }: PersonalInfoEditorProps) 
                   <Textarea
                     placeholder="Write a brief professional summary highlighting your key skills and experience..."
                     rows={4}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none border-gray-200 focus:border-orange-500"
+                    className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 resize-none border-gray-200 focus:border-indigo-600"
                     {...field}
                   />
                 </FormControl>

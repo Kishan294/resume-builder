@@ -6,6 +6,8 @@ import { MinimalTemplate } from "@/components/templates/minimal-template";
 import { CreativeTemplate } from "@/components/templates/creative-template";
 import { ProfessionalTemplate } from "@/components/templates/professional-template";
 import { CompactTemplate } from "@/components/templates/compact-template";
+import { ExecutiveTemplate } from "@/components/templates/executive-template";
+import { TechProTemplate } from "@/components/templates/tech-pro-template";
 import type { Resume } from "@/db/schema";
 import { transformResumeForTemplate } from "@/utils/resume-transform";
 
@@ -29,6 +31,10 @@ export function ResumePreview({ resume, exportMode = false }: ResumePreviewProps
         return <ProfessionalTemplate resume={transformedResume} />;
       case "compact":
         return <CompactTemplate resume={transformedResume} />;
+      case "executive":
+        return <ExecutiveTemplate resume={transformedResume} />;
+      case "tech-pro":
+        return <TechProTemplate resume={transformedResume} />;
       case "modern":
       default:
         return <ModernTemplate resume={transformedResume} />;

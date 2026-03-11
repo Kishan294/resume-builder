@@ -124,9 +124,9 @@ const openMobilePrintWindow = () => {
         max-width: 100%;
         margin: 0;
       ">
-        <div style="margin-bottom: 20px; text-align: center; border-bottom: 2px solid #f97316; padding-bottom: 10px;">
+        <div style="margin-bottom: 20px; text-align: center; border-bottom: 2px solid #4f46e5; padding-bottom: 10px;">
           <button onclick="window.print()" style="
-            background: #f97316;
+            background: #4f46e5;
             color: white;
             border: none;
             padding: 12px 24px;
@@ -227,12 +227,12 @@ const openPrintWindow = () => {
             
             /* Typography */
             h1 { font-size: 24px; font-weight: bold; margin-bottom: 8px; color: #111827; }
-            h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #f97316; }
+            h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #4f46e5; }
             h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: #111827; }
             p { margin-bottom: 4px; color: #374151; }
             
             /* Colors */
-            .text-orange-500, .text-orange-600 { color: #f97316; }
+            .text-indigo-600, .text-indigo-700 { color: #4f46e5; }
             .text-red-500, .text-red-600 { color: #ef4444; }
             .text-gray-900 { color: #111827; }
             .text-gray-800 { color: #1f2937; }
@@ -241,7 +241,7 @@ const openPrintWindow = () => {
             .text-white { color: #ffffff; }
             
             .bg-white { background-color: #ffffff; }
-            .bg-orange-500 { background-color: #f97316; }
+            .bg-indigo-600 { background-color: #4f46e5; }
             .bg-red-500 { background-color: #ef4444; }
             .bg-gray-50 { background-color: #f9fafb; }
             .bg-gray-100 { background-color: #f3f4f6; }
@@ -249,11 +249,11 @@ const openPrintWindow = () => {
             
             /* Borders */
             .border-b { border-bottom: 1px solid #e2e8f0; }
-            .border-b-2 { border-bottom: 2px solid #f97316; }
-            .border-l-2 { border-left: 2px solid #fdba74; }
-            .border-l-4 { border-left: 4px solid #f97316; }
-            .border-orange-500 { border-color: #f97316; }
-            .border-orange-300 { border-color: #fdba74; }
+            .border-b-2 { border-bottom: 2px solid #4f46e5; }
+            .border-l-2 { border-left: 2px solid #a5b4fc; }
+            .border-l-4 { border-left: 4px solid #4f46e5; }
+            .border-indigo-600 { border-color: #4f46e5; }
+            .border-indigo-200 { border-color: #a5b4fc; }
             
             /* Spacing */
             .p-4 { padding: 16px; }
@@ -313,7 +313,7 @@ const openPrintWindow = () => {
             
             /* Gradients */
             .bg-gradient-to-b { background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); }
-            .from-orange-500 { --tw-gradient-from: #f97316; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(249, 115, 22, 0)); }
+            .from-indigo-600 { --tw-gradient-from: #4f46e5; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(249, 115, 22, 0)); }
             .to-red-500 { --tw-gradient-to: #ef4444; }
             
             @media print {

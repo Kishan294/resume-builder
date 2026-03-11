@@ -102,8 +102,9 @@ export function ResumeCard({
 
   return (
     <>
-      <Card className="hover:shadow-lg transition-all duration-200 group">
-        <CardHeader>
+      <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group border-slate-200 overflow-hidden bg-white">
+        <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <CardHeader className="pb-4">
           <div className="flex justify-between items-start">
             <div className="flex-1">
               {isRenaming ? (
@@ -112,64 +113,64 @@ export function ResumeCard({
                   onChange={(e) => setNewTitle(e.target.value)}
                   onBlur={handleRename}
                   onKeyDown={handleKeyPress}
-                  className="text-lg font-semibold border-none p-0 h-auto focus-visible:ring-0 mb-1"
+                  className="text-lg font-bold border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500/10 p-1 h-auto mb-1"
                   autoFocus
                 />
               ) : (
-                <CardTitle className="text-lg group-hover:text-orange-500 transition-colors">
+                <CardTitle className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
                   {resume.title}
                 </CardTitle>
               )}
-              <CardDescription className="flex items-center gap-2 mt-1">
-                <Badge variant="outline" className="text-xs">
+              <CardDescription className="flex items-center gap-3 mt-2">
+                <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-100 text-[10px] uppercase tracking-wider font-bold">
                   {resume.template}
                 </Badge>
-                <span className="flex items-center gap-1 text-xs">
-                  <Calendar className="h-3 w-3" />
-                  {resume.updatedAt ? new Date(resume.updatedAt).toLocaleDateString() : "Unknown"}
+                <span className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                  <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                  {resume.updatedAt ? new Date(resume.updatedAt).toLocaleDateString("en-US", { month: 'short', day: 'numeric' }) : "Recently"}
                 </span>
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
               {resume.isPublic && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  <Eye className="h-3 w-3" />
-                  Public
+                <Badge variant="outline" className="flex items-center gap-1.5 border-emerald-200 bg-emerald-50 text-emerald-700 px-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                  <span className="text-[10px] font-bold">LIVE</span>
                 </Badge>
               )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                    <MoreVertical className="h-3 w-3" />
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-slate-100 rounded-full">
+                    <MoreVertical className="h-4 w-4 text-slate-500" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setIsRenaming(true)}>
+                <DropdownMenuContent align="end" className="w-48 p-1 shadow-lg border-slate-200">
+                  <DropdownMenuItem onClick={() => setIsRenaming(true)} className="rounded-md focus:bg-indigo-50 focus:text-indigo-700">
                     <Edit2 className="h-4 w-4 mr-2" />
-                    Rename Resume
+                    Rename
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => setShowDeleteDialog(true)}
-                    className="text-red-600 focus:text-red-600"
+                    className="text-red-600 focus:bg-red-50 focus:text-red-700 rounded-md"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Resume
+                    Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
+        <CardContent className="pt-0 pb-6">
+          <div className="grid grid-cols-3 gap-2">
             <Button
-              variant="outline"
+              variant="default"
               size="sm"
               onClick={() => router.push(`/editor/${resume.id}`)}
-              className="flex items-center space-x-1 hover:bg-orange-500 hover:text-white transition-colors"
+              className="flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm font-semibold h-9 rounded-lg"
             >
-              <Edit className="h-3 w-3" />
+              <Edit className="h-3.5 w-3.5" />
               <span>Edit</span>
             </Button>
             <Button
@@ -177,12 +178,12 @@ export function ResumeCard({
               size="sm"
               onClick={() => onShare(resume.id, resume.title)}
               disabled={loadingStates.sharing}
-              className="flex items-center space-x-1"
+              className="flex items-center justify-center gap-1.5 border-slate-200 hover:bg-slate-50 text-slate-600 h-9 rounded-lg font-medium"
             >
               {loadingStates.sharing ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <Share2 className="h-3 w-3" />
+                <Share2 className="h-3.5 w-3.5" />
               )}
               <span>Share</span>
             </Button>
@@ -191,12 +192,12 @@ export function ResumeCard({
               size="sm"
               onClick={() => onDownload(resume.id)}
               disabled={loadingStates.downloading}
-              className="flex items-center space-x-1"
+              className="flex items-center justify-center gap-1.5 border-slate-200 hover:bg-slate-50 text-slate-600 h-9 rounded-lg font-medium"
             >
               {loadingStates.downloading ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
-                <Download className="h-3 w-3" />
+                <Download className="h-3.5 w-3.5" />
               )}
               <span>PDF</span>
             </Button>

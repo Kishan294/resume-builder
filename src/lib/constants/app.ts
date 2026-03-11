@@ -16,9 +16,21 @@ export const ROUTES = {
 export const RESUME_TEMPLATES = [
   {
     id: "modern",
-    name: "Modern",
-    description: "Clean and contemporary design",
+    name: "Modern Pro",
+    description: "Clean Indigo accents with bold typography",
     preview: "/templates/modern-preview.png",
+  },
+  {
+    id: "executive",
+    name: "Executive Elite",
+    description: "High-end serif design for senior lead positions",
+    preview: "/templates/executive-preview.png",
+  },
+  {
+    id: "tech-pro",
+    name: "Developer Core",
+    description: "Technical mono-spaced layout for software engineers",
+    preview: "/templates/tech-pro-preview.png",
   },
   {
     id: "classic",
@@ -34,20 +46,20 @@ export const RESUME_TEMPLATES = [
   },
   {
     id: "minimal",
-    name: "Minimal",
-    description: "Simple and elegant design",
+    name: "Minimalist",
+    description: "Ultra-clean and simple design",
     preview: "/templates/minimal-preview.png",
   },
   {
     id: "professional",
-    name: "Professional",
-    description: "Corporate-friendly format",
+    name: "Corporate",
+    description: "Corporate-friendly standard format",
     preview: "/templates/professional-preview.png",
   },
   {
     id: "compact",
-    name: "Compact",
-    description: "Maximize content in limited space",
+    name: "Condensed",
+    description: "Maximize content in tight spaces",
     preview: "/templates/compact-preview.png",
   },
 ] as const;

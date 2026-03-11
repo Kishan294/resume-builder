@@ -40,7 +40,7 @@ export const mobilePrintFallback = (elementId: string): boolean => {
               text-align: center;
               margin-bottom: 20px;
               padding-bottom: 15px;
-              border-bottom: 2px solid #f97316;
+              border-bottom: 2px solid #4f46e5;
             }
             
             .print-buttons {
@@ -51,7 +51,7 @@ export const mobilePrintFallback = (elementId: string): boolean => {
             }
             
             .print-btn {
-              background: #f97316;
+              background: #4f46e5;
               color: white;
               border: none;
               padding: 12px 24px;
@@ -80,16 +80,16 @@ export const mobilePrintFallback = (elementId: string): boolean => {
             
             /* Resume styles */
             .resume-content h1 { font-size: 24px; font-weight: bold; margin-bottom: 8px; color: #111827; }
-            .resume-content h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #f97316; border-bottom: 2px solid #f97316; padding-bottom: 4px; }
+            .resume-content h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: #4f46e5; border-bottom: 2px solid #4f46e5; padding-bottom: 4px; }
             .resume-content h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; color: #111827; }
             .resume-content p { margin-bottom: 4px; color: #374151; }
             
-            .text-orange-500, .text-orange-600 { color: #f97316; }
+            .text-indigo-600, .text-indigo-700 { color: #4f46e5; }
             .text-gray-900 { color: #111827; }
             .text-gray-700 { color: #374151; }
             .text-gray-600 { color: #4b5563; }
             .border-b-2 { border-bottom: 2px solid; }
-            .border-orange-500 { border-color: #f97316; }
+            .border-indigo-600 { border-color: #4f46e5; }
             .pb-6 { padding-bottom: 24px; }
             .mb-6 { margin-bottom: 24px; }
             .mb-3 { margin-bottom: 12px; }
@@ -112,8 +112,8 @@ export const mobilePrintFallback = (elementId: string): boolean => {
             .tracking-wide { letter-spacing: 0.025em; }
             .text-center { text-align: center; }
             .text-right { text-align: right; }
-            .border-l-2 { border-left: 2px solid #fdba74; }
-            .border-l-4 { border-left: 4px solid #f97316; }
+            .border-l-2 { border-left: 2px solid #a5b4fc; }
+            .border-l-4 { border-left: 4px solid #4f46e5; }
             
             @media print {
               .print-header { display: none; }
@@ -135,7 +135,7 @@ export const mobilePrintFallback = (elementId: string): boolean => {
         </head>
         <body>
           <div class="print-header">
-            <h1 style="margin-bottom: 10px; color: #f97316;">Resume - Print View</h1>
+            <h1 style="margin-bottom: 10px; color: #4f46e5;">Resume - Print View</h1>
             <p style="margin-bottom: 15px; color: #6b7280;">Use the buttons below to print or save your resume</p>
             <div class="print-buttons">
               <button class="print-btn" onclick="window.print()">Print Resume</button>

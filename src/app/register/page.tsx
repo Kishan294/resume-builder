@@ -6,43 +6,63 @@ import { RegisterForm } from "@/components/auth/register-form";
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-red-100 relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-orange-400/20 to-red-400/20 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-red-400/20 to-orange-400/20 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
-        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-l from-amber-400/10 to-orange-400/10 rounded-full blur-2xl"></div>
+    <div className="min-h-screen bg-white relative overflow-hidden flex">
+      {/* Left side - decorative */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 relative items-center justify-center p-12">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:3rem_3rem]" />
+        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-violet-500/15 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/3 left-1/4 w-48 h-48 bg-indigo-500/15 rounded-full blur-[80px]" />
+
+        <div className="relative text-center max-w-md">
+          <div className="inline-flex p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 mb-8">
+            <FileText className="h-10 w-10 text-indigo-400" />
+          </div>
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Start building with ProfilCraft
+          </h2>
+          <p className="text-slate-400 leading-relaxed">
+            Create your account and start building a professional resume that
+            stands out to recruiters and hiring managers.
+          </p>
+        </div>
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
+      {/* Right side - form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center space-x-2 text-gray-600 hover:text-orange-500 transition-colors mb-8 group">
-              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-              <span className="font-medium">Back to Home</span>
+          <div className="mb-8">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition-colors group text-sm font-medium"
+            >
+              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
+              Back to Home
             </Link>
+          </div>
 
-            <div className="flex items-center justify-center space-x-3 mb-6">
-              <div className="p-2 rounded-xl bg-gradient-to-r from-orange-500 to-red-500">
-                <FileText className="h-8 w-8 text-white" />
+          <div className="mb-8 lg:hidden">
+            <div className="flex items-center gap-2.5 mb-6">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600">
+                <FileText className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                ProfilCraft
-              </h1>
+              <span className="text-xl font-bold text-slate-900">
+                Profil<span className="text-indigo-600">Craft</span>
+              </span>
             </div>
           </div>
 
-          <div className="space-y-6">
-            <RegisterForm />
+          <RegisterForm />
 
-            <div className="text-center">
-              <p className="text-gray-600">
-                Already have an account?{" "}
-                <Link href="/login" className="text-orange-500 hover:text-orange-600 font-semibold hover:underline transition-all">
-                  Sign in here
-                </Link>
-              </p>
-            </div>
+          <div className="text-center mt-6">
+            <p className="text-slate-500 text-sm">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="text-indigo-600 hover:text-indigo-700 font-semibold hover:underline transition-all"
+              >
+                Sign in
+              </Link>
+            </p>
           </div>
         </div>
       </div>

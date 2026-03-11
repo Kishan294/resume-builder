@@ -167,7 +167,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                         <FormControl>
                           <Input
                             placeholder="Company Name"
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                             {...field}
                           />
                         </FormControl>
@@ -184,7 +184,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                         <FormControl>
                           <Input
                             placeholder="Job Title"
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                             {...field}
                           />
                         </FormControl>
@@ -209,7 +209,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                               field.onChange(monthString);
                             }}
                             placeholder="Select start date"
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                           />
                         </FormControl>
                         <FormMessage />
@@ -234,7 +234,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                             }}
                             placeholder="Select end date"
                             disabled={form.getValues(`experiences.${index}.current`)}
-                            className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                            className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                           />
                         </FormControl>
                         <FormField
@@ -274,7 +274,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                       <FormControl>
                         <Input
                           placeholder="City, State"
-                          className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                          className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20"
                           {...field}
                         />
                       </FormControl>
@@ -292,7 +292,7 @@ export function WorkExperienceEditor({ data, onUpdate }: WorkExperienceEditorPro
                         <Textarea
                           placeholder="• Describe your key responsibilities and achievements&#10;• Use bullet points for better readability&#10;• Include quantifiable results when possible"
                           rows={4}
-                          className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20 resize-none"
+                          className="transition-all duration-200 focus:ring-2 focus:ring-indigo-600/20 resize-none"
                           {...field}
                         />
                       </FormControl>
