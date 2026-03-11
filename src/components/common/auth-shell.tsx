@@ -2,9 +2,28 @@
 
 import Link from "next/link";
 import { FileText, ArrowLeft } from "lucide-react";
-import { LoginForm } from "@/components/auth/login-form";
 
-export default function LoginPage() {
+interface AuthShellProps {
+  children: React.ReactNode;
+  heading: string;
+  subheading: string;
+  leftPanelTitle: string;
+  leftPanelDescription: string;
+  footerText: string;
+  footerLinkText: string;
+  footerHref: string;
+}
+
+export function AuthShell({
+  children,
+  heading,
+  subheading,
+  leftPanelTitle,
+  leftPanelDescription,
+  footerText,
+  footerLinkText,
+  footerHref,
+}: AuthShellProps) {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden flex">
       {/* Left side - decorative */}
@@ -18,11 +37,10 @@ export default function LoginPage() {
             <FileText className="h-10 w-10 text-indigo-400" />
           </div>
           <h2 className="text-3xl font-bold text-white mb-4">
-            Welcome back to ProfilCraft
+            {leftPanelTitle}
           </h2>
           <p className="text-slate-400 leading-relaxed">
-            Continue building your professional resume. Your career narrative
-            is waiting for you.
+            {leftPanelDescription}
           </p>
         </div>
       </div>
@@ -51,18 +69,29 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <LoginForm />
+          <div className="space-y-6">
+            <div className="space-y-2 text-left mb-8">
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+                {heading}
+              </h1>
+              <p className="text-slate-500 text-sm">
+                {subheading}
+              </p>
+            </div>
 
-          <div className="text-center mt-6">
-            <p className="text-slate-500 text-sm">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/register"
-                className="text-indigo-600 hover:text-indigo-700 font-semibold hover:underline transition-all"
-              >
-                Sign up free
-              </Link>
-            </p>
+            {children}
+
+            <div className="text-center mt-6">
+              <p className="text-slate-500 text-sm">
+                {footerText}{" "}
+                <Link
+                  href={footerHref}
+                  className="text-indigo-600 hover:text-indigo-700 font-semibold hover:underline transition-all"
+                >
+                  {footerLinkText}
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>

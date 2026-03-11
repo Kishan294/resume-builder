@@ -5,10 +5,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { FileText, Plus, Loader2 } from "lucide-react";
 import { api } from "@/lib/trpc/client";
-import { TemplateSelector } from "@/components/dashboard/template-selector";
-import { ResumeCard } from "@/components/dashboard/resume-card";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { PageHeader } from "@/components/common/page-header";
+import { Container } from "@/components/common/container";
+import { TemplateSelector } from "@/components/dashboard/template-selector";
+import { ResumeCard } from "@/components/dashboard/resume-card";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -109,14 +111,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="container-responsive py-12 sm:py-16">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6 mb-12">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            My Portfolio
-          </h1>
-          <p className="text-slate-500 mt-2 font-medium">Manage your professional career narratives</p>
-        </div>
+    <Container className="py-12 sm:py-16">
+      <PageHeader
+        title="My Portfolio"
+        description="Manage your professional career narratives"
+      >
         <TemplateSelector onCreateResume={createNewResume}>
           <Button
             className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all duration-300 px-8 py-6 text-base font-bold rounded-xl"
@@ -126,7 +125,7 @@ export default function DashboardPage() {
             <span>{createResumeMutation.isPending ? "Configuring..." : "Create New Resume"}</span>
           </Button>
         </TemplateSelector>
-      </div>
+      </PageHeader>
 
       {!resumes || resumes.length === 0 ? (
         <Card className="border-dashed border-2 border-slate-200 bg-white/50 backdrop-blur-sm rounded-[32px] overflow-hidden">
@@ -169,6 +168,6 @@ export default function DashboardPage() {
           ))}
         </div>
       )}
-    </main>
+    </Container>
   );
 }

@@ -110,14 +110,6 @@ function LoginFormContent() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-          Welcome back
-        </h1>
-        <p className="text-slate-500 text-sm">
-          Sign in to your account to continue building
-        </p>
-      </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

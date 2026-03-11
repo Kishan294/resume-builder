@@ -9,6 +9,7 @@ import { PrintPreview } from "@/components/editor/print-preview";
 import { generateSimplePDF } from "@/utils/pdf-generator";
 import { toast } from "sonner";
 import Link from "next/link";
+import { Container } from "@/components/common/container";
 
 export default function PublicResumePage({ params }: { params: Promise<{ slug: string }> }) {
   const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null);
@@ -78,38 +79,45 @@ export default function PublicResumePage({ params }: { params: Promise<{ slug: s
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <FileText className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-semibold">{resume.title}</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button
-              onClick={handleDownload}
-              disabled={isDownloading}
-              className="flex items-center space-x-2"
-            >
-              <Download className="h-4 w-4" />
-              <span>{isDownloading ? "Preparing..." : "Download PDF"}</span>
-            </Button>
-            <Link href="/">
-              <Button variant="outline">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Create Your Own
+      <header className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-20">
+        <Container size="wide" className="py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="p-1.5 rounded-lg bg-indigo-600">
+                <FileText className="h-5 w-5 text-white" />
+              </div>
+              <h1 className="text-lg font-bold text-slate-900">{resume.title}</h1>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleDownload}
+                disabled={isDownloading}
+                className="bg-indigo-600 hover:bg-indigo-700 rounded-xl"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                <span>{isDownloading ? "Preparing..." : "Download"}</span>
               </Button>
-            </Link>
+              <Link href="/">
+                <Button variant="outline" className="rounded-xl border-slate-200">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">Create Your Own</span>
+                  <span className="sm:hidden">Create</span>
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
+        </Container>
       </header>
 
       {/* Resume Preview */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-[8.5in] mx-auto">
-          <PrintPreview resume={resume} />
-        </div>
+      <main className="py-12">
+        <Container>
+          <div className="max-w-[8.5in] mx-auto shadow-2xl shadow-slate-200 rounded-sm overflow-hidden bg-white">
+            <PrintPreview resume={resume} />
+          </div>
+        </Container>
       </main>
     </div>
   );

@@ -137,14 +137,6 @@ function RegisterFormContent() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-          Create your account
-        </h1>
-        <p className="text-slate-500 text-sm">
-          Start building your professional resume today
-        </p>
-      </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
